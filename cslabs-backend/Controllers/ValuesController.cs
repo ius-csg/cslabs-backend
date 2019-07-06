@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Vim25Api;
 
-namespace cslabs_backend.Controllers
+namespace CSLabsBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
