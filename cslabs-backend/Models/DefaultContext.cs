@@ -11,6 +11,8 @@ namespace CSLabsBackend.Models
         { }
         
         public DbSet<Module> Modules { get; set; }
+        
+        public DbSet<Badge> Badges { get; set; }
        
        
        protected override void OnModelCreating(ModelBuilder builder)
@@ -18,6 +20,7 @@ namespace CSLabsBackend.Models
            base.OnModelCreating(builder);
            
            Module.OnModelCreating(builder);
+           Badge.OnModelCreating(builder);
        
            foreach(var entity in builder.Model.GetEntityTypes())
            {
