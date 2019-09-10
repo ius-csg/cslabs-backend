@@ -8,6 +8,6 @@ namespace CSLabsBackend.Models
             : base(options)
         { }
         // add tables here
-       // public DbSet<UnitGroupType> SomeTableName { get; set; }
+       // public DbSet<SomeModel> SomeModelName { get; set; }
     }
 }

@@ -31,6 +31,7 @@ namespace CSLabsBackend
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             var connection = Configuration.GetSection("ConnectionStrings")["DefaultConnection"];
             services.AddDbContextPool<DefaultContext>(options => options.UseMySql(connection, mySqlOptions => {
+                // change the version if needed.
                 mySqlOptions.ServerVersion(new Version(10, 2, 13), ServerType.MariaDb);
             }));
         }

@@ -2,7 +2,8 @@
 
 ### Requirements
 
-* .NET Core
+* [.NET Core](https://dotnet.microsoft.com/download) Download .net core 2.2 SDK
+* Visual Studio 2019 or the Rider IDE from Jetbrains
 
 
 
@@ -10,12 +11,11 @@
 
 ### Tutorial
 
-Follow this tutorial for a quickstart in .net core web api.
+Follow these tutorials to get started.
 
+[.Net Core Web Api Tutorial](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-2.2&tabs=visual-studio)
 
-https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-2.2&tabs=visual-studio
-
-
+[EF Core Documentation](https://docs.microsoft.com/en-us/ef/core/)
 
 
 
