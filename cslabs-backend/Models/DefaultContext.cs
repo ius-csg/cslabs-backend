@@ -17,10 +17,8 @@ namespace CSLabsBackend.Models
        {
            base.OnModelCreating(builder);
            
-           builder.Entity<Module>()
-               .Property(b => b.CreatedAt)
-               .HasDefaultValueSql("UTC_TIMESTAMP()");
-
+           Module.OnModelCreating(builder);
+       
            foreach(var entity in builder.Model.GetEntityTypes())
            {
                // Replace table names
@@ -63,7 +61,7 @@ namespace CSLabsBackend.Models
            {
                if (entry.Entity is ITrackable trackable)
                {
-                   var now = DateTime.UtcNow;
+                   DateTime now = DateTime.UtcNow;
                    switch (entry.State)
                    {
                        case EntityState.Modified:
@@ -72,6 +70,7 @@ namespace CSLabsBackend.Models
 
                        case EntityState.Added:
                            trackable.CreatedAt = now;
+                           trackable.UpdatedAt = now;
                            break;
                    }
                }

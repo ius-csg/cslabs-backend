@@ -9,21 +9,30 @@ using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using CSLabsBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSLabsBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class ModulesController : BaseController
     {
-
-       
-
+        public ModulesController(DefaultContext defaultContext) : base(defaultContext)
+        {
+        }
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            this.DatabaseContext.Modules.Add(new Module()
+            {
+                Name = "This is a test module",
+                ShortName = "Test Module",
+                Description = "This is a test module that is supposed to test the table",
+                Published = false
+            });
+            this.DatabaseContext.SaveChanges();
             return new string[] { "value1", "value2" };
         }
 
@@ -51,5 +60,7 @@ namespace CSLabsBackend.Controllers
         public void Delete(int id)
         {
         }
+
+        
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace CSLabsBackend.Models
 {
@@ -18,5 +19,15 @@ namespace CSLabsBackend.Models
         public DateTime UpdatedAt { get; set; }
         [Required]
         public bool Published { get; set; }
+
+        public static void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Module>()
+                .Property(b => b.CreatedAt)
+                .HasDefaultValueSql("UTC_TIMESTAMP()");
+            
+            builder.Entity<Module>().HasIndex(u => u.Name).IsUnique();
+            builder.Entity<Module>().HasIndex(u => u.ShortName).IsUnique();
+        }
     }
 }
