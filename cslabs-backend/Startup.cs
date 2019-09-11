@@ -22,6 +22,8 @@ namespace CSLabsBackend
         {
             Configuration = configuration;
         }
+        
+        readonly string CorsPolicyName = "_CorsPolicy";
 
         public IConfiguration Configuration { get; }
 
@@ -34,6 +36,16 @@ namespace CSLabsBackend
                 // change the version if needed.
                 mySqlOptions.ServerVersion(new Version(10, 2, 13), ServerType.MariaDb);
             }));
+            services.AddCors(options =>
+            {
+                options.AddPolicy(CorsPolicyName,
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000", "https://cslabs.ius.edu")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,7 +59,7 @@ namespace CSLabsBackend
             {
                 app.UseHsts();
             }
-
+            app.UseCors(CorsPolicyName);
             app.UseHttpsRedirection();
             app.UseMvc();
         }
