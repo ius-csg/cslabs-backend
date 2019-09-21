@@ -38,9 +38,9 @@ namespace CSLabsBackend.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public Module Get(int id)
         {
-            return "value";
+            return this.DatabaseContext.Modules.Find(id);
         }
 
         // POST api/values
@@ -60,7 +60,5 @@ namespace CSLabsBackend.Controllers
         public void Delete(int id)
         {
         }
-
-        
     }
 }
