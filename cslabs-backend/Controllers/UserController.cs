@@ -1,4 +1,5 @@
 ﻿using CSLabsBackend.Models;
+using CSLabsBackend.RequestModels;
 using CSLabsBackend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +21,10 @@ namespace CSLabsBackend.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody]User userParam)
+        public IActionResult Authenticate([FromBody]AuthenticateRequest userParam)
         {
             
-            var user = _authenticationService.Authenticate(userParam.Username, userParam.Password);
+            var user = _authenticationService.Authenticate(userParam.Email, userParam.Password);
 
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
@@ -31,7 +32,7 @@ namespace CSLabsBackend.Controllers
             return Ok(user);
         }
 
-        [HttpGet]
+        [HttpGet("current")]
         public IActionResult Current()
         {
             var email = User.FindFirst("sub")?.Value;

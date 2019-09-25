@@ -27,12 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Vim25Service">
-      <HintPath>Vim25Service.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 

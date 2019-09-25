@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using CSLabsBackend.Models;
 using CSLabsBackend.Util;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -13,27 +14,23 @@ namespace CSLabsBackend.Services
     public interface IAuthenticationService
     {
         User Authenticate(string email, string password);
-        IEnumerable<User> GetAll();
     }
 
     public class AuthenticationService : IAuthenticationService
     {
-        // users hardcoded for simplicity, store in a db with hashed passwords in production applications
-        private List<User> _users = new List<User>
-        { 
-            new User { Id = 1, FirstName = "Test", LastName = "User", Username = "test", Password = "test" } 
-        };
-
         private readonly AppSettings _appSettings;
-
-        public AuthenticationService(IOptions<AppSettings> appSettings)
+        private readonly DefaultContext _databaseContext;
+        
+        public AuthenticationService(IOptions<AppSettings> appSettings, DefaultContext defaultContext)
         {
             _appSettings = appSettings.Value;
+            _databaseContext = defaultContext;
         }
 
         public User Authenticate(string email, string password)
         {
-            var user = _users.SingleOrDefault(x => x.IusEMail == email && x.Password == password);
+            // @todo authenticate with kerberos.
+            var user = _databaseContext.Users.SingleOrDefault(x => x.SchoolEmail == email);
 
             // return null if user not found
             if (user == null)
@@ -56,18 +53,10 @@ namespace CSLabsBackend.Services
             user.Token = tokenHandler.WriteToken(token);
 
             // remove password before returning
-            user.Password = null;
+            //user.Password = null;
 
             return user;
         }
-
-        public IEnumerable<User> GetAll()
-        {
-            // return users without passwords
-            return _users.Select(x => {
-                x.Password = null;
-                return x;
-            });
-        }
+        
     }
 }

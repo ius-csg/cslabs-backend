@@ -20,6 +20,9 @@ namespace CSLabsBackend.Models
         [Required]
         [Column(TypeName = "VARCHAR(45)")]
         public string LastName { get; set; }
+        
+        [NotMapped]
+        public string Token { get; set; }
 
         [Required]
         [Column(TypeName = "VARCHAR(45)")]
