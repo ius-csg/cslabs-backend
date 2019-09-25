@@ -57,6 +57,7 @@ namespace CSLabsBackend.Models
 
             builder.Entity<User>().HasIndex(u => u.SchoolEmail).IsUnique();
             builder.Entity<User>().HasIndex(u => u.PersonalEmail).IsUnique();
+            builder.Entity<User>().HasIndex(u => u.CardCodeHash).IsUnique();
         }
     }
 }
