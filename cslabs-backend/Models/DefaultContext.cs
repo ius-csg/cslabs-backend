@@ -13,14 +13,20 @@ namespace CSLabsBackend.Models
         public DbSet<Module> Modules { get; set; }
         
         public DbSet<Badge> Badges { get; set; }
-       
-       
-       protected override void OnModelCreating(ModelBuilder builder)
+
+        public DbSet<User> Users { get; set; }
+
+        public DbSet<Lab> Labs { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder builder)
        {
            base.OnModelCreating(builder);
            
            Module.OnModelCreating(builder);
            Badge.OnModelCreating(builder);
+           User.OnModelCreating(builder);
+           Lab.OnModelCreating(builder);
        
            foreach(var entity in builder.Model.GetEntityTypes())
            {
