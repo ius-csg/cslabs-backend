@@ -5,7 +5,7 @@ namespace CSLabsBackend.Controllers
 {
     public class BaseController: ControllerBase
     {
-        protected DefaultContext DatabaseContext;
+        protected readonly DefaultContext DatabaseContext;
         
         public BaseController(DefaultContext defaultContext)
         {
