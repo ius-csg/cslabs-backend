@@ -15,15 +15,18 @@ namespace CSLabsBackend.Models
         public DbSet<Badge> Badges { get; set; }
 
         public DbSet<User> Users { get; set; }
-       
-       
-       protected override void OnModelCreating(ModelBuilder builder)
+
+        public DbSet<Lab> Labs { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder builder)
        {
            base.OnModelCreating(builder);
            
            Module.OnModelCreating(builder);
            Badge.OnModelCreating(builder);
            User.OnModelCreating(builder);
+           Lab.OnModelCreating(builder);
        
            foreach(var entity in builder.Model.GetEntityTypes())
            {
