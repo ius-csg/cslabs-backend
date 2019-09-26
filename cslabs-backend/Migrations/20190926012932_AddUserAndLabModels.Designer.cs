@@ -3,14 +3,16 @@ using System;
 using CSLabsBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSLabsBackend.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20190926012932_AddUserAndLabModels")]
+    partial class AddUserAndLabModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,9 +52,7 @@ namespace CSLabsBackend.Migrations
                         .HasColumnName("short_name");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("UTC_TIMESTAMP()");
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id")
                         .HasName("pk_badges");
@@ -129,9 +129,7 @@ namespace CSLabsBackend.Migrations
                         .HasColumnType("VARCHAR(100)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("UTC_TIMESTAMP()");
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id")
                         .HasName("pk_labs");
@@ -170,9 +168,7 @@ namespace CSLabsBackend.Migrations
                         .HasColumnName("short_name");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("UTC_TIMESTAMP()");
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id")
                         .HasName("pk_modules");
@@ -196,7 +192,7 @@ namespace CSLabsBackend.Migrations
 
                     b.Property<string>("CardCodeHash")
                         .HasColumnName("card_code_hash")
-                        .HasColumnType("VARCHAR(100)");
+                        .HasColumnType("VARCHAR(45)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -206,19 +202,22 @@ namespace CSLabsBackend.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnName("first_name")
-                        .HasColumnType("VARCHAR(100)");
+                        .HasColumnType("VARCHAR(45)");
 
-                    b.Property<int?>("GraduationYear")
-                        .HasColumnName("graduation_year");
+                    b.Property<string>("GraduationYear")
+                        .IsRequired()
+                        .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 48)))
+                        .HasColumnName("graduation_year")
+                        .HasColumnType("VARCHAR(45)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnName("last_name")
-                        .HasColumnType("VARCHAR(100)");
+                        .HasColumnType("VARCHAR(45)");
 
                     b.Property<string>("MiddleName")
                         .HasColumnName("middle_name")
-                        .HasColumnType("VARCHAR(100)");
+                        .HasColumnType("VARCHAR(45)");
 
                     b.Property<string>("PersonalEmail")
                         .IsRequired()
@@ -228,15 +227,13 @@ namespace CSLabsBackend.Migrations
                     b.Property<string>("SchoolEmail")
                         .IsRequired()
                         .HasColumnName("school_email")
-                        .HasColumnType("VARCHAR(100)");
+                        .HasColumnType("VARCHAR(45)");
 
-                    b.Property<DateTime?>("TerminationDate")
+                    b.Property<DateTime>("TerminationDate")
                         .HasColumnName("termination_date");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("UTC_TIMESTAMP()");
+                        .HasColumnName("updated_at");
 
                     b.Property<string>("UserType")
                         .IsRequired()

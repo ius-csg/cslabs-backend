@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CSLabsBackend.Models
 {
-    public interface ITrackable
+    public abstract class ITrackable
     {
-        DateTime CreatedAt { get; set; }
-        DateTime UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
     }
 }

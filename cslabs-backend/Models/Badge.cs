@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CSLabsBackend.Util;
 using Microsoft.EntityFrameworkCore;
 
 namespace CSLabsBackend.Models
@@ -28,12 +29,9 @@ namespace CSLabsBackend.Models
         
         public static void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Badge>()
-                .Property(b => b.CreatedAt)
-                .HasDefaultValueSql("UTC_TIMESTAMP()");
-            
-            builder.Entity<Badge>().HasIndex(u => u.Name).IsUnique();
-            builder.Entity<Badge>().HasIndex(u => u.ShortName).IsUnique();
+            builder.TimeStamps<Badge>();
+            builder.Unique<Badge>(u => u.Name);
+            builder.Unique<Badge>(u => u.ShortName);
         }
        
     }
