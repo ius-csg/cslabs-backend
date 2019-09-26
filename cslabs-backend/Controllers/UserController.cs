@@ -35,8 +35,7 @@ namespace CSLabsBackend.Controllers
         [HttpGet("current")]
         public IActionResult Current()
         {
-            var email = User.FindFirst("sub")?.Value;
-            return Ok(email);
+            return Ok(GetUser());
         }
     }
 }

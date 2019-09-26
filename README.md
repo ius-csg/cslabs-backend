@@ -37,6 +37,13 @@ dotnet ef migrations remove
 ```
 Read more about migrations [here](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations)
 
+To revert a migration:
+
+```
+dotnet ef database update LastGoodMigration
+```
+
+
 ### MariaDB Setup
 
 [Setup MariaDB 10.2.13](https://downloads.mariadb.org/interstitial/mariadb-10.2.13/winx64-packages/mariadb-10.2.13-winx64.msi/from/http%3A//ftp.hosteurope.de/mirror/archive.mariadb.org/)

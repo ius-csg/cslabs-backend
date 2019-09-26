@@ -1,7 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CSLabsBackend.Models.Enums;
+using static CSLabsBackend.Models.Enums.UserType;
+using CSLabsBackend.Util;
 using Microsoft.EntityFrameworkCore;
 
 namespace CSLabsBackend.Models
@@ -11,56 +12,50 @@ namespace CSLabsBackend.Models
         public int Id { get; set; }
 
         [Required]
-        [Column(TypeName = "VARCHAR(45)")]
+        [Column(TypeName = "VARCHAR(100)")]
         public string FirstName { get; set; }
 
-        [Column(TypeName = "VARCHAR(45)")]
+        [Column(TypeName = "VARCHAR(100)")]
         public string MiddleName { get; set; }
 
         [Required]
-        [Column(TypeName = "VARCHAR(45)")]
+        [Column(TypeName = "VARCHAR(100)")]
         public string LastName { get; set; }
         
         [NotMapped]
         public string Token { get; set; }
 
         [Required]
-        [Column(TypeName = "VARCHAR(45)")]
+        [Column(TypeName = "VARCHAR(100)")]
         public string SchoolEmail { get; set; }
 
         [Required]
         [Column(TypeName = "VARCHAR(45)")]
         public string PersonalEmail { get; set; }
+        
+        public int? GraduationYear { get; set; }
 
         [Required]
         [Column(TypeName = "VARCHAR(45)")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy}")]
-        public DateTime GraduationYear { get; set; }
-
-        [Required]
-        [Column(TypeName = "VARCHAR(45)")]
-        public userType UserType { get; set; }
+        public string UserType { get; set; } = Guest;
 
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdatedAt { get; set; }
 
-        [Column(TypeName = "VARCHAR(45)")]
+        [Column(TypeName = "VARCHAR(100)")]
         public string CardCodeHash { get; set; }
 
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]
-        public DateTime TerminationDate { get; set; }
+        public DateTime? TerminationDate { get; set; }
 
         public static void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<User>()
-                .Property(b => b.CreatedAt)
-                .HasDefaultValueSql("UTC_TIMESTAMP()");
-
-            builder.Entity<User>().HasIndex(u => u.SchoolEmail).IsUnique();
-            builder.Entity<User>().HasIndex(u => u.PersonalEmail).IsUnique();
-            builder.Entity<User>().HasIndex(u => u.CardCodeHash).IsUnique();
+            builder.TimeStamps<User>();
+            builder.Unique<User>(u => u.SchoolEmail);
+            builder.Unique<User>(u => u.PersonalEmail);
+            builder.Unique<User>(u => u.CardCodeHash);
         }
     }
 }
