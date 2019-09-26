@@ -54,7 +54,7 @@ namespace CSLabsBackend.Models
                 .Property(b => b.CreatedAt)
                 .HasDefaultValueSql("UTC_TIMESTAMP()");
 
-            builder.Entity<Lab>().HasIndex(u => u.name).IsUnique();
+            builder.Entity<Lab>().HasIndex(u => u.Name).IsUnique();
         }
     }
 }
