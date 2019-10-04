@@ -32,6 +32,14 @@ namespace CSLabsBackend.Controllers
             return Ok(user);
         }
 
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] User userParam)
+        {
+            var test = "";
+            return Ok("");
+        }
+
         [HttpGet("current")]
         public IActionResult Current()
         {
