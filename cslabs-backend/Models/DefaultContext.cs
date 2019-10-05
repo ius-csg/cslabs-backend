@@ -10,6 +10,7 @@ namespace CSLabsBackend.Models
             : base(options)
         { }
         
+        
         public DbSet<Module> Modules { get; set; }
         
         public DbSet<Badge> Badges { get; set; }

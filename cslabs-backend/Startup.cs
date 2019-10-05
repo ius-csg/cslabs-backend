@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using CSLabsBackend.Models;
 using CSLabsBackend.Services;
 using CSLabsBackend.Util;
@@ -57,6 +59,8 @@ namespace CSLabsBackend
             });
 
             ConfigureJWT(services);
+
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         }
 

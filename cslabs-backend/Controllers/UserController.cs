@@ -1,4 +1,5 @@
-﻿using CSLabsBackend.Models;
+﻿using AutoMapper;
+using CSLabsBackend.Models;
 using CSLabsBackend.RequestModels;
 using CSLabsBackend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,7 @@ namespace CSLabsBackend.Controllers
         
         private readonly IAuthenticationService _authenticationService;
 
-        public UserController(IAuthenticationService authenticationService, DefaultContext defaultContext): base(defaultContext)
+        public UserController(IAuthenticationService authenticationService, DefaultContext defaultContext, IMapper mapper): base(defaultContext, mapper)
         {
             _authenticationService = authenticationService;
         }
@@ -34,10 +35,15 @@ namespace CSLabsBackend.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register([FromBody] User userParam)
+        public IActionResult Register([FromBody] RegistrationRequest registration)
         {
-            var test = "";
-            return Ok("");
+            if (!registration.IsValid(DatabaseContext))
+                return BadRequest(registration.Validate(DatabaseContext));
+            
+            var user = Map<User>(registration);
+            DatabaseContext.Users.Add(user);
+            DatabaseContext.SaveChanges();
+            return Ok(_authenticationService.Authenticate(registration.GetEmail(), registration.Password));
         }
 
         [HttpGet("current")]

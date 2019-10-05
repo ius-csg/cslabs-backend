@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using AutoMapper;
 using CSLabsBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,10 +9,17 @@ namespace CSLabsBackend.Controllers
     public class BaseController: ControllerBase
     {
         protected readonly DefaultContext DatabaseContext;
+        private readonly IMapper mapper;
+
+        protected T Map<T>(object value)
+        {
+            return mapper.Map<T>(value);
+        }
         
-        public BaseController(DefaultContext defaultContext)
+        public BaseController(DefaultContext defaultContext, IMapper mapper )
         {
             this.DatabaseContext = defaultContext;
+            this.mapper = mapper;
         }
 
         public User GetUser()
