@@ -30,7 +30,7 @@ namespace CSLabsBackend.Services
         public User Authenticate(string email, string password)
         {
             // @todo authenticate with kerberos.
-            var user = _databaseContext.Users.SingleOrDefault(x => x.SchoolEmail == email);
+            var user = _databaseContext.Users.SingleOrDefault(x => x.SchoolEmail == email || x.PersonalEmail == email);
 
             // return null if user not found
             if (user == null)

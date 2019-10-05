@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static CSLabsBackend.Models.Enums.UserType;
 using CSLabsBackend.Util;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CSLabsBackend.Models
@@ -24,12 +25,10 @@ namespace CSLabsBackend.Models
         
         [NotMapped]
         public string Token { get; set; }
-
-        [Required]
+        
         [Column(TypeName = "VARCHAR(100)")]
         public string SchoolEmail { get; set; }
-
-        [Required]
+        
         [Column(TypeName = "VARCHAR(45)")]
         public string PersonalEmail { get; set; }
         
@@ -41,7 +40,8 @@ namespace CSLabsBackend.Models
 
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]
         public DateTime CreatedAt { get; set; }
-
+        
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]
         public DateTime UpdatedAt { get; set; }
 
         [Column(TypeName = "VARCHAR(100)")]
