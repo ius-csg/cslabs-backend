@@ -4,6 +4,7 @@
 
 * [.NET Core](https://dotnet.microsoft.com/download) Download .net core 2.2 SDK
 * Visual Studio 2019 or the Rider IDE from Jetbrains
+* Copy `appsetting.Example.json` to `appsettings.json`
 
 ### Tutorial
 
