@@ -23,17 +23,9 @@ namespace CSLabsBackend.Controllers
         }
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public IActionResult Get()
         {
-            this.DatabaseContext.Modules.Add(new Module()
-            {
-                Name = "This is a test module",
-                ShortName = "Test Module",
-                Description = "This is a test module that is supposed to test the table",
-                Published = false
-            });
-            this.DatabaseContext.SaveChanges();
-            return new string[] { "value1", "value2" };
+            return Ok(DatabaseContext.Modules.Where(m => m.Published).ToList());
         }
 
         // GET api/values/5
