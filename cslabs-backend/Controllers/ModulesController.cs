@@ -9,6 +9,7 @@ using System.ServiceModel.Description;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using AutoMapper;
 using CSLabsBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,7 @@ namespace CSLabsBackend.Controllers
     [ApiController]
     public class ModulesController : BaseController
     {
-        public ModulesController(DefaultContext defaultContext) : base(defaultContext)
+        public ModulesController(DefaultContext defaultContext, IMapper mapper) : base(defaultContext, mapper)
         {
         }
         // GET api/values

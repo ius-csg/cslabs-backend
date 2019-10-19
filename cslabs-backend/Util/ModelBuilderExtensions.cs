@@ -23,6 +23,7 @@ namespace CSLabsBackend.Util
             builder.Entity<TEntity>().HasIndex(indexExpression).IsUnique();
         }
 
+        
         public static void SnakeCaseDatabase(this ModelBuilder builder)
         {
             foreach(var entity in builder.Model.GetEntityTypes())
