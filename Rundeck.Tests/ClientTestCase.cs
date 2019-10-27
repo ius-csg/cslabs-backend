@@ -3,8 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
+using Rundeck;
 
-namespace RundeckClient.Tests
+namespace Rundeck.Tests
 {
     public class ClientTestCase
     {

@@ -1,4 +1,4 @@
-namespace RundeckClient
+namespace Rundeck
 {
     public class Job
     {
