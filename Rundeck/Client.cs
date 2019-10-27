@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace RundeckClient
+namespace Rundeck
 {
     public class Client
     {
@@ -43,13 +44,28 @@ namespace RundeckClient
             return JsonConvert.DeserializeObject<List<Job>>(response);
         }
         
-        public async Task<Execution> RunJob(string jobId, Dictionary<string, string> options = null)
+        public async Task<Execution> RunJob(string jobId, ExecutionParams options = null)
         {
-            var content = new FormUrlEncodedContent(options ?? new Dictionary<string, string>());
+            var strContent = JsonConvert.SerializeObject(options ?? new ExecutionParams());
+            var content = new StringContent(strContent, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(getUrl($"job/{jobId}/executions"), content);
             var responseString = await response.Content.ReadAsStringAsync();
+            if (!response.IsSuccessStatusCode)
+                throw new RundeckException(JsonConvert.DeserializeObject<ErrorResponse>(responseString));
+            
             var jobResponse = JsonConvert.DeserializeObject<Execution>(responseString);
             return jobResponse;
+        }
+
+        public async Task<string> RunJobAndGetOutput(string jobId, ExecutionParams options = null)
+        {
+            var execution = await RunJob(jobId, options);
+            while (execution.Status == "running")
+            {
+                execution = await GetExecution(execution.Id);
+            }
+            
+            return await GetExecutionOutput(execution.Id);
         }
         
         public async Task<Execution> GetExecution(string executionId)
@@ -63,7 +79,7 @@ namespace RundeckClient
         {
             return await client.GetStringAsync(getUrl($"execution/{executionId}/output?format=text"));
         }
-        
+
     }
     
 }

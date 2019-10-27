@@ -1,4 +1,4 @@
-﻿namespace CSLabsBackend.Util
+﻿namespace CSLabsBackend.Config
 {
     public class AppSettings
     {

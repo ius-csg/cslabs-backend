@@ -1,6 +1,6 @@
 using System;
 
-namespace RundeckClient
+namespace Rundeck
 {
     public class Execution
     {
