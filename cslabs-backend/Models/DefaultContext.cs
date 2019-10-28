@@ -18,6 +18,8 @@ namespace CSLabsBackend.Models
         public DbSet<User> Users { get; set; }
 
         public DbSet<Lab> Labs { get; set; }
+        
+        public DbSet<UserModule> UserModules { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -27,6 +29,7 @@ namespace CSLabsBackend.Models
            Badge.OnModelCreating(builder);
            User.OnModelCreating(builder);
            Lab.OnModelCreating(builder);
+           UserModule.OnModelCreating(builder);
            builder.SnakeCaseDatabase();
        }
        
