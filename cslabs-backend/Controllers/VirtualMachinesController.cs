@@ -22,6 +22,20 @@ namespace CSLabsBackend.Controllers
             return Ok(await api.GetTicket(Id));
         }
 
+        //Shutdown
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Shutdown(int Id)
+        {
+            return Ok();
+        }
+
+        //StartUp
+        [HttpPut("{id}")]
+        public async Task<IActionResult> StartUp(int Id)
+        {
+            return Ok();
+        }
+
         
     }
 }
