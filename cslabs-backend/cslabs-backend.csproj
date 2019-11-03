@@ -31,4 +31,8 @@
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Rundeck\Rundeck.csproj" />
+  </ItemGroup>
+
 </Project>
