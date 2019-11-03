@@ -65,7 +65,13 @@ namespace Rundeck
                 execution = await GetExecution(execution.Id);
             }
             
-            return await GetExecutionOutput(execution.Id);
+            String output =  await GetExecutionOutput(execution.Id);
+            while (output.Length == 0)
+            {
+                output =  await GetExecutionOutput(execution.Id);
+            }
+
+            return output;
         }
         
         public async Task<Execution> GetExecution(string executionId)
