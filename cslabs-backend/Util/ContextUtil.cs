@@ -14,7 +14,7 @@ namespace CSLabsBackend.Util
             var entries = changeTracker.Entries();
             foreach (var entry in entries)
             {
-                if (entry.Entity is ITrackable trackable)
+                if (entry.Entity is Trackable trackable)
                 {
                     DateTime now = DateTime.UtcNow;
                     switch (entry.State)

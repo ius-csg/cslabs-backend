@@ -3,14 +3,16 @@ using System;
 using CSLabsBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSLabsBackend.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20191105030319_ScaffoldModulesAndInstances")]
+    partial class ScaffoldModulesAndInstances
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,6 +47,10 @@ namespace CSLabsBackend.Migrations
                     b.Property<int>("RequiredNumOfModules")
                         .HasColumnName("required_num_of_modules");
 
+                    b.Property<string>("ShortName")
+                        .IsRequired()
+                        .HasColumnName("short_name");
+
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("updated_at")
@@ -56,6 +62,10 @@ namespace CSLabsBackend.Migrations
                     b.HasIndex("Name")
                         .IsUnique()
                         .HasName("ix_badges_name");
+
+                    b.HasIndex("ShortName")
+                        .IsUnique()
+                        .HasName("ix_badges_short_name");
 
                     b.ToTable("badges");
                 });
@@ -175,6 +185,10 @@ namespace CSLabsBackend.Migrations
                     b.Property<bool>("Published")
                         .HasColumnName("published");
 
+                    b.Property<string>("ShortName")
+                        .IsRequired()
+                        .HasColumnName("short_name");
+
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("updated_at")
@@ -186,6 +200,10 @@ namespace CSLabsBackend.Migrations
                     b.HasIndex("Name")
                         .IsUnique()
                         .HasName("ix_modules_name");
+
+                    b.HasIndex("ShortName")
+                        .IsUnique()
+                        .HasName("ix_modules_short_name");
 
                     b.ToTable("modules");
                 });
@@ -317,6 +335,9 @@ namespace CSLabsBackend.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
+                    b.Property<int?>("LabId")
+                        .HasColumnName("lab_id");
+
                     b.Property<int>("LabVmId")
                         .HasColumnName("lab_vm_id");
 
@@ -337,8 +358,8 @@ namespace CSLabsBackend.Migrations
                     b.HasKey("Id")
                         .HasName("pk_user_lab_vms");
 
-                    b.HasIndex("LabVmId")
-                        .HasName("ix_user_lab_vms_lab_vm_id");
+                    b.HasIndex("LabId")
+                        .HasName("ix_user_lab_vms_lab_id");
 
                     b.HasIndex("UserLabId")
                         .HasName("ix_user_lab_vms_user_lab_id");
@@ -421,7 +442,7 @@ namespace CSLabsBackend.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CSLabsBackend.Models.UserModels.UserModule", "UserModule")
-                        .WithMany("UserLabs")
+                        .WithMany()
                         .HasForeignKey("UserModuleId")
                         .HasConstraintName("fk_user_labs_user_modules_user_module_id")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -429,11 +450,10 @@ namespace CSLabsBackend.Migrations
 
             modelBuilder.Entity("CSLabsBackend.Models.UserModels.UserLabVm", b =>
                 {
-                    b.HasOne("CSLabsBackend.Models.ModuleModels.LabVm", "LabVm")
+                    b.HasOne("CSLabsBackend.Models.ModuleModels.Lab", "Lab")
                         .WithMany()
-                        .HasForeignKey("LabVmId")
-                        .HasConstraintName("fk_user_lab_vms_lab_vms_lab_vm_id")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("LabId")
+                        .HasConstraintName("fk_user_lab_vms_labs_lab_id");
 
                     b.HasOne("CSLabsBackend.Models.UserModels.User", "User")
                         .WithMany()

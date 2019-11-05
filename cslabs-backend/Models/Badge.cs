@@ -6,13 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CSLabsBackend.Models
 {
-    public class Badge : ITrackable
+    public class Badge : Trackable
     {
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
-        public string ShortName { get; set; }
         [Column(TypeName = "TEXT")]
         [Required]
         public string Description { get; set; }
@@ -31,7 +29,6 @@ namespace CSLabsBackend.Models
         {
             builder.TimeStamps<Badge>();
             builder.Unique<Badge>(u => u.Name);
-            builder.Unique<Badge>(u => u.ShortName);
         }
        
     }

@@ -64,6 +64,7 @@ namespace CSLabsBackend
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         }
+        
 
         private void ConfigureJWT(IServiceCollection services)
         {
