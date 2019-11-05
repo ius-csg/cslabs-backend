@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using CSLabsBackend.Config;
 using CSLabsBackend.Models;
+using CSLabsBackend.Models.UserModels;
 using CSLabsBackend.Util;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

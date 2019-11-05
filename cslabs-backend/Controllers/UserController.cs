@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CSLabsBackend.Models;
+using CSLabsBackend.Models.UserModels;
 using CSLabsBackend.RequestModels;
 using CSLabsBackend.Services;
 using Microsoft.AspNetCore.Authorization;

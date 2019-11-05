@@ -3,21 +3,26 @@ using System.ComponentModel.DataAnnotations.Schema;
 using CSLabsBackend.Util;
 using Microsoft.EntityFrameworkCore;
 
-namespace CSLabsBackend.Models
+namespace CSLabsBackend.Models.ModuleModels
 {
-    public class LabVirtualMachine: ITrackable
+    public class LabVm: Trackable
     {
+        public int Id { get; set; }
         [Required]
         [Column(TypeName = "VARCHAR(100)")]
         public string Name { get; set; }
         [Required]
         public int LabId { get; set; }
+        
+        [Required]
+        public int TemplateProxmoxVmId { get; set; }
 
         public Lab Lab { get; set; }
 
         public static void OnModelCreating(ModelBuilder builder)
         {
-            builder.TimeStamps<LabVirtualMachine>();
+            builder.TimeStamps<LabVm>();
+            builder.Unique<LabVm>(u => u.Name);
         }
     }
 }

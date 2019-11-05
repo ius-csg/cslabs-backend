@@ -8,7 +8,7 @@ namespace CSLabsBackend.Util
 {
     public static class ModelBuilderExtensions
     {
-        public static void TimeStamps<T> (this ModelBuilder builder) where T : ITrackable
+        public static void TimeStamps<T> (this ModelBuilder builder) where T : Trackable
         {
             builder.Entity<T>()
                 .Property(b => b.CreatedAt)
