@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using AutoMapper;
 using CSLabsBackend.Models;
+using CSLabsBackend.Models.ModuleModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSLabsBackend.Controllers

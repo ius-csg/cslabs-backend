@@ -1,14 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static CSLabsBackend.Models.Enums.UserType;
 using CSLabsBackend.Util;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static CSLabsBackend.Models.Enums.UserType;
 
-namespace CSLabsBackend.Models
+namespace CSLabsBackend.Models.UserModels
 {
-    public class User : ITrackable
+    public class User : Trackable
     {
         public int Id { get; set; }
 
