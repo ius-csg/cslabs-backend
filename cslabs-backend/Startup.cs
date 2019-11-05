@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using CSLabsBackend.Config;
 using CSLabsBackend.Models;
 using CSLabsBackend.Services;
 using CSLabsBackend.Util;
