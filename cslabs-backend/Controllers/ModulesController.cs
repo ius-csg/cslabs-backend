@@ -36,6 +36,13 @@ namespace CSLabsBackend.Controllers
         {
             return this.DatabaseContext.Modules.Find(id);
         }
+        
+        // GET api/values/5
+        [HttpGet("code/{code}")]
+        public Module Get(string code)
+        {
+            return this.DatabaseContext.Modules.First(m => m.SpecialCode == code);
+        }
 
         // POST api/values
         [HttpPost]

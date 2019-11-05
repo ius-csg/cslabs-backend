@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using AutoMapper.Configuration;
+using CSLabsBackend.Config;
 using CSLabsBackend.Models;
 using CSLabsBackend.Models.Enums;
 using CSLabsBackend.Models.ModuleModels;
@@ -10,7 +12,7 @@ namespace CSLabsBackend
 {
     public static class Seeder
     {
-        public static void Seed(DefaultContext context)
+        public static void Seed(DefaultContext context, AppSettings settings)
         {
             if (!context.Modules.Any())
             {
@@ -19,6 +21,7 @@ namespace CSLabsBackend
                     Description = "Test Pilot",
                     Name = "Dr. Sexton's Test Pilot",
                     Published = false,
+                    SpecialCode = settings.ModuleSpecialCode,
                     Labs = new List<Lab>()
                     {
                         new Lab()
@@ -48,7 +51,8 @@ namespace CSLabsBackend
             using (var scope = host.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetService<DefaultContext>();
-                Seed(context);
+                var appSettings = scope.ServiceProvider.GetService<AppSettings>();
+                Seed(context, appSettings);
             }
             return host;
         }

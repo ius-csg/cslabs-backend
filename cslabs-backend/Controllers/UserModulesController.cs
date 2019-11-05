@@ -23,15 +23,24 @@ namespace CSLabsBackend.Controllers
         }
         
         
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] int moduleId)
+        [HttpPost("{specialCode}")]
+        public async Task<IActionResult> Post(string specialCode)
         {
-            var module = DatabaseContext.Modules
+           
+            var module = await DatabaseContext.Modules
                 .Include(m => m.Labs)
                 .ThenInclude(l => l.LabVms)
-                .First(m => m.Id == moduleId);
+                .FirstAsync(m => m.SpecialCode == specialCode);
             if (module == null)
                 return BadRequest(new ErrorResponse() {Message = "Module not found"});
+            
+            var count = await DatabaseContext.UserModules
+                .Where(m => m.ModuleId == module.Id)
+                .Where(m => m.UserId == GetUser().Id)
+                .CountAsync();
+            if (count > 0)
+                return Forbid("Cannot Create Multiple Instances");
+            
             var firstLab = module.Labs.First();
             var api = new ProxmoxApi("http://", "***REMOVED***", "***REMOVED***");
             int createdVmId = await api.CloneTemplate(100);
@@ -64,14 +73,22 @@ namespace CSLabsBackend.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(DatabaseContext.UserModules.Where(m => m.UserId == GetUser().Id).ToList());
+            return Ok(DatabaseContext.UserModules
+                .Where(m => m.UserId == GetUser().Id)
+                .Include(u => u.Module)
+                .ToList());
         }
         
         //Get api
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var module =  this.DatabaseContext.UserModules.Find(id);
+            var module = this.DatabaseContext.UserModules
+                .Include(u => u.Module)
+                .Include(u => u.UserLabs)
+                .ThenInclude(l => l.UserLabVms)
+                .ThenInclude(vm => vm.LabVm)
+                .First(UserLab => UserLab.Id == id);
             if (module.UserId == GetUser().Id)
                 return Ok(module);
             return Forbid();

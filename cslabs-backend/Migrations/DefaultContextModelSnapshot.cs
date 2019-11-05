@@ -175,6 +175,9 @@ namespace CSLabsBackend.Migrations
                     b.Property<bool>("Published")
                         .HasColumnName("published");
 
+                    b.Property<string>("SpecialCode")
+                        .HasColumnName("special_code");
+
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("updated_at")
@@ -186,6 +189,10 @@ namespace CSLabsBackend.Migrations
                     b.HasIndex("Name")
                         .IsUnique()
                         .HasName("ix_modules_name");
+
+                    b.HasIndex("SpecialCode")
+                        .IsUnique()
+                        .HasName("ix_modules_special_code");
 
                     b.ToTable("modules");
                 });

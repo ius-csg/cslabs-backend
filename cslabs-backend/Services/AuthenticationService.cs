@@ -23,9 +23,9 @@ namespace CSLabsBackend.Services
         private readonly AppSettings _appSettings;
         private readonly DefaultContext _databaseContext;
         
-        public AuthenticationService(IOptions<AppSettings> appSettings, DefaultContext defaultContext)
+        public AuthenticationService(AppSettings appSettings, DefaultContext defaultContext)
         {
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings;
             _databaseContext = defaultContext;
         }
 

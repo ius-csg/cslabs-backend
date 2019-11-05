@@ -21,12 +21,14 @@ namespace CSLabsBackend.Models.ModuleModels
         [Required]
         public bool Published { get; set; }
         
+        public string SpecialCode { get; set; }
         public List<Lab> Labs { get; set; }
 
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<Module>();
             builder.Unique<Module>(u => u.Name);
+            builder.Unique<Module>(u => u.SpecialCode);
         }
     }
 }

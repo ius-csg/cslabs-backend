@@ -20,6 +20,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
@@ -42,12 +43,21 @@ namespace CSLabsBackend
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(options => options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                });
             var connection = Configuration.GetSection("ConnectionStrings")["DefaultConnection"];
+            
+            
             services.AddDbContextPool<DefaultContext>(options => options.UseMySql(connection, mySqlOptions => {
                 // change the version if needed.
                 mySqlOptions.ServerVersion(new Version(10, 2, 13), ServerType.MariaDb);
             }));
+            
+            
+            
             services.AddCors(options =>
             {
                 options.AddPolicy(CorsPolicyName,
@@ -58,23 +68,20 @@ namespace CSLabsBackend
                             .AllowAnyMethod();
                     });
             });
-
-            ConfigureJWT(services);
+            var appSettings = Configuration.Get<AppSettings>();
+            services.AddSingleton(appSettings);
+            ConfigureJWT(services, appSettings.Secret);
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         }
         
 
-        private void ConfigureJWT(IServiceCollection services)
+        private void ConfigureJWT(IServiceCollection services, string secret)
         {
-            // configure strongly typed settings objects
-            var appSettingsSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
-
             // configure jwt authentication
-            var appSettings = appSettingsSection.Get<AppSettings>();
-            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            
+            var key = Encoding.ASCII.GetBytes(secret);
             services.AddAuthentication(x =>
                 {
                     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
