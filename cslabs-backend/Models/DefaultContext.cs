@@ -1,5 +1,4 @@
-﻿using System;
-using CSLabsBackend.Models.ModuleModels;
+﻿using CSLabsBackend.Models.ModuleModels;
 using CSLabsBackend.Models.UserModels;
 using CSLabsBackend.Util;
 using Microsoft.EntityFrameworkCore;
@@ -11,18 +10,20 @@ namespace CSLabsBackend.Models
         public DefaultContext(DbContextOptions<DefaultContext> options)
             : base(options)
         { }
-        
-        
-        
-        
-        public DbSet<Badge> Badges { get; set; }
 
+        public DbSet<Badge> Badges { get; set; }
+        
         public DbSet<User> Users { get; set; }
+        
         public DbSet<Module> Modules { get; set; }
+        
         public DbSet<Lab> Labs { get; set; }
+        
         public DbSet<LabVm> LabVms { get; set; }
         public DbSet<UserModule> UserModules { get; set; }
+        
         public DbSet<UserLab> UserLabs { get; set; }
+        
         public DbSet<UserLabVm> UserLabVms { get; set; }
         
         protected override void OnModelCreating(ModelBuilder builder)

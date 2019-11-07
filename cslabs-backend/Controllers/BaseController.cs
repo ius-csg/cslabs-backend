@@ -3,6 +3,7 @@ using System.Linq;
 using AutoMapper;
 using CSLabsBackend.Models;
 using CSLabsBackend.Models.UserModels;
+using CSLabsBackend.Proxmox;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSLabsBackend.Controllers
@@ -12,16 +13,18 @@ namespace CSLabsBackend.Controllers
         protected readonly DefaultContext DatabaseContext;
         private readonly IMapper mapper;
         private User user = null;
+        protected ProxmoxApi proxmoxApi;
 
         protected T Map<T>(object value)
         {
             return mapper.Map<T>(value);
         }
         
-        public BaseController(DefaultContext defaultContext, IMapper mapper )
+        public BaseController(BaseControllerDependencies dependencies)
         {
-            this.DatabaseContext = defaultContext;
-            this.mapper = mapper;
+            this.DatabaseContext = dependencies.DatabaseContext;
+            this.mapper = dependencies.Mapper;
+            this.proxmoxApi = dependencies.ProxmoxApi;
         }
 
         public User GetUser()

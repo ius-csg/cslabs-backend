@@ -16,7 +16,7 @@ namespace CSLabsBackend.Controllers
         
         private readonly IAuthenticationService _authenticationService;
 
-        public UserController(IAuthenticationService authenticationService, DefaultContext defaultContext, IMapper mapper): base(defaultContext, mapper)
+        public UserController(IAuthenticationService authenticationService, BaseControllerDependencies deps): base(deps)
         {
             _authenticationService = authenticationService;
         }

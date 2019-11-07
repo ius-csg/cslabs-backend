@@ -18,11 +18,8 @@ namespace CSLabsBackend.Controllers
     [Authorize]
     public class UserModulesController : BaseController
     {
-        public UserModulesController(DefaultContext defaultContext, IMapper mapper) : base(defaultContext, mapper)
-        {
-        }
-        
-        
+        public UserModulesController(BaseControllerDependencies deps) : base(deps) { }
+
         [HttpPost("{specialCode}")]
         public async Task<IActionResult> Post(string specialCode)
         {
@@ -42,8 +39,7 @@ namespace CSLabsBackend.Controllers
                 return Forbid("Cannot Create Multiple Instances");
             
             var firstLab = module.Labs.First();
-            var api = new ProxmoxApi("http://", "***REMOVED***", "***REMOVED***");
-            int createdVmId = await api.CloneTemplate(100);
+            int createdVmId = await proxmoxApi.CloneTemplate(100);
             var userModule = new UserModule
             {
                 Module = module,

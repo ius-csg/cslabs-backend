@@ -10,18 +10,13 @@ namespace CSLabsBackend.Controllers
     [ApiController]
     public class VirtualMachinesController : BaseController
     {
-        private ProxmoxApi api;
-        
-        public VirtualMachinesController(DefaultContext defaultContext, IMapper mapper) : base(defaultContext, mapper)
-        {
-            api = new ProxmoxApi("http://", "***REMOVED***", "***REMOVED***");
-        }
+        public VirtualMachinesController(BaseControllerDependencies deps) : base(deps) { }
         
         // GET
         [HttpGet("get-ticket/{id}")]
         public async Task<IActionResult> GetTicket(int Id)
         {
-            return Ok(await api.GetTicket(Id));
+            return Ok(await proxmoxApi.GetTicket(Id));
         }
 
         //Shutdown
@@ -31,7 +26,7 @@ namespace CSLabsBackend.Controllers
             var userLabVm = DatabaseContext.UserLabVms.Find(Id);
             if (userLabVm.UserId != GetUser().Id)
                 return Forbid();
-            await api.ShutdownVm( userLabVm.ProxmoxVmId);
+            await proxmoxApi.ShutdownVm( userLabVm.ProxmoxVmId);
             return Ok();
         }
 
@@ -42,7 +37,7 @@ namespace CSLabsBackend.Controllers
             var userLabVm = DatabaseContext.UserLabVms.Find(Id);
             if (userLabVm.UserId != GetUser().Id)
                 return Forbid();
-            await api.StartVM(userLabVm.ProxmoxVmId);
+            await proxmoxApi.StartVM(userLabVm.ProxmoxVmId);
             return Ok();
         }
 

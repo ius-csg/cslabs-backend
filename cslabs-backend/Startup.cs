@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CSLabsBackend.Config;
 using CSLabsBackend.Models;
+using CSLabsBackend.Proxmox;
 using CSLabsBackend.Services;
 using CSLabsBackend.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -40,6 +42,7 @@ namespace CSLabsBackend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var appSettings = ConfigureAppSettings(services);
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
@@ -48,34 +51,38 @@ namespace CSLabsBackend
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });
-            var connection = Configuration.GetSection("ConnectionStrings")["DefaultConnection"];
             
-            
-            services.AddDbContextPool<DefaultContext>(options => options.UseMySql(connection, mySqlOptions => {
+            ConfigureDatabase(services, appSettings.ConnectionStrings.DefaultConnection);
+            ConfigureCors(services, appSettings.CorsUrls);
+            ConfigureJWT(services, appSettings.JWTSecret);
+            services.ProvideProxmoxApi(appSettings);
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        }
+
+        private void ConfigureDatabase(IServiceCollection services, string connectionString)
+        {
+            services.AddDbContextPool<DefaultContext>(options => options.UseMySql(connectionString, mySqlOptions => {
                 // change the version if needed.
                 mySqlOptions.ServerVersion(new Version(10, 2, 13), ServerType.MariaDb);
             }));
-            
-            
-            
-            services.AddCors(options =>
-            {
-                options.AddPolicy(CorsPolicyName,
-                    builder =>
-                    {
-                        builder.WithOrigins("http://localhost:3000", "https://cslabs.ius.edu")
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
-            });
+        }
+        private AppSettings ConfigureAppSettings(IServiceCollection services)
+        {
             var appSettings = Configuration.Get<AppSettings>();
             services.AddSingleton(appSettings);
-            ConfigureJWT(services, appSettings.Secret);
-
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
-
+            return appSettings;
         }
-        
+        private void ConfigureCors(IServiceCollection services, string[] corsUrls)
+        {
+            services.AddCors(options => { 
+                options.AddPolicy(CorsPolicyName, builder => {
+                    builder.WithOrigins(corsUrls)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                    }); 
+            });
+        }
+
 
         private void ConfigureJWT(IServiceCollection services, string secret)
         {

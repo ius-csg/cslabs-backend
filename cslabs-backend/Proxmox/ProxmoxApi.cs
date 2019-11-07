@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CSLabsBackend.Config;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using Rundeck;
@@ -9,10 +10,11 @@ namespace CSLabsBackend.Proxmox
     public class ProxmoxApi
     {
         private RundeckClient client;
-        
-        public ProxmoxApi(string scheme, string host, string authToken)
+        private RundeckJobIdSettings jobIds;
+        public ProxmoxApi(string scheme, string host, string apiKey, RundeckJobIdSettings jobIds)
         {
-            this.client = new RundeckClient(scheme, host, authToken);
+            this.client = new RundeckClient(scheme, host, apiKey);
+            this.jobIds = jobIds;
         }
 
 
@@ -25,30 +27,30 @@ namespace CSLabsBackend.Proxmox
 
         public async Task<TicketResponse> GetTicket(int vmId)
         {
-            var output = await this.client.RunJobAndGetOutput("***REMOVED***", getVmIdParams(vmId));
+            var output = await this.client.RunJobAndGetOutput(jobIds.GetTicket, getVmIdParams(vmId));
             return JsonConvert.DeserializeObject<TicketResponse>(output);
         }
         
         public async Task StartVM(int vmId)
         {
-            await this.client.RunJobAndGetOutput("***REMOVED***", getVmIdParams(vmId));
+            await this.client.RunJobAndGetOutput(jobIds.StartVM, getVmIdParams(vmId));
         }
         
         
         public async Task StopVM(int vmId)
         {
-            await this.client.RunJobAndGetOutput("***REMOVED***", getVmIdParams(vmId));
+            await this.client.RunJobAndGetOutput(jobIds.StopVM, getVmIdParams(vmId));
         }
         
         
         public async Task ShutdownVm(int vmId)
         {
-            await this.client.RunJobAndGetOutput("***REMOVED***", getVmIdParams(vmId));
+            await this.client.RunJobAndGetOutput(jobIds.ShutdownVm, getVmIdParams(vmId));
         }
         
         public async Task<int> CloneTemplate(int vmId)
         {
-            var output = await this.client.RunJobAndGetOutput("***REMOVED***", getVmIdParams(vmId));
+            var output = await this.client.RunJobAndGetOutput(jobIds.CloneTemplate, getVmIdParams(vmId));
             return int.Parse(output);
         }
     }

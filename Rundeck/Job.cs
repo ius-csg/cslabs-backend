@@ -12,12 +12,12 @@ namespace Rundeck
         public bool Scheduled { get; set; }
         public bool Enabled { get; set; }
         
-//        "href": "http://***REMOVED***/api/33/job/8fb632b6-f647-46f6-9bb9-218cb3eeee60",
+//        "href": "http://192.168.1.160:4440/api/33/job/8fb632b6-f647-46f6-9bb9-218cb3eeee60",
 //        "id": "8fb632b6-f647-46f6-9bb9-218cb3eeee60",
 //        "scheduleEnabled": true,
 //        "scheduled": false,
 //        "enabled": true,
-//        "permalink": "http://***REMOVED***/project/CSGLabs/job/show/8fb632b6-f647-46f6-9bb9-218cb3eeee60",
+//        "permalink": "http://192.168.1.160:4440/project/CSGLabs/job/show/8fb632b6-f647-46f6-9bb9-218cb3eeee60",
 //        "group": null,
 //        "description": "",
 //        "project": "CSGLabs",

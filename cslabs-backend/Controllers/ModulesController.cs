@@ -20,7 +20,7 @@ namespace CSLabsBackend.Controllers
     [ApiController]
     public class ModulesController : BaseController
     {
-        public ModulesController(DefaultContext defaultContext, IMapper mapper) : base(defaultContext, mapper)
+        public ModulesController(BaseControllerDependencies deps) : base(deps)
         {
         }
         // GET api/values
