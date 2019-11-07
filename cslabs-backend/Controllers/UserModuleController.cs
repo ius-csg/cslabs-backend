@@ -39,7 +39,8 @@ namespace CSLabsBackend.Controllers
                 return Forbid("Cannot Create Multiple Instances");
             
             var firstLab = module.Labs.First();
-            int createdVmId = await proxmoxApi.CloneTemplate(100);
+            var firstVm = firstLab.LabVms.First();
+            int createdVmId = await proxmoxApi.CloneTemplate(firstVm.TemplateProxmoxVmId);
             var userModule = new UserModule
             {
                 Module = module,
@@ -53,7 +54,7 @@ namespace CSLabsBackend.Controllers
                     {
                         new UserLabVm()
                         {
-                            LabVm = firstLab.LabVms.First(),
+                            LabVm = firstVm,
                             User = GetUser(),
                             ProxmoxVmId = createdVmId,
                         }
@@ -66,19 +67,18 @@ namespace CSLabsBackend.Controllers
             return Ok(userModule);
         }
 
-        [HttpGet("{userModuleId}/status")]
-        public async Task<IActionResult> Status(int userModuleId)
+        [HttpGet("{id}/status")]
+        public async Task<IActionResult> Status(int id)
         {
            var userModule =  DatabaseContext.UserModules
                .Include(u => u.UserLabs)
                .ThenInclude(l => l.UserLabVms)
-               .First(m => m.UserId == GetUser().Id && m.Id == userModuleId);
+               .First(m => m.UserId == GetUser().Id && m.Id == id);
            if (userModule == null)
                return NotFound();
            foreach (var vm in userModule.UserLabs.First().UserLabVms)
            {
                var status = await proxmoxApi.GetVmStatus(vm.ProxmoxVmId);
-               var statusStr = "";
                if (status.Lock == "clone")
                    return Ok("Initializing");
            }
@@ -98,14 +98,17 @@ namespace CSLabsBackend.Controllers
         
         //Get api
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var module = this.DatabaseContext.UserModules
+            var module = await this.DatabaseContext.UserModules
                 .Include(u => u.Module)
                 .Include(u => u.UserLabs)
                 .ThenInclude(l => l.UserLabVms)
                 .ThenInclude(vm => vm.LabVm)
-                .First(UserLab => UserLab.Id == id);
+                .FirstOrDefaultAsync(UserLab => UserLab.Id == id);
+            if (module == null)
+                return NotFound();
+            
             if (module.UserId == GetUser().Id)
                 return Ok(module);
             return Forbid();
