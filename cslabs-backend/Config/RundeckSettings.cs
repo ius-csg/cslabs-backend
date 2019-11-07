@@ -5,7 +5,7 @@ namespace CSLabsBackend.Config
         public string Scheme { get; set; }
         public string Host { get; set; }
         public string ApiKey { get; set; }
-        public RundeckJobIdSettings JobIdIds { get; set; }
+        public RundeckJobIdSettings JobIds { get; set; }
         
     }
 }

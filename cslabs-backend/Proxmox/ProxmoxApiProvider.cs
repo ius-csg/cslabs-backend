@@ -12,7 +12,7 @@ namespace CSLabsBackend.Proxmox
                 rundeckSettings.Scheme,
                 rundeckSettings.Host,
                 rundeckSettings.ApiKey,
-                rundeckSettings.JobIdIds
+                rundeckSettings.JobIds
             ));
         }
     }

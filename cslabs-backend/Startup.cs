@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using CSLabsBackend.Config;
+using CSLabsBackend.Controllers;
 using CSLabsBackend.Models;
 using CSLabsBackend.Proxmox;
 using CSLabsBackend.Services;
@@ -25,6 +26,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Sgw.KebabCaseRouteTokens;
 
 namespace CSLabsBackend
 {
@@ -44,17 +46,30 @@ namespace CSLabsBackend
         {
             var appSettings = ConfigureAppSettings(services);
             services
-                .AddMvc()
+                .AddMvc(options =>
+                {
+                    options
+                        .Conventions
+                        .Add(new KebabCaseRouteTokenReplacementControllerModelConvention());
+                    
+                    var methodNamePrefixes = new string[] {"Create", "Delete", "Update", "Get", "Find"};
+
+                    options
+                        .Conventions
+                        .Add(new KebabCaseRouteTokenReplacementActionModelConvention(methodNamePrefixes));
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });
+          
             
             ConfigureDatabase(services, appSettings.ConnectionStrings.DefaultConnection);
             ConfigureCors(services, appSettings.CorsUrls);
             ConfigureJWT(services, appSettings.JWTSecret);
+            services.AddScoped<BaseControllerDependencies>();
             services.ProvideProxmoxApi(appSettings);
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
         }

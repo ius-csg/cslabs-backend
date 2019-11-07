@@ -33,13 +33,13 @@ namespace CSLabsBackend.Proxmox
         
         public async Task StartVM(int vmId)
         {
-            await this.client.RunJobAndGetOutput(jobIds.StartVM, getVmIdParams(vmId));
+            await this.client.RunJobAndGetOutput(jobIds.StartVm, getVmIdParams(vmId));
         }
         
         
         public async Task StopVM(int vmId)
         {
-            await this.client.RunJobAndGetOutput(jobIds.StopVM, getVmIdParams(vmId));
+            await this.client.RunJobAndGetOutput(jobIds.StopVm, getVmIdParams(vmId));
         }
         
         
@@ -52,6 +52,12 @@ namespace CSLabsBackend.Proxmox
         {
             var output = await this.client.RunJobAndGetOutput(jobIds.CloneTemplate, getVmIdParams(vmId));
             return int.Parse(output);
+        }
+
+        public async Task<VmStatus> GetVmStatus(int vmId)
+        {
+            var output = await this.client.RunJobAndGetOutput(jobIds.GetVmStatus, getVmIdParams(vmId));
+            return JsonConvert.DeserializeObject<VmStatus>(output);
         }
     }
 }

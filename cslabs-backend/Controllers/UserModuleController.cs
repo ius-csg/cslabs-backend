@@ -16,9 +16,9 @@ namespace CSLabsBackend.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UserModulesController : BaseController
+    public class UserModuleController : BaseController
     {
-        public UserModulesController(BaseControllerDependencies deps) : base(deps) { }
+        public UserModuleController(BaseControllerDependencies deps) : base(deps) { }
 
         [HttpPost("{specialCode}")]
         public async Task<IActionResult> Post(string specialCode)
@@ -65,6 +65,27 @@ namespace CSLabsBackend.Controllers
             await DatabaseContext.SaveChangesAsync();
             return Ok(userModule);
         }
+
+        [HttpGet("{userModuleId}/status")]
+        public async Task<IActionResult> Status(int userModuleId)
+        {
+           var userModule =  DatabaseContext.UserModules
+               .Include(u => u.UserLabs)
+               .ThenInclude(l => l.UserLabVms)
+               .First(m => m.UserId == GetUser().Id && m.Id == userModuleId);
+           if (userModule == null)
+               return NotFound();
+           foreach (var vm in userModule.UserLabs.First().UserLabVms)
+           {
+               var status = await proxmoxApi.GetVmStatus(vm.ProxmoxVmId);
+               var statusStr = "";
+               if (status.Lock == "clone")
+                   return Ok("Initializing");
+           }
+
+           return Ok("Initialized");
+        }
+        
         
         [HttpGet]
         public IActionResult Get()

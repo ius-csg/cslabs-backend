@@ -8,9 +8,9 @@ namespace CSLabsBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VirtualMachinesController : BaseController
+    public class VirtualMachineController : BaseController
     {
-        public VirtualMachinesController(BaseControllerDependencies deps) : base(deps) { }
+        public VirtualMachineController(BaseControllerDependencies deps) : base(deps) { }
         
         // GET
         [HttpGet("get-ticket/{id}")]

@@ -18,9 +18,9 @@ namespace CSLabsBackend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ModulesController : BaseController
+    public class ModuleController : BaseController
     {
-        public ModulesController(BaseControllerDependencies deps) : base(deps)
+        public ModuleController(BaseControllerDependencies deps) : base(deps)
         {
         }
         // GET api/values
@@ -37,11 +37,15 @@ namespace CSLabsBackend.Controllers
             return this.DatabaseContext.Modules.Find(id);
         }
         
-        // GET api/values/5
         [HttpGet("code/{code}")]
-        public Module Get(string code)
+        public IActionResult Get(string code)
         {
-            return this.DatabaseContext.Modules.First(m => m.SpecialCode == code);
+            var module =  this.DatabaseContext.Modules.First(m => m.SpecialCode == code);
+            var userModule = DatabaseContext.UserModules.FirstOrDefault(m => m.UserId == GetUser().Id && m.ModuleId == module.Id);
+            if (userModule != null) {
+                module.UserModuleId = userModule.Id;
+            }
+            return Ok(module);
         }
 
         // POST api/values

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using CSLabsBackend.Util;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,9 @@ namespace CSLabsBackend.Models.ModuleModels
         
         public string SpecialCode { get; set; }
         public List<Lab> Labs { get; set; }
+        
+        [NotMapped]
+        public int UserModuleId { get; set; }
 
         public static void OnModelCreating(ModelBuilder builder)
         {
