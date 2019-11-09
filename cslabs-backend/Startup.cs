@@ -138,7 +138,7 @@ namespace CSLabsBackend
                 app.UseHsts();
             }
             app.UseCors(CorsPolicyName);
-            app.UseHttpsRedirection();
+//            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
         }
