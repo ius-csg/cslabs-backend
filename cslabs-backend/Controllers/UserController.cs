@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using CSLabsBackend.Models;
-using CSLabsBackend.Models.UserModels;
+﻿using CSLabsBackend.Models.UserModels;
 using CSLabsBackend.RequestModels;
 using CSLabsBackend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -42,8 +40,7 @@ namespace CSLabsBackend.Controllers
                 return BadRequest(registration.Validate(DatabaseContext));
             
             var user = Map<User>(registration);
-            DatabaseContext.Users.Add(user);
-            DatabaseContext.SaveChanges();
+            _authenticationService.AddUser(user);
             return Ok(_authenticationService.Authenticate(registration.GetEmail(), registration.Password));
         }
 

@@ -45,6 +45,9 @@ namespace CSLabsBackend.Models.UserModels
 
         [Column(TypeName = "VARCHAR(100)")]
         public string CardCodeHash { get; set; }
+        
+        [Required]
+        public string Password { get; set; }
 
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]
         public DateTime? TerminationDate { get; set; }
@@ -55,6 +58,9 @@ namespace CSLabsBackend.Models.UserModels
             builder.Unique<User>(u => u.SchoolEmail);
             builder.Unique<User>(u => u.PersonalEmail);
             builder.Unique<User>(u => u.CardCodeHash);
+            builder.Entity<User>()
+                .Property(b => b.Password)
+                .HasDefaultValue(null);
         }
     }
 }
