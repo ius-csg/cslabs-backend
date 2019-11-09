@@ -73,7 +73,7 @@ namespace CSLabsBackend.Controllers
            var userModule =  DatabaseContext.UserModules
                .Include(u => u.UserLabs)
                .ThenInclude(l => l.UserLabVms)
-               .First(m => m.UserId == GetUser().Id && m.Id == id);
+               .FirstOrDefault(m => m.UserId == GetUser().Id && m.Id == id);
            if (userModule == null)
                return NotFound();
            foreach (var vm in userModule.UserLabs.First().UserLabVms)
