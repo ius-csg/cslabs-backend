@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CSLabsBackend.Config;
@@ -50,6 +51,7 @@ namespace CSLabsBackend.Proxmox
         
         public async Task<int> CloneTemplate(int vmId)
         {
+            Console.WriteLine("VmId: " + vmId);
             var output = await this.client.RunJobAndGetOutput(jobIds.CloneTemplate, getVmIdParams(vmId));
             return int.Parse(output);
         }
