@@ -35,11 +35,11 @@ namespace CSLabsBackend.RequestModels
         
         public GenericErrorResponse Validate(DefaultContext dbContext)
         {
-            if (SchoolEmail != null && dbContext.Users.Count(u => u.SchoolEmail == SchoolEmail) != 0)
+            if (!string.IsNullOrEmpty(SchoolEmail) && dbContext.Users.Count(u => u.SchoolEmail == SchoolEmail) != 0)
             {
                 return new GenericErrorResponse { Message = "The specified school email is already in use"};
             }
-            if (PersonalEmail != null && dbContext.Users.Count(u => u.PersonalEmail == PersonalEmail) != 0)
+            if (!string.IsNullOrEmpty(PersonalEmail) && dbContext.Users.Count(u => u.PersonalEmail == PersonalEmail) != 0)
             {
                 return new GenericErrorResponse { Message = "The specified personal email is already in use"};
             }

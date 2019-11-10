@@ -11,6 +11,7 @@ using CSLabsBackend.Models;
 using CSLabsBackend.Models.UserModels;
 using CSLabsBackend.Util;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -35,7 +36,8 @@ namespace CSLabsBackend.Services
 
         public async Task<User> AddUser(User user)
         {
-            user.Password = HashPassword(user.Password);
+            var hasher = new PasswordHasher<User>();
+            user.Password = hasher.HashPassword(user, user.Password);
             _databaseContext.Users.Add(user);
             await _databaseContext.SaveChangesAsync();
             return user;
@@ -45,14 +47,18 @@ namespace CSLabsBackend.Services
         {
             // @todo authenticate with kerberos.
             var user = _databaseContext.Users
-                .SingleOrDefault(x =>
-                    (x.SchoolEmail == email || x.PersonalEmail == email) &&
-                    x.Password == HashPassword(password));
-
-
+                .FirstOrDefault(x =>
+                    (x.SchoolEmail == email || x.PersonalEmail == email));
+            
             // return null if user not found
             if (user == null)
                 return null;
+            
+            var hasher = new PasswordHasher<User>();
+            if(hasher.VerifyHashedPassword(user, user.Password, password) == PasswordVerificationResult.Failed) {
+                return null;
+            }
+            
 
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -76,29 +82,6 @@ namespace CSLabsBackend.Services
 
             return user;
         }
-
-        public string HashPassword(string password)
-        {
-            // code pulled from https://docs.microsoft.com/en-us/aspnet/core/security/data-protection/consumer-apis/password-hashing?view=aspnetcore-2.2
-            // generate a 128-bit salt using a secure PRNG
-            byte[] salt = new byte[128 / 8];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(salt);
-            }
-
-            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
-
-            // derive a 256-bit subkey (use HMACSHA1 with 10,000 iterations)
-            return Convert.ToBase64String(
-                KeyDerivation.Pbkdf2(
-                    password: password,
-                    salt: salt,
-                    prf: KeyDerivationPrf.HMACSHA1,
-                    iterationCount: 10000,
-                    numBytesRequested: 256 / 8
-                )
-            );
-        }
+        
     }
 }

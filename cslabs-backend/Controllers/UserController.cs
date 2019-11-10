@@ -1,4 +1,5 @@
-﻿using CSLabsBackend.Models.UserModels;
+﻿using System.Threading.Tasks;
+using CSLabsBackend.Models.UserModels;
 using CSLabsBackend.RequestModels;
 using CSLabsBackend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -34,13 +35,14 @@ namespace CSLabsBackend.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegistrationRequest registration)
+        public async Task<IActionResult> Register([FromBody] RegistrationRequest registration)
         {
             if (!registration.IsValid(DatabaseContext))
                 return BadRequest(registration.Validate(DatabaseContext));
             
             var user = Map<User>(registration);
-            _authenticationService.AddUser(user);
+            user.SetNulls();
+            await _authenticationService.AddUser(user);
             return Ok(_authenticationService.Authenticate(registration.GetEmail(), registration.Password));
         }
 

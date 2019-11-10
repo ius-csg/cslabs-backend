@@ -52,6 +52,16 @@ namespace CSLabsBackend.Models.UserModels
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]
         public DateTime? TerminationDate { get; set; }
 
+        public void SetNulls()
+        {
+            if (PersonalEmail.Length == 0) {
+                PersonalEmail = null;
+            }
+            if (SchoolEmail.Length == 0) {
+                SchoolEmail = null;
+            }
+        }
+
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<User>();
