@@ -53,6 +53,7 @@ namespace CSLabsBackend.Proxmox
         {
             Console.WriteLine("VmId: " + vmId);
             var output = await this.client.RunJobAndGetOutput(jobIds.CloneTemplate, getVmIdParams(vmId));
+            Console.WriteLine("Clone Template Output: " + output);
             return int.Parse(output);
         }
 
