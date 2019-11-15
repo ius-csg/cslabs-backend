@@ -29,6 +29,17 @@ namespace CSLabsBackend.Controllers
             await proxmoxApi.ShutdownVm("a1", userLabVm.ProxmoxVmId);
             return Ok();
         }
+        
+        //Shutdown
+        [HttpPost("stop/{id}")]
+        public async Task<IActionResult> Stop(int Id)
+        {
+            var userLabVm = DatabaseContext.UserLabVms.Find(Id);
+            if (userLabVm.UserId != GetUser().Id)
+                return Forbid();
+            await proxmoxApi.StopVM("a1", userLabVm.ProxmoxVmId);
+            return Ok();
+        }
 
         //StartUp
         [HttpPost("start/{id}")]
