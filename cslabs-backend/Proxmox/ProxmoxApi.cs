@@ -1,66 +1,101 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using CSLabsBackend.Config;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Newtonsoft.Json;
-using Rundeck;
-using  RundeckClient = Rundeck.Client;
+using Corsinvest.ProxmoxVE.Api;
+
 namespace CSLabsBackend.Proxmox
 {
     public class ProxmoxApi
     {
-        private RundeckClient client;
-        private RundeckJobIdSettings jobIds;
-        public ProxmoxApi(string scheme, string host, string apiKey, RundeckJobIdSettings jobIds)
+        private PveClient client;
+        private bool loggedIn = false;
+        private string username;
+        private string password;
+
+        public ProxmoxApi(string host, string username,  string password)
         {
-            this.client = new RundeckClient(scheme, host, apiKey);
-            this.jobIds = jobIds;
+            client = new PveClient(host);
+            this.username = username;
+            this.password = password;
         }
 
-
-        public ExecutionParams getVmIdParams(int vmId)
+        protected async Task loginIfNotLoggedIn()
         {
-            return new ExecutionParams() {options = new Dictionary<string, string>() {
-                ["VmId"] = vmId.ToString()
-            }};
+            if (!loggedIn) {
+                await Task.Run(() =>
+                {
+                    loggedIn = client.Login(username, password);
+                    if (!loggedIn)
+                    {
+                        throw new UnauthorizedProxmoxUser();
+                    }
+                });
+            }
         }
 
-        public async Task<TicketResponse> GetTicket(int vmId)
+        public async Task<TicketResponse> GetTicket(string node, int vmId)
         {
-            var output = await this.client.RunJobAndGetOutput(jobIds.GetTicket, getVmIdParams(vmId));
-            return JsonConvert.DeserializeObject<TicketResponse>(output);
+            await loginIfNotLoggedIn();
+            var output = await Task.Run(() => this.client.Nodes[node].Qemu[vmId].Vncproxy.Vncproxy(websocket: true));
+
+            return new TicketResponse()
+            {
+                Port = int.Parse(output.Response.data.port),
+                Ticket = output.Response.data.ticket,
+            };
         }
         
-        public async Task StartVM(int vmId)
+        public async Task StartVM(string node, int vmId)
         {
-            await this.client.RunJobAndGetOutput(jobIds.StartVm, getVmIdParams(vmId));
+            await loginIfNotLoggedIn();
+            await Task.Run(() => this.client.Nodes[node].Qemu[vmId].Status.Start.VmStart());
         }
         
         
-        public async Task StopVM(int vmId)
+        public async Task StopVM(string node, int vmId)
         {
-            await this.client.RunJobAndGetOutput(jobIds.StopVm, getVmIdParams(vmId));
+            await loginIfNotLoggedIn();
+            await Task.Run(() => this.client.Nodes[node].Qemu[vmId].Status.Stop.VmStop());
         }
         
         
-        public async Task ShutdownVm(int vmId)
+        public async Task ShutdownVm(string node, int vmId)
         {
-            await this.client.RunJobAndGetOutput(jobIds.ShutdownVm, getVmIdParams(vmId));
+            await loginIfNotLoggedIn();
+            await Task.Run(() => this.client.Nodes[node].Qemu[vmId].Status.Shutdown.VmShutdown());
         }
         
-        public async Task<int> CloneTemplate(int vmId)
+        public async Task<int> CloneTemplate(string node, int vmId)
         {
+            await loginIfNotLoggedIn();
+            var vmListResponse = await Task.Run(() => this.client.Nodes[node].Qemu.Vmlist());
+            var data = (List<object>)vmListResponse.Response.data;
+            List<int> ids = new List<int>();
+            foreach (IDictionary<string, object> item in data) {
+                ids.Add(int.Parse((string)item["vmid"]));
+            }
+
+            int newVmId = ids.Max() + 1;
             Console.WriteLine("VmId: " + vmId);
-            var output = await this.client.RunJobAndGetOutput(jobIds.CloneTemplate, getVmIdParams(vmId));
-            Console.WriteLine("Clone Template Output: " + output);
-            return int.Parse(output);
+            await Task.Run(() => this.client.Nodes[node].Qemu[vmId].Clone.CloneVm(newVmId));
+            
+            return newVmId;
         }
 
-        public async Task<VmStatus> GetVmStatus(int vmId)
+        public async Task<VmStatus> GetVmStatus(string node, int vmId)
         {
-            var output = await this.client.RunJobAndGetOutput(jobIds.GetVmStatus, getVmIdParams(vmId));
-            return JsonConvert.DeserializeObject<VmStatus>(output);
+            await loginIfNotLoggedIn();
+            var statusResponse = await Task.Run(() => this.client.Nodes[node].Qemu[vmId].Status.Current.VmStatus());
+            var lockValue = "";
+            if(((IDictionary<String, object>)statusResponse.Response.data).ContainsKey("lock")) {
+                lockValue = statusResponse.Response.data.@lock;
+            }
+            return new VmStatus
+            {
+                Lock = lockValue,
+                Status = statusResponse.Response.data.status
+            };
         }
     }
 }

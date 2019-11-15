@@ -7,7 +7,7 @@ namespace CSLabsBackend.Config
         public string JWTSecret { get; set; }
         public string ModuleSpecialCode { get; set; }
         public ConnectionStrings ConnectionStrings { get; set; }
-        public RundeckSettings RunDeckApi { get; set; }
+        public ProxmoxSettings Proxmox { get; set; }
         public string[] CorsUrls { get; set; }
     }
 }

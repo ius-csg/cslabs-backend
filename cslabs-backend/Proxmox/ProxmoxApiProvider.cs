@@ -7,12 +7,11 @@ namespace CSLabsBackend.Proxmox
     {
         public static void ProvideProxmoxApi(this IServiceCollection services, AppSettings appSettings)
         {
-            var rundeckSettings = appSettings.RunDeckApi;
+            var settings = appSettings.Proxmox;
             services.AddSingleton(new ProxmoxApi(
-                rundeckSettings.Scheme,
-                rundeckSettings.Host,
-                rundeckSettings.ApiKey,
-                rundeckSettings.JobIds
+                settings.Host,
+                settings.Username,
+                settings.Password
             ));
         }
     }

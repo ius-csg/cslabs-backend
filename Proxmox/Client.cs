@@ -21,8 +21,8 @@ namespace Rundeck
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
-            client.DefaultRequestHeaders.Add("X-Rundeck-Auth-Token", authToken);
-            client.DefaultRequestHeaders.Add("User-Agent", ".NET Rundeck client");
+            client.DefaultRequestHeaders.Add("X-Proxmox-Auth-Token", authToken);
+            client.DefaultRequestHeaders.Add("User-Agent", ".NET Proxmox client");
             baseUrl = scheme + host + "/api/33";
         }
 

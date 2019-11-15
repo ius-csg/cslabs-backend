@@ -25,7 +25,7 @@ namespace CSLabsBackend.Controllers
             var dic = new Dictionary<int, string>();
             foreach (var vm in userLab.UserLabVms)
             {
-                var status = await proxmoxApi.GetVmStatus(vm.ProxmoxVmId);
+                var status = await proxmoxApi.GetVmStatus("a1", vm.ProxmoxVmId);
                 dic.Add(vm.Id, status.Status);
             }
 

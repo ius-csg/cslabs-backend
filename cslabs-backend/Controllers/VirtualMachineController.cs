@@ -16,7 +16,7 @@ namespace CSLabsBackend.Controllers
         [HttpGet("get-ticket/{id}")]
         public async Task<IActionResult> GetTicket(int Id)
         {
-            return Ok(await proxmoxApi.GetTicket(Id));
+            return Ok(await proxmoxApi.GetTicket("a1", Id));
         }
 
         //Shutdown
@@ -26,7 +26,7 @@ namespace CSLabsBackend.Controllers
             var userLabVm = DatabaseContext.UserLabVms.Find(Id);
             if (userLabVm.UserId != GetUser().Id)
                 return Forbid();
-            await proxmoxApi.ShutdownVm( userLabVm.ProxmoxVmId);
+            await proxmoxApi.ShutdownVm("a1", userLabVm.ProxmoxVmId);
             return Ok();
         }
 
@@ -37,7 +37,7 @@ namespace CSLabsBackend.Controllers
             var userLabVm = DatabaseContext.UserLabVms.Find(Id);
             if (userLabVm.UserId != GetUser().Id)
                 return Forbid();
-            await proxmoxApi.StartVM(userLabVm.ProxmoxVmId);
+            await proxmoxApi.StartVM("a1", userLabVm.ProxmoxVmId);
             return Ok();
         }
 

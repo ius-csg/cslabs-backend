@@ -4,6 +4,8 @@
         <TargetFramework>netcoreapp2.2</TargetFramework>
 
         <IsPackable>false</IsPackable>
+
+        <RootNamespace>Rundeck.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,12 +17,13 @@
 
     <ItemGroup>
       <None Update="appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Rundeck\Rundeck.csproj" />
+      <ProjectReference Include="..\cslabs-backend\cslabs-backend.csproj" />
+      <ProjectReference Include="..\Proxmox\Proxmox.csproj" />
     </ItemGroup>
 
 </Project>
