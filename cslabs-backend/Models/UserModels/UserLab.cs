@@ -18,6 +18,10 @@ namespace CSLabsBackend.Models.UserModels
         [Required]
         public int LabId { get; set; }
         
+        public string ReadMe { get; set; }
+        
+        public byte[] Image { get; set; }
+        
         public UserModule UserModule { get; set; }
         [InverseProperty(nameof(UserLabVm.UserLab))]
         public List<UserLabVm> UserLabVms { get; set; }

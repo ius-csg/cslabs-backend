@@ -17,6 +17,10 @@ namespace CSLabsBackend.Models.ModuleModels
         [Required]
         [Column(TypeName = "VARCHAR(45)")]
         public string LabType { get; set; } = Permanent;
+        
+        public string ReadMe { get; set; }
+        
+        public byte[] Image { get; set; }
 
         [Required]
         public int ModuleId { get; set; }
