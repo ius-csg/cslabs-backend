@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using CSLabsBackend.Models.UserModels;
 using CSLabsBackend.RequestModels;
 using CSLabsBackend.Services;
+using FluentEmail.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -39,7 +41,7 @@ namespace CSLabsBackend.Controllers
         {
             if (!registration.IsValid(DatabaseContext))
                 return BadRequest(registration.Validate(DatabaseContext));
-            
+
             var user = Map<User>(registration);
             user.SetNulls();
             await _authenticationService.AddUser(user);
