@@ -4,6 +4,7 @@ using AutoMapper;
 using CSLabsBackend.Models;
 using CSLabsBackend.Models.UserModels;
 using CSLabsBackend.Proxmox;
+using FluentEmail.Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CSLabsBackend.Controllers
@@ -14,6 +15,12 @@ namespace CSLabsBackend.Controllers
         private readonly IMapper mapper;
         private User user = null;
         protected ProxmoxApi proxmoxApi;
+        private IFluentEmailFactory EmailFactory { get; set; }
+
+        protected IFluentEmail CreateEmail()
+        {
+            return EmailFactory.Create();
+        }
 
         protected T Map<T>(object value)
         {
@@ -25,6 +32,7 @@ namespace CSLabsBackend.Controllers
             this.DatabaseContext = dependencies.DatabaseContext;
             this.mapper = dependencies.Mapper;
             this.proxmoxApi = dependencies.ProxmoxApi;
+            this.EmailFactory = dependencies.EmailFactory;
         }
 
         public User GetUser()

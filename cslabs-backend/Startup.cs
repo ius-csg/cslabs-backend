@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -64,14 +65,23 @@ namespace CSLabsBackend
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });
-          
-            
+
+            ConfigureEmail(services, appSettings.Email);
             ConfigureDatabase(services, appSettings.ConnectionStrings.DefaultConnection);
             ConfigureCors(services, appSettings.CorsUrls);
             ConfigureJWT(services, appSettings.JWTSecret);
             services.AddScoped<BaseControllerDependencies>();
             services.ProvideProxmoxApi(appSettings);
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        }
+
+        private void ConfigureEmail(IServiceCollection services, EmailSettings emailSettings)
+        {
+            Console.WriteLine(Environment.CurrentDirectory);
+            services
+                .AddFluentEmail(emailSettings.FromAddress)
+                .AddRazorRenderer(Path.Join(Environment.CurrentDirectory, "Views"))
+                .AddSmtpSender(emailSettings.Host, 587, emailSettings.UserName, emailSettings.Password);
         }
 
         private void ConfigureDatabase(IServiceCollection services, string connectionString)
@@ -122,6 +132,7 @@ namespace CSLabsBackend
                     };
                 });
 
+         
             // configure DI for application services
             services.AddScoped<IAuthenticationService, AuthenticationService>();
         }

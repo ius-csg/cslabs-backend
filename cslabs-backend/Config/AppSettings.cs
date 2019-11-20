@@ -8,6 +8,8 @@ namespace CSLabsBackend.Config
         public string ModuleSpecialCode { get; set; }
         public ConnectionStrings ConnectionStrings { get; set; }
         public ProxmoxSettings Proxmox { get; set; }
+        
+        public EmailSettings Email { get; set; }
         public string[] CorsUrls { get; set; }
     }
 }
