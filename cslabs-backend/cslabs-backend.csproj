@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Connected Services\" />
-    <Folder Include="EmailViewModels" />
     <Folder Include="wwwroot\" />
     <Folder Include="Models\Enums\" />
   </ItemGroup>

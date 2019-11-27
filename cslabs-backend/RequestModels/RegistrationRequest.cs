@@ -19,7 +19,7 @@ namespace CSLabsBackend.RequestModels
         [Required]
         public string LastName { get; set; }
         
-        [RegularExpression(@"^.+@ius\.edu$", ErrorMessage = "The email must end with @ius.edu")]
+        [RegularExpression(@"^.+@iu[s]?\.edu$", ErrorMessage = "The email must end with @iu(s).edu")]
         [EitherRequired(nameof(PersonalEmail))]
         public string SchoolEmail { get; set; }
        

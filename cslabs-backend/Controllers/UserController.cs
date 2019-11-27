@@ -73,7 +73,7 @@ namespace CSLabsBackend.Controllers
             return Ok(GetUser());
         }
 
-        [HttpPost("verify")]
+        [HttpPost("verify-email")]
         public async Task<IActionResult> VerifyEmail([FromBody] EmailVerificationRequest request)
         {
             var user = await DatabaseContext
