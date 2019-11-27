@@ -81,7 +81,7 @@ namespace CSLabsBackend
             services
                 .AddFluentEmail(emailSettings.FromAddress)
                 .AddRazorRenderer(Path.Join(Environment.CurrentDirectory, "Views"))
-                .AddSmtpSender(emailSettings.Host, 587, emailSettings.UserName, emailSettings.Password);
+                .AddSmtpSender(emailSettings.Host, emailSettings.Port, emailSettings.UserName, emailSettings.Password);
         }
 
         private void ConfigureDatabase(IServiceCollection services, string connectionString)
