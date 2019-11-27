@@ -1,6 +1,6 @@
 using System.IO;
 using System.Threading.Tasks;
-using CSLabsBackend.EmailViewModels;
+using CSLabsBackend.Email.ViewModels;
 using CSLabsBackend.Util;
 using FluentEmail.Core;
 using Microsoft.AspNetCore.Mvc;

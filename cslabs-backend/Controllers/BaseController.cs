@@ -16,6 +16,8 @@ namespace CSLabsBackend.Controllers
         private User user = null;
         protected ProxmoxApi proxmoxApi;
         private IFluentEmailFactory EmailFactory { get; set; }
+        
+        protected string WebAppUrl { get; set; }
 
         protected IFluentEmail CreateEmail()
         {
@@ -33,6 +35,7 @@ namespace CSLabsBackend.Controllers
             this.mapper = dependencies.Mapper;
             this.proxmoxApi = dependencies.ProxmoxApi;
             this.EmailFactory = dependencies.EmailFactory;
+            this.WebAppUrl = dependencies.AppSettings.WebAppUrl;
         }
 
         public User GetUser()

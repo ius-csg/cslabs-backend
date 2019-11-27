@@ -30,6 +30,11 @@ namespace CSLabsBackend.Models.UserModels
         
         [Column(TypeName = "VARCHAR(45)")]
         public string PersonalEmail { get; set; }
+        [Column(TypeName = "VARCHAR(100)")]
+        public string SchoolEmailVerificationCode { get; set; }
+        
+        [Column(TypeName = "VARCHAR(100)")]
+        public string PersonalEmailVerificationCode { get; set; }
         
         public int? GraduationYear { get; set; }
 
