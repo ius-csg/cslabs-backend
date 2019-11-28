@@ -5,16 +5,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CSLabsBackend.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class HealthCheckController : BaseController
     {
         public HealthCheckController(BaseControllerDependencies dependencies) : base(dependencies)
         {
         }
-        
-        public async Task<IActionResult> Get()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            var results = await DatabaseContext.Users.Where(t => false).ToListAsync();
-            return Ok("Everything seems to be operational, database test result should equal 0: " + results.Count);
+            var count = await DatabaseContext.Users.CountAsync();
+            return Ok("Everything seems to be operational, user count: " + count);
         }
 
        
