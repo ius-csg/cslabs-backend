@@ -16,15 +16,19 @@ namespace CSLabsBackend.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(DatabaseContext.Labs.ToList());
+            return Ok(DatabaseContext.Labs
+                .Include(u => u.LabVms)
+                .ToList());
         }
         
         
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var lab = DatabaseContext.Labs.Where(u => u.UserId == GetUser().Id && u.Id == id);
-            
+            var lab = DatabaseContext.Labs
+                .Include(u => u.LabVms)
+                .Include(u => u.ModuleId)
+                .First(u => u.UserId == GetUser().Id && u.Id == id);
             return Ok(lab);
         }
     }

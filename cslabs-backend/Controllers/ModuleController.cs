@@ -13,6 +13,7 @@ using AutoMapper;
 using CSLabsBackend.Models;
 using CSLabsBackend.Models.ModuleModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CSLabsBackend.Controllers
 {
@@ -29,6 +30,7 @@ namespace CSLabsBackend.Controllers
         {
             return Ok(DatabaseContext.Modules.Where(m => m.Published).ToList());
         }
+        
 
         // GET api/values/5
         [HttpGet("{id}")]

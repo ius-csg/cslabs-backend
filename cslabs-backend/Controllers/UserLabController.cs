@@ -15,7 +15,7 @@ namespace CSLabsBackend.Controllers
         public UserLabController(BaseControllerDependencies dependencies) : base(dependencies) { }
 
         [HttpGet("{id}/status")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetStatus(int id)
         {
             var userLab =  DatabaseContext.UserLabs
                 .Include(l => l.UserLabVms)
@@ -30,6 +30,16 @@ namespace CSLabsBackend.Controllers
             }
 
             return Ok(dic);
+        }
+        
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Ge(int id)
+        {
+            var lab = DatabaseContext.Labs
+                .Include(u => u.LabVms)
+                .Include(u => u.ModuleId)
+                .First(u => u.UserId == GetUser().Id && u.Id == id);
+            return Ok(lab);
         }
     }
 }
