@@ -105,6 +105,8 @@ namespace CSLabsBackend.Controllers
                 .Include(u => u.UserLabs)
                 .ThenInclude(l => l.UserLabVms)
                 .ThenInclude(vm => vm.LabVm)
+                .Include(u => u.UserLabs)
+                .ThenInclude(u => u.Lab)
                 .FirstOrDefaultAsync(UserLab => UserLab.Id == id);
             if (module == null)
                 return NotFound();

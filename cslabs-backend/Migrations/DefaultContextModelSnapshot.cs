@@ -77,9 +77,6 @@ namespace CSLabsBackend.Migrations
                     b.Property<int>("EstimatedMemoryUsedMb")
                         .HasColumnName("estimated_memory_used_mb");
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnName("image");
-
                     b.Property<int>("LabDifficulty")
                         .HasColumnName("lab_difficulty");
 
@@ -94,9 +91,6 @@ namespace CSLabsBackend.Migrations
                     b.Property<string>("Name")
                         .HasColumnName("name")
                         .HasColumnType("VARCHAR(100)");
-
-                    b.Property<string>("ReadMe")
-                        .HasColumnName("read_me");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
@@ -291,14 +285,8 @@ namespace CSLabsBackend.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnName("image");
-
                     b.Property<int>("LabId")
                         .HasColumnName("lab_id");
-
-                    b.Property<string>("ReadMe")
-                        .HasColumnName("read_me");
 
                     b.Property<string>("Status")
                         .IsRequired()
