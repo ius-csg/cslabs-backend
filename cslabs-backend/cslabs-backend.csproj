@@ -39,8 +39,4 @@
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Proxmox\Proxmox.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -23,7 +23,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\cslabs-backend\cslabs-backend.csproj" />
-      <ProjectReference Include="..\Proxmox\Proxmox.csproj" />
     </ItemGroup>
 
 </Project>
