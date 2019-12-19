@@ -1,31 +1,32 @@
 using System;
 using System.Collections;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using CSLabsBackend.Models;
-using CSLabsBackend.Models.Enums;
+using CSLabsBackend.Config;
 using CSLabsBackend.Models.UserModels;
-using static CSLabsBackend.Models.Enums.UserType;
-using CSLabsBackend.Util;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Novell.Directory.Ldap;
 
 namespace CSLabsBackend.Services
 {
-    public class Ldap
+    public class LdapService
     {
-        private static string ldapHost = "<ldap host>";
-        private static int ldapPort = 389;
-        private static string serverDN = "";
-        private static string serverPass = "<server pass>";
-        public static void CreateEntry(User user, string pass)
+        private readonly string _ldapHost;
+        private readonly int _ldapPort;
+        private readonly string _adminDn;
+        private readonly string _adminPass;
+
+        public LdapService(LdapSettings settings)
+        {
+            _ldapHost = settings.Server;
+            _ldapPort = settings.Port;
+            _adminDn = settings.AdminDn;
+            _adminPass = settings.AdminPassword;
+        }
+        public void CreateEntry(User user, string pass)
         {
             LdapConnection ldapConn = new LdapConnection();
         
-            ldapConn.Connect(ldapHost, ldapPort);
+            ldapConn.Connect(_ldapHost, _ldapPort);
         
-            ldapConn.Bind(serverDN, serverPass);
+            ldapConn.Bind(_adminDn, _adminPass);
         
             LdapAttributeSet userAttributeSet = new LdapAttributeSet();
             userAttributeSet.Add( new LdapAttribute("objectclass", user.UserType));
@@ -41,13 +42,13 @@ namespace CSLabsBackend.Services
             ldapConn.Add(newEntry);
         }
 
-        public static void ModifyPassword(User user, string attrName, string attrString, string pass)
+        public void ModifyAttribute(User user, string attrName, string attrString, string pass)
         {
             string userDN = "cn=TestUser,ou=users,dc=csg,dc=ius,dc=edu";
             
             LdapConnection ldapConn = new LdapConnection();
         
-            ldapConn.Connect(ldapHost, ldapPort);
+            ldapConn.Connect(_ldapHost, _ldapPort);
 
             try
             {
@@ -55,7 +56,7 @@ namespace CSLabsBackend.Services
             }
             catch
             {
-                
+                throw new AuthenticationFailureException();
             }
             
 
@@ -72,13 +73,13 @@ namespace CSLabsBackend.Services
             ldapConn.Modify( userDN, mods);
         }
 
-        public static void LdapConnect(User user, string pass)
+        public void LdapConnect(User user, string pass)
         {
             string userDN = "cn=TestUser,ou=users,dc=csg,dc=ius,dc=edu";
             
             LdapConnection ldapConn = new LdapConnection();
 
-            ldapConn.Connect(ldapHost, ldapPort);
+            ldapConn.Connect(_ldapHost, _ldapPort);
 
             try
             {

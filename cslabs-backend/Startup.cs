@@ -70,6 +70,8 @@ namespace CSLabsBackend
             ConfigureDatabase(services, appSettings.ConnectionStrings.DefaultConnection);
             ConfigureCors(services, appSettings.CorsUrls);
             ConfigureJWT(services, appSettings.JWTSecret);
+
+            services.AddTransient<LdapService>();
             services.AddScoped<BaseControllerDependencies>();
             services.ProvideProxmoxApi(appSettings);
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -95,6 +97,7 @@ namespace CSLabsBackend
         {
             var appSettings = Configuration.Get<AppSettings>();
             services.AddSingleton(appSettings);
+            services.AddSingleton(appSettings.Ldap);
             return appSettings;
         }
         private void ConfigureCors(IServiceCollection services, string[] corsUrls)

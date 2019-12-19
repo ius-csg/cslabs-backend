@@ -10,6 +10,8 @@ namespace CSLabsBackend.Config
         public ProxmoxSettings Proxmox { get; set; }
         
         public EmailSettings Email { get; set; }
+        
+        public LdapSettings Ldap { get; set; }
         public string[] CorsUrls { get; set; }
         
         public string WebAppUrl { get; set; }

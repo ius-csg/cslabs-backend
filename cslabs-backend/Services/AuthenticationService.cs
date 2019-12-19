@@ -45,10 +45,11 @@ namespace CSLabsBackend.Services
 
         public User Authenticate(string email, string password)
         {
-            // @todo authenticate with kerberos.
+            // @todo authenticate with LDAP.
             var user = _databaseContext.Users
                 .FirstOrDefault(x =>
                     (x.SchoolEmail == email || x.PersonalEmail == email));
+            
             
             // return null if user not found
             if (user == null)

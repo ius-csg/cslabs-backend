@@ -32,13 +32,16 @@ namespace CSLabsBackend.Controllers
         [HttpPost("authenticate")]
         public IActionResult Authenticate([FromBody]AuthenticateRequest userParam)
         {
-            
-            var user = _authenticationService.Authenticate(userParam.Email, userParam.Password);
-
-            if (user == null)
+            try
+            {
+                var user = _authenticationService.Authenticate(userParam.Email, userParam.Password);
+                return Ok(user);
+            }
+            catch (AuthenticationFailureException)
+            {
                 return BadRequest(new { message = "Username or password is incorrect" });
+            }
 
-            return Ok(user);
         }
 
         [AllowAnonymous]
