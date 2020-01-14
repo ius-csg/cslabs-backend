@@ -95,6 +95,32 @@ namespace CSLabsBackend.Migrations
                     b.ToTable("hypervisors");
                 });
 
+            modelBuilder.Entity("CSLabsBackend.Models.HypervisorNode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id");
+
+                    b.Property<int>("HypervisorId")
+                        .HasColumnName("hypervisor_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_hypervisor_nodes");
+
+                    b.HasIndex("HypervisorId")
+                        .HasName("ix_hypervisor_nodes_hypervisor_id");
+
+                    b.HasIndex("Name", "HypervisorId")
+                        .IsUnique()
+                        .HasName("ix_hypervisor_nodes_name_hypervisor_id");
+
+                    b.ToTable("hypervisor_nodes");
+                });
+
             modelBuilder.Entity("CSLabsBackend.Models.ModuleModels.Lab", b =>
                 {
                     b.Property<int>("Id")
@@ -442,6 +468,15 @@ namespace CSLabsBackend.Migrations
                         .HasName("ix_user_modules_user_id_module_id");
 
                     b.ToTable("user_modules");
+                });
+
+            modelBuilder.Entity("CSLabsBackend.Models.HypervisorNode", b =>
+                {
+                    b.HasOne("CSLabsBackend.Models.Hypervisor", "Hypervisor")
+                        .WithMany()
+                        .HasForeignKey("HypervisorId")
+                        .HasConstraintName("fk_hypervisor_nodes_hypervisors_hypervisor_id")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CSLabsBackend.Models.ModuleModels.Lab", b =>

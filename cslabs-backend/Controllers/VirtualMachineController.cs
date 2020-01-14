@@ -1,8 +1,10 @@
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using CSLabsBackend.Models;
 using CSLabsBackend.Proxmox;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CSLabsBackend.Controllers
 {
@@ -14,9 +16,10 @@ namespace CSLabsBackend.Controllers
         
         // GET
         [HttpGet("get-ticket/{id}")]
-        public async Task<IActionResult> GetTicket(int Id)
+        public async Task<IActionResult> GetTicket(int id)
         {
-            return Ok(await proxmoxApi.GetTicket("a1", Id));
+            var vm = DatabaseContext.UserLabVms.FirstAsync(v => v.Id == id);
+            return Ok(await proxmoxApi.GetTicket(vm.Id));
         }
 
         //Shutdown
@@ -26,7 +29,7 @@ namespace CSLabsBackend.Controllers
             var userLabVm = DatabaseContext.UserLabVms.Find(Id);
             if (userLabVm.UserId != GetUser().Id)
                 return Forbid();
-            await proxmoxApi.ShutdownVm("a1", userLabVm.ProxmoxVmId);
+            await proxmoxApi.ShutdownVm(userLabVm.ProxmoxVmId);
             return Ok();
         }
         
@@ -37,7 +40,7 @@ namespace CSLabsBackend.Controllers
             var userLabVm = DatabaseContext.UserLabVms.Find(Id);
             if (userLabVm.UserId != GetUser().Id)
                 return Forbid();
-            await proxmoxApi.StopVM("a1", userLabVm.ProxmoxVmId);
+            await proxmoxApi.StopVM(userLabVm.ProxmoxVmId);
             return Ok();
         }
 
@@ -48,7 +51,7 @@ namespace CSLabsBackend.Controllers
             var userLabVm = DatabaseContext.UserLabVms.Find(Id);
             if (userLabVm.UserId != GetUser().Id)
                 return Forbid();
-            await proxmoxApi.StartVM("a1", userLabVm.ProxmoxVmId);
+            await proxmoxApi.StartVM(userLabVm.ProxmoxVmId);
             return Ok();
         }
 

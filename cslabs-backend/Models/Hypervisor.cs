@@ -14,7 +14,7 @@ namespace CSLabsBackend.Models
         public string Password { get; set; }
         [Required]
         public string NoVncUrl { get; set; }
-        
+
         public static void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Unique<Hypervisor>(h => h.NoVncUrl);

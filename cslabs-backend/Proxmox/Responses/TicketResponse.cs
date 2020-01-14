@@ -1,4 +1,4 @@
-namespace CSLabsBackend.Proxmox
+namespace CSLabsBackend.Proxmox.Responses
 {
     public class TicketResponse
     {

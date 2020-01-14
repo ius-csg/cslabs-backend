@@ -71,7 +71,6 @@ namespace CSLabsBackend
             ConfigureCors(services, appSettings.CorsUrls);
             ConfigureJWT(services, appSettings.JWTSecret);
             services.AddScoped<BaseControllerDependencies>();
-            services.ProvideProxmoxApi(appSettings);
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
         }
 

@@ -40,7 +40,7 @@ namespace CSLabsBackend.Controllers
             
             var firstLab = module.Labs.First();
             var firstVm = firstLab.LabVms.First();
-            int createdVmId = await proxmoxApi.CloneTemplate("a1", firstVm.TemplateProxmoxVmId);
+            int createdVmId = await proxmoxApi.CloneTemplate(firstVm.TemplateProxmoxVmId);
             var userModule = new UserModule
             {
                 Module = module,
@@ -78,7 +78,7 @@ namespace CSLabsBackend.Controllers
                return NotFound();
            foreach (var vm in userModule.UserLabs.First().UserLabVms)
            {
-               var status = await proxmoxApi.GetVmStatus("a1", vm.ProxmoxVmId);
+               var status = await proxmoxApi.GetVmStatus(vm.ProxmoxVmId);
                if (status.Lock == "clone")
                    return Ok("Initializing");
            }

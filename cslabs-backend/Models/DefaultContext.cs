@@ -27,6 +27,7 @@ namespace CSLabsBackend.Models
         public DbSet<UserLabVm> UserLabVms { get; set; }
         
         public DbSet<Hypervisor> Hypervisors { get; set; }
+        public DbSet<HypervisorNode> HypervisorNodes { get; set; }
         
         protected override void OnModelCreating(ModelBuilder builder)
        {
@@ -44,7 +45,9 @@ namespace CSLabsBackend.Models
            UserModule.OnModelCreating(builder);
            UserLab.OnModelCreating(builder);
            UserLabVm.OnModelCreating(builder);
+           // hypervisor
            Hypervisor.OnModelCreating(builder);
+           HypervisorNode.OnModelCreating(builder);
            builder.SnakeCaseDatabase();
        }
        

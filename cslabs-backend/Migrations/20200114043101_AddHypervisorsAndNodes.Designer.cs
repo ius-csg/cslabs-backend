@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSLabsBackend.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    [Migration("20200114021705_AddHypervisors")]
-    partial class AddHypervisors
+    [Migration("20200114043101_AddHypervisorsAndNodes")]
+    partial class AddHypervisorsAndNodes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -95,6 +95,32 @@ namespace CSLabsBackend.Migrations
                         .HasName("ix_hypervisors_no_vnc_url");
 
                     b.ToTable("hypervisors");
+                });
+
+            modelBuilder.Entity("CSLabsBackend.Models.HypervisorNode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id");
+
+                    b.Property<int>("HypervisorId")
+                        .HasColumnName("hypervisor_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_hypervisor_nodes");
+
+                    b.HasIndex("HypervisorId")
+                        .HasName("ix_hypervisor_nodes_hypervisor_id");
+
+                    b.HasIndex("Name", "HypervisorId")
+                        .IsUnique()
+                        .HasName("ix_hypervisor_nodes_name_hypervisor_id");
+
+                    b.ToTable("hypervisor_nodes");
                 });
 
             modelBuilder.Entity("CSLabsBackend.Models.ModuleModels.Lab", b =>
@@ -444,6 +470,15 @@ namespace CSLabsBackend.Migrations
                         .HasName("ix_user_modules_user_id_module_id");
 
                     b.ToTable("user_modules");
+                });
+
+            modelBuilder.Entity("CSLabsBackend.Models.HypervisorNode", b =>
+                {
+                    b.HasOne("CSLabsBackend.Models.Hypervisor", "Hypervisor")
+                        .WithMany()
+                        .HasForeignKey("HypervisorId")
+                        .HasConstraintName("fk_hypervisor_nodes_hypervisors_hypervisor_id")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CSLabsBackend.Models.ModuleModels.Lab", b =>
