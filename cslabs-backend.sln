@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSLabs.Tests", "CSLabs.Tests\CSLabs.Tests.csproj", "{1C691A76-7B92-413D-8B13-11D2165FAFA9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSLabsConsole", "CSLabsConsole\CSLabsConsole.csproj", "{E6399054-7CA6-4CC6-8326-AA9A04706994}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{1C691A76-7B92-413D-8B13-11D2165FAFA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C691A76-7B92-413D-8B13-11D2165FAFA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C691A76-7B92-413D-8B13-11D2165FAFA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6399054-7CA6-4CC6-8326-AA9A04706994}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6399054-7CA6-4CC6-8326-AA9A04706994}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6399054-7CA6-4CC6-8326-AA9A04706994}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6399054-7CA6-4CC6-8326-AA9A04706994}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

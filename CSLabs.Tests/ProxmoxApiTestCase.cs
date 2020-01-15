@@ -32,7 +32,7 @@ namespace Rundeck.Tests
                     Password = apiSection["Password"]
                 }
             };
-            client = new ProxmoxApi(hypervisorNode);
+            client = new ProxmoxApi(hypervisorNode, apiSection["Password"]);
         }
 
         [Test]

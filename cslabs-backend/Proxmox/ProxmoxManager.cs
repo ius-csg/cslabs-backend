@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CSLabsBackend.Config;
 using CSLabsBackend.Models;
 using CSLabsBackend.Models.UserModels;
 using CSLabsBackend.Proxmox.Responses;
@@ -11,9 +12,11 @@ namespace CSLabsBackend.Proxmox
     public class ProxmoxManager
     {
         private DefaultContext _context;
-        public ProxmoxManager(DefaultContext context)
+        private string _encryptionKey;
+        public ProxmoxManager(DefaultContext context, AppSettings appSettings)
         {
             _context = context;
+            _encryptionKey = appSettings.ProxmoxEncryptionKey;
         }
         public async Task<ProxmoxApi> GetLeastLoadedHyperVisor(long requiredMemoryGB)
         {
@@ -25,7 +28,7 @@ namespace CSLabsBackend.Proxmox
             var list = new List<KeyValuePair<NodeStatus,ProxmoxApi>>();
             foreach (var hypervisorNode in hypervisorNodes)
             {
-                var api = new ProxmoxApi(hypervisorNode);
+                var api = GetProxmoxApi(hypervisorNode);
                 var nodeStatus = await api.GetNodeStatus();
                 list.Add(new KeyValuePair<NodeStatus, ProxmoxApi>(nodeStatus, api));
             }
@@ -37,10 +40,16 @@ namespace CSLabsBackend.Proxmox
 
             return list.First().Value;
         }
+
+        private ProxmoxApi GetProxmoxApi(HypervisorNode node)
+        {
+            var password = Cryptography.DecryptString(node.Hypervisor.Password, _encryptionKey);
+            return new ProxmoxApi(node, password);
+        }
         
         public ProxmoxApi GetProxmoxApi(UserLab userLab)
         {
-            return new ProxmoxApi(userLab.HypervisorNode);
+            return GetProxmoxApi(userLab.HypervisorNode);
         }
     }
 }

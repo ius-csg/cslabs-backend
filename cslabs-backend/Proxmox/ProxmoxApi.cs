@@ -12,11 +12,13 @@ namespace CSLabsBackend.Proxmox
     {
         private PveClient client;
         private DateTime _loggedInAt = DateTime.MinValue;
+        private string _password;
         public HypervisorNode HypervisorNode { get;}
-        public ProxmoxApi(HypervisorNode hypervisorNode)
+        public ProxmoxApi(HypervisorNode hypervisorNode, string password)
         {
             client = new PveClient(hypervisorNode.Hypervisor.Host);
             HypervisorNode = hypervisorNode;
+            _password = password;
         }
 
         private bool loggedIn => DateTime.Now.Subtract(_loggedInAt).TotalMinutes < 15;
@@ -28,7 +30,7 @@ namespace CSLabsBackend.Proxmox
 
         private void Login()
         {
-            bool successful = client.Login(HypervisorNode.Hypervisor.UserName, HypervisorNode.Hypervisor.Password);
+            bool successful = client.Login(HypervisorNode.Hypervisor.UserName, _password);
             if (!successful)
                 throw new UnauthorizedProxmoxUser();
             _loggedInAt = DateTime.Now;

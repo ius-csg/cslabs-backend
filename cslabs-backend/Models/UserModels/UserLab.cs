@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using CSLabsBackend.Models.ModuleModels;
 using CSLabsBackend.Util;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace CSLabsBackend.Models.UserModels
 {
@@ -29,6 +30,7 @@ namespace CSLabsBackend.Models.UserModels
         
         public int HypervisorNodeId  { get; set; }
         [ForeignKey(nameof(HypervisorNodeId))]
+        [JsonIgnore]
         public HypervisorNode HypervisorNode { get; set; }
         
         public static void OnModelCreating(ModelBuilder builder)

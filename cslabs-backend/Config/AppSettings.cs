@@ -10,6 +10,8 @@ namespace CSLabsBackend.Config
         public EmailSettings Email { get; set; }
         public string[] CorsUrls { get; set; }
         
+        public string ProxmoxEncryptionKey { get; set; }
+        
         public string WebAppUrl { get; set; }
     }
 }
