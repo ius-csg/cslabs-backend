@@ -1,17 +1,17 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CSLabsBackend.Models;
+using CSLabsBackend.Models.UserModels;
 using CSLabsBackend.Proxmox.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace CSLabsBackend.Proxmox
 {
-    public class ProxmoxLoadManager
+    public class ProxmoxManager
     {
         private DefaultContext _context;
-        public ProxmoxLoadManager(DefaultContext context)
+        public ProxmoxManager(DefaultContext context)
         {
             _context = context;
         }
@@ -36,6 +36,11 @@ namespace CSLabsBackend.Proxmox
                 throw new NoHypervisorAvailableException();
 
             return list.First().Value;
+        }
+        
+        public ProxmoxApi GetProxmoxApi(UserLab userLab)
+        {
+            return new ProxmoxApi(userLab.HypervisorNode);
         }
     }
 }

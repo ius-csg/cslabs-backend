@@ -40,7 +40,8 @@ namespace CSLabsBackend.Controllers
             
             var firstLab = module.Labs.First();
             var firstVm = firstLab.LabVms.First();
-            int createdVmId = await proxmoxApi.CloneTemplate(firstVm.TemplateProxmoxVmId);
+            var api = await ProxmoxManager.GetLeastLoadedHyperVisor(firstLab.EstimatedMemoryUsedMb);
+            int createdVmId = await api.CloneTemplate(firstVm.TemplateProxmoxVmId);
             var userModule = new UserModule
             {
                 Module = module,
@@ -50,6 +51,7 @@ namespace CSLabsBackend.Controllers
                     Lab = firstLab, 
                     Status = "ON", 
                     User = GetUser(),
+                    HypervisorNode = api.HypervisorNode,
                     UserLabVms = new List<UserLabVm>()
                     {
                         new UserLabVm()
@@ -76,9 +78,11 @@ namespace CSLabsBackend.Controllers
                .FirstOrDefault(m => m.UserId == GetUser().Id && m.Id == id);
            if (userModule == null)
                return NotFound();
+           var userLab = userModule.UserLabs.First();
+           var api = ProxmoxManager.GetProxmoxApi(userLab);
            foreach (var vm in userModule.UserLabs.First().UserLabVms)
            {
-               var status = await proxmoxApi.GetVmStatus(vm.ProxmoxVmId);
+               var status = await api.GetVmStatus(vm.ProxmoxVmId);
                if (status.Lock == "clone")
                    return Ok("Initializing");
            }

@@ -23,9 +23,10 @@ namespace CSLabsBackend.Controllers
             if (userLab == null)
                 return NotFound();
             var dic = new Dictionary<int, string>();
+            var api = ProxmoxManager.GetProxmoxApi(userLab);
             foreach (var vm in userLab.UserLabVms)
             {
-                var status = await proxmoxApi.GetVmStatus(vm.ProxmoxVmId);
+                var status = await api.GetVmStatus(vm.ProxmoxVmId);
                 dic.Add(vm.Id, status.Status);
             }
 

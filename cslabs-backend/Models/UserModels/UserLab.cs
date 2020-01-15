@@ -27,6 +27,10 @@ namespace CSLabsBackend.Models.UserModels
         [Required]
         public string Status { get; set; }
         
+        public int HypervisorNodeId  { get; set; }
+        [ForeignKey(nameof(HypervisorNodeId))]
+        public HypervisorNode HypervisorNode { get; set; }
+        
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<UserLab>();
