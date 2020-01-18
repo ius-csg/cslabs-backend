@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using CommandLine;
 using CSLabsBackend.Config;
-using CSLabsBackend.Models;
 using CSLabsBackend.Services;
 using CSLabsConsole.Commands;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +14,17 @@ namespace CSLabsConsole
 {
     class Program
     {
+
+        public static List<Type> Commands = new List<Type>
+        {
+            typeof(AddHypervisorCommand),
+            typeof(AddHypervisorNodeCommand),
+            typeof(ChangeHypervisorPasswordCommand),
+            typeof(ListHypervisorsCommand),
+            typeof(EncryptCommand),
+            typeof(DecryptCommand)
+        };
+        
         static async Task Main(string[] args)
         {
             var builder = new ConfigurationBuilder()
@@ -28,20 +38,11 @@ namespace CSLabsConsole
             serviceCollection.ConfigureDatabase(appSettings.ConnectionStrings.DefaultConnection);
             serviceCollection.AddSingleton(appSettings);
 
-            await ExecuteCommands(new List<Type>
-                {
-                    typeof(AddHypervisorCommand),
-                    typeof(AddHypervisorNodeCommand),
-                    typeof(ChangeHypervisorPasswordCommand),
-                    typeof(ListHypervisorsCommand),
-                    typeof(EncryptCommand),
-                    typeof(DecryptCommand)
-                },
-                serviceCollection, args);
+            await ExecuteCommands(Commands, serviceCollection, args);
         }
 
 
-        public static async Task ExecuteCommands(List<Type> commands, IServiceCollection collection, string[] args)
+        private static async Task ExecuteCommands(List<Type> commands, IServiceCollection collection, string[] args)
         {
             foreach (var command in commands)
                 collection.AddSingleton(command);
