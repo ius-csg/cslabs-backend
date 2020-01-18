@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CSLabsBackend.Util;
@@ -13,11 +14,11 @@ namespace CSLabsBackend.Models.ModuleModels
         public string Name { get; set; }
         [Required]
         public int LabId { get; set; }
-        
-        [Required]
-        public int TemplateProxmoxVmId { get; set; }
 
         public Lab Lab { get; set; }
+
+        [InverseProperty(nameof(VmTemplate.LabVm))]
+        public List<VmTemplate> VmTemplates { get; set; } = new List<VmTemplate>();
 
         public static void OnModelCreating(ModelBuilder builder)
         {

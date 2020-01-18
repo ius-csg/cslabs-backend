@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using CSLabsBackend.Models.ModuleModels;
 using CSLabsBackend.Util;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace CSLabsBackend.Models.UserModels
 {
@@ -27,10 +28,19 @@ namespace CSLabsBackend.Models.UserModels
         [Required]
         public string Status { get; set; }
         
+        public int HypervisorNodeId  { get; set; }
+        [ForeignKey(nameof(HypervisorNodeId))]
+        [JsonIgnore]
+        public HypervisorNode HypervisorNode { get; set; }
+        
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<UserLab>();
             builder.Entity<UserLab>().HasIndex(u => new {u.UserId, u.LabId}).IsUnique();
+            builder.Entity<UserLab>()
+                .HasOne(u => u.HypervisorNode)
+                .WithMany(n => n.UserLabs)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

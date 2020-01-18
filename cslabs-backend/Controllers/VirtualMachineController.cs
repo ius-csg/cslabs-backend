@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using AutoMapper;
-using CSLabsBackend.Models;
-using CSLabsBackend.Proxmox;
+using System.Web;
+using CSLabsBackend.Models.UserModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CSLabsBackend.Controllers
 {
@@ -14,19 +14,30 @@ namespace CSLabsBackend.Controllers
         
         // GET
         [HttpGet("get-ticket/{id}")]
-        public async Task<IActionResult> GetTicket(int Id)
+        public async Task<IActionResult> GetTicket(int id)
         {
-            return Ok(await proxmoxApi.GetTicket("a1", Id));
+            var vm = await GetVm(id);
+            var url = vm.UserLab.HypervisorNode.Hypervisor.NoVncUrl
+                .Replace("{node}", vm.UserLab.HypervisorNode.Name)
+                .Replace("{vm}", vm.ProxmoxVmId.ToString());
+          
+            var ticket = await ProxmoxManager.GetProxmoxApi(vm.UserLab).GetTicket(vm.ProxmoxVmId);
+            url += "?port=" + ticket.Port + "&vncticket=" + HttpUtility.UrlEncode(ticket.Ticket);
+            return Ok(new
+            {
+                Ticket = ticket.Ticket,
+                Port = ticket.Port,
+                Url = url
+            });
         }
 
         //Shutdown
         [HttpPost("shutdown/{id}")]
-        public async Task<IActionResult> Shutdown(int Id)
+        public async Task<IActionResult> Shutdown(int id)
         {
-            var userLabVm = DatabaseContext.UserLabVms.Find(Id);
-            if (userLabVm.UserId != GetUser().Id)
-                return Forbid();
-            await proxmoxApi.ShutdownVm("a1", userLabVm.ProxmoxVmId);
+            var vm = await GetVm(id);
+            if (vm.UserId != GetUser().Id) return Forbid();
+            await ProxmoxManager.GetProxmoxApi(vm.UserLab).ShutdownVm(vm.ProxmoxVmId);
             return Ok();
         }
         
@@ -43,24 +54,31 @@ namespace CSLabsBackend.Controllers
         
         //Stop
         [HttpPost("stop/{id}")]
-        public async Task<IActionResult> Stop(int Id)
+        public async Task<IActionResult> Stop(int id)
         {
-            var userLabVm = DatabaseContext.UserLabVms.Find(Id);
-            if (userLabVm.UserId != GetUser().Id)
-                return Forbid();
-            await proxmoxApi.StopVM("a1", userLabVm.ProxmoxVmId);
+            var vm = await GetVm(id);
+            if (vm.UserId != GetUser().Id) return Forbid();
+            await ProxmoxManager.GetProxmoxApi(vm.UserLab).StopVM(vm.ProxmoxVmId);
             return Ok();
         }
 
         //StartUp
         [HttpPost("start/{id}")]
-        public async Task<IActionResult> StartUp(int Id)
+        public async Task<IActionResult> StartUp(int id)
         {
-            var userLabVm = DatabaseContext.UserLabVms.Find(Id);
-            if (userLabVm.UserId != GetUser().Id)
-                return Forbid();
-            await proxmoxApi.StartVM("a1", userLabVm.ProxmoxVmId);
+            var vm = await GetVm(id);
+            if (vm.UserId != GetUser().Id) return Forbid();
+            await ProxmoxManager.GetProxmoxApi(vm.UserLab).StartVM(vm.ProxmoxVmId);
             return Ok();
+        }
+
+        private async Task<UserLabVm> GetVm(int id)
+        {
+            return await DatabaseContext.UserLabVms
+                .Include(v => v.UserLab)
+                .ThenInclude(l => l.HypervisorNode)
+                .ThenInclude(n => n.Hypervisor)
+                .FirstAsync(v => v.Id == id);
         }
 
         

@@ -27,6 +27,9 @@ namespace CSLabsBackend.Controllers
             var module = await DatabaseContext.Modules
                 .Include(m => m.Labs)
                 .ThenInclude(l => l.LabVms)
+                .ThenInclude(v => v.VmTemplates)
+                .ThenInclude(t => t.HypervisorNode)
+                .ThenInclude(n => n.Hypervisor)
                 .FirstAsync(m => m.SpecialCode == specialCode);
             if (module == null)
                 return BadRequest(new ErrorResponse() {Message = "Module not found"});
@@ -40,7 +43,9 @@ namespace CSLabsBackend.Controllers
             
             var firstLab = module.Labs.First();
             var firstVm = firstLab.LabVms.First();
-            int createdVmId = await proxmoxApi.CloneTemplate("a1", firstVm.TemplateProxmoxVmId);
+            var firstTemplate = firstLab.LabVms.SelectMany(v => v.VmTemplates).First();
+            var api = await ProxmoxManager.GetLeastLoadedHyperVisor(firstLab);
+            int createdVmId = await api.CloneTemplate(firstTemplate.HypervisorNode, firstTemplate.TemplateVmId);
             var userModule = new UserModule
             {
                 Module = module,
@@ -50,6 +55,7 @@ namespace CSLabsBackend.Controllers
                     Lab = firstLab, 
                     Status = "ON", 
                     User = GetUser(),
+                    HypervisorNode = api.HypervisorNode,
                     UserLabVms = new List<UserLabVm>()
                     {
                         new UserLabVm()
@@ -72,13 +78,18 @@ namespace CSLabsBackend.Controllers
         {
            var userModule =  DatabaseContext.UserModules
                .Include(u => u.UserLabs)
+               .ThenInclude(l => l.HypervisorNode)
+               .ThenInclude(n => n.Hypervisor)
+               .Include(u => u.UserLabs)
                .ThenInclude(l => l.UserLabVms)
                .FirstOrDefault(m => m.UserId == GetUser().Id && m.Id == id);
            if (userModule == null)
                return NotFound();
+           var userLab = userModule.UserLabs.First();
+           var api = ProxmoxManager.GetProxmoxApi(userLab);
            foreach (var vm in userModule.UserLabs.First().UserLabVms)
            {
-               var status = await proxmoxApi.GetVmStatus("a1", vm.ProxmoxVmId);
+               var status = await api.GetVmStatus(vm.ProxmoxVmId);
                if (status.Lock == "clone")
                    return Ok("Initializing");
            }

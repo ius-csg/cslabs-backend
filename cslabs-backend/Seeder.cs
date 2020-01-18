@@ -16,27 +16,34 @@ namespace CSLabsBackend
         {
             if (!context.Modules.Any())
             {
-                context.Modules.Add(new Module()
+                context.Modules.Add(new Module
                 {
                     Description = "Test Pilot",
-                    Name = "Dr. Sexton's Test Pilot",
+                    Name = "Sexton's Test Pilot",
                     Published = false,
                     SpecialCode = settings.ModuleSpecialCode,
-                    Labs = new List<Lab>()
+                    Labs = new List<Lab>
                     {
-                        new Lab()
+                        new Lab
                         {
                             Name = "Test Pilot Lab",
                             EstimatedCpusUsed = 1,
                             EstimatedMemoryUsedMb = 4096,
                             LabType = LabTypes.Permanent,
                             LabDifficulty = 1,
-                            LabVms = new List<LabVm>()
+                            LabVms = new List<LabVm>
                             {
-                                new LabVm()
+                                new LabVm
                                 {
                                     Name = "Test Pilot VM",
-                                    TemplateProxmoxVmId = 100
+                                    VmTemplates = new List<VmTemplate>
+                                    {
+                                        new VmTemplate
+                                        {
+                                            HypervisorNodeId = 1,
+                                            TemplateVmId = 109
+                                        }
+                                    }
                                 }
                             }
                         }
