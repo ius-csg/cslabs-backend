@@ -32,7 +32,7 @@ namespace CSLabsBackend.Controllers
         
         //Stop
         [HttpPost("stop/{id}")]
-        public async Task<IActionResult> Reboot(int Id)
+        public async Task<IActionResult> Reset(int Id)
         {
             var userLabVm = DatabaseContext.UserLabVms.Find(Id);
             if (userLabVm.UserId != GetUser().Id)
