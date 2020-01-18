@@ -12,7 +12,7 @@ namespace Rundeck.Tests
     public class ProxmoxApiTestCase
     {
         private ProxmoxApi client;
-
+        private HypervisorNode _hypervisorNode;
         [SetUp]
         public void Setup()
         {
@@ -22,7 +22,7 @@ namespace Rundeck.Tests
 
             IConfiguration configuration = builder.Build();
             var apiSection = configuration.GetSection("Api");
-            var hypervisorNode = new HypervisorNode
+            _hypervisorNode = new HypervisorNode
             {
                 Name = "a1",
                 Hypervisor = new Hypervisor
@@ -32,7 +32,7 @@ namespace Rundeck.Tests
                     Password = apiSection["Password"]
                 }
             };
-            client = new ProxmoxApi(hypervisorNode, apiSection["Password"]);
+            client = new ProxmoxApi(_hypervisorNode, apiSection["Password"]);
         }
 
         [Test]
@@ -53,7 +53,7 @@ namespace Rundeck.Tests
         [Test]
         public async Task TestCloneTemplate()
         {
-            var newVmId = await client.CloneTemplate(103);
+            var newVmId = await client.CloneTemplate(_hypervisorNode, 103);
             Assert.NotNull(newVmId);
         }
         
