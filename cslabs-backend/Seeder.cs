@@ -19,7 +19,7 @@ namespace CSLabsBackend
                 context.Modules.Add(new Module
                 {
                     Description = "Test Pilot",
-                    Name = "Dr. Sexton's Test Pilot",
+                    Name = "Sexton's Test Pilot",
                     Published = false,
                     SpecialCode = settings.ModuleSpecialCode,
                     Labs = new List<Lab>
@@ -41,7 +41,7 @@ namespace CSLabsBackend
                                         new VmTemplate
                                         {
                                             HypervisorNodeId = 1,
-                                            TemplateVmId = 100
+                                            TemplateVmId = 109
                                         }
                                     }
                                 }
