@@ -62,6 +62,7 @@ Follow these tutorials to get started.
 
 ### Ef Core
 
+Before running any `dotnet ef` commands, cd into `<project-dir>/cslabs-backend`.
 To generate a migration based on your latest changes, type:
 
 ```
