@@ -14,7 +14,7 @@ namespace CSLabsBackend.Controllers
         protected readonly DefaultContext DatabaseContext;
         private readonly IMapper mapper;
         private User user = null;
-        protected ProxmoxApi proxmoxApi;
+        protected readonly ProxmoxManager ProxmoxManager;
         private IFluentEmailFactory EmailFactory { get; set; }
         
         protected string WebAppUrl { get; set; }
@@ -33,7 +33,7 @@ namespace CSLabsBackend.Controllers
         {
             this.DatabaseContext = dependencies.DatabaseContext;
             this.mapper = dependencies.Mapper;
-            this.proxmoxApi = dependencies.ProxmoxApi;
+            this.ProxmoxManager = dependencies.ProxmoxManager;
             this.EmailFactory = dependencies.EmailFactory;
             this.WebAppUrl = dependencies.AppSettings.WebAppUrl;
         }

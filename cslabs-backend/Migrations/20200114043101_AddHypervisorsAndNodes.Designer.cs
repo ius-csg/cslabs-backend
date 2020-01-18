@@ -3,14 +3,16 @@ using System;
 using CSLabsBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSLabsBackend.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20200114043101_AddHypervisorsAndNodes")]
+    partial class AddHypervisorsAndNodes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,6 +195,9 @@ namespace CSLabsBackend.Migrations
                         .HasColumnName("name")
                         .HasColumnType("VARCHAR(100)");
 
+                    b.Property<int>("TemplateProxmoxVmId")
+                        .HasColumnName("template_proxmox_vm_id");
+
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("updated_at")
@@ -351,9 +356,6 @@ namespace CSLabsBackend.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
-                    b.Property<int>("HypervisorNodeId")
-                        .HasColumnName("hypervisor_node_id");
-
                     b.Property<int>("LabId")
                         .HasColumnName("lab_id");
 
@@ -374,9 +376,6 @@ namespace CSLabsBackend.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_user_labs");
-
-                    b.HasIndex("HypervisorNodeId")
-                        .HasName("ix_user_labs_hypervisor_node_id");
 
                     b.HasIndex("LabId")
                         .HasName("ix_user_labs_lab_id");
@@ -473,33 +472,6 @@ namespace CSLabsBackend.Migrations
                     b.ToTable("user_modules");
                 });
 
-            modelBuilder.Entity("CSLabsBackend.Models.VmTemplate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id");
-
-                    b.Property<int>("HypervisorNodeId")
-                        .HasColumnName("hypervisor_node_id");
-
-                    b.Property<int>("LabVmId")
-                        .HasColumnName("lab_vm_id");
-
-                    b.Property<int>("TemplateVmId")
-                        .HasColumnName("template_vm_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_vm_template");
-
-                    b.HasIndex("HypervisorNodeId")
-                        .HasName("ix_vm_template_hypervisor_node_id");
-
-                    b.HasIndex("LabVmId")
-                        .HasName("ix_vm_template_lab_vm_id");
-
-                    b.ToTable("vm_template");
-                });
-
             modelBuilder.Entity("CSLabsBackend.Models.HypervisorNode", b =>
                 {
                     b.HasOne("CSLabsBackend.Models.Hypervisor", "Hypervisor")
@@ -529,12 +501,6 @@ namespace CSLabsBackend.Migrations
 
             modelBuilder.Entity("CSLabsBackend.Models.UserModels.UserLab", b =>
                 {
-                    b.HasOne("CSLabsBackend.Models.HypervisorNode", "HypervisorNode")
-                        .WithMany("UserLabs")
-                        .HasForeignKey("HypervisorNodeId")
-                        .HasConstraintName("fk_user_labs_hypervisor_nodes_hypervisor_node_id")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("CSLabsBackend.Models.ModuleModels.Lab", "Lab")
                         .WithMany()
                         .HasForeignKey("LabId")
@@ -587,21 +553,6 @@ namespace CSLabsBackend.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .HasConstraintName("fk_user_modules_users_user_id")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("CSLabsBackend.Models.VmTemplate", b =>
-                {
-                    b.HasOne("CSLabsBackend.Models.HypervisorNode", "HypervisorNode")
-                        .WithMany()
-                        .HasForeignKey("HypervisorNodeId")
-                        .HasConstraintName("fk_vm_template_hypervisor_nodes_hypervisor_node_id")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CSLabsBackend.Models.ModuleModels.LabVm", "LabVm")
-                        .WithMany("VmTemplates")
-                        .HasForeignKey("LabVmId")
-                        .HasConstraintName("fk_vm_template_lab_vms_lab_vm_id")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

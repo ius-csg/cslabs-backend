@@ -18,14 +18,17 @@ namespace CSLabsBackend.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var userLab =  DatabaseContext.UserLabs
+                .Include(l => l.HypervisorNode)
+                .ThenInclude(n => n.Hypervisor)
                 .Include(l => l.UserLabVms)
                 .First(m => m.UserId == GetUser().Id && m.Id == id);
             if (userLab == null)
                 return NotFound();
             var dic = new Dictionary<int, string>();
+            var api = ProxmoxManager.GetProxmoxApi(userLab);
             foreach (var vm in userLab.UserLabVms)
             {
-                var status = await proxmoxApi.GetVmStatus("a1", vm.ProxmoxVmId);
+                var status = await api.GetVmStatus(vm.ProxmoxVmId);
                 dic.Add(vm.Id, status.Status);
             }
 
