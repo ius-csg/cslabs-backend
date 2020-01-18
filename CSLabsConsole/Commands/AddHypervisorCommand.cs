@@ -5,6 +5,7 @@ using CommandLine;
 using CSLabsBackend.Config;
 using CSLabsBackend.Models;
 using CSLabsBackend.Proxmox;
+using Newtonsoft.Json;
 
 namespace CSLabsConsole.Commands
 {
@@ -34,14 +35,17 @@ namespace CSLabsConsole.Commands
         
         public override async Task Run(AddHypervisorOptions options)
         {
-            _context.Hypervisors.Add(new Hypervisor
+            var hypervisor = new Hypervisor
             {
                 Host = options.Host,
                 UserName = options.UserName,
                 NoVncUrl = options.NoVncUrl,
                 Password = Cryptography.EncryptString(options.Password, _encryptionKey)
-            });
+            };
+            _context.Hypervisors.Add(hypervisor);
             await _context.SaveChangesAsync();
+            Console.WriteLine("Added Hypervisor:");
+            Console.WriteLine(JsonConvert.SerializeObject(hypervisor));
         }
     }
 }

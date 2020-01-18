@@ -31,6 +31,9 @@ namespace CSLabsConsole
             await ExecuteCommands(new List<Type>
                 {
                     typeof(AddHypervisorCommand),
+                    typeof(AddHypervisorNodeCommand),
+                    typeof(ChangeHypervisorPasswordCommand),
+                    typeof(ListHypervisorsCommand),
                     typeof(EncryptCommand),
                     typeof(DecryptCommand)
                 },
