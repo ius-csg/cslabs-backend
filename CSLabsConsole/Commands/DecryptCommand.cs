@@ -8,7 +8,7 @@ namespace CSLabsConsole.Commands
     [Verb("decrypt", HelpText = "Decrypts a string")]
     public class DecryptOptions
     {
-        [Value(0)]
+        [Value(0, Required = true, HelpText = "Specify the string to decrypt")]
         public string StringToDecrypt { get; set; }
     }
     public class DecryptCommand : Command<DecryptOptions>

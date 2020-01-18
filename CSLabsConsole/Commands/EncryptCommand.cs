@@ -8,7 +8,7 @@ namespace CSLabsConsole.Commands
     [Verb("encrypt", HelpText = "Encrypts a string")]
     public class EncryptOptions
     {
-        [Value(0)]
+        [Value(0, Required = true, HelpText = "Specify the string to encrypt")]
         public string StringToEncrypt { get; set; }
     }
     public class EncryptCommand : Command<EncryptOptions>
