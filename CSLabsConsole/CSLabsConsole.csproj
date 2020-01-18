@@ -10,7 +10,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="CommandLineParser" Version="2.7.82" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+      <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
     </ItemGroup>
 
 </Project>
