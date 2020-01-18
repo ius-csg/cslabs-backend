@@ -27,6 +27,9 @@ namespace CSLabsBackend.Controllers
             var module = await DatabaseContext.Modules
                 .Include(m => m.Labs)
                 .ThenInclude(l => l.LabVms)
+                .ThenInclude(v => v.VmTemplates)
+                .ThenInclude(t => t.HypervisorNode)
+                .ThenInclude(n => n.Hypervisor)
                 .FirstAsync(m => m.SpecialCode == specialCode);
             if (module == null)
                 return BadRequest(new ErrorResponse() {Message = "Module not found"});
@@ -40,8 +43,8 @@ namespace CSLabsBackend.Controllers
             
             var firstLab = module.Labs.First();
             var firstVm = firstLab.LabVms.First();
-            var api = await ProxmoxManager.GetLeastLoadedHyperVisor(firstLab.EstimatedMemoryUsedMb);
-            int createdVmId = await api.CloneTemplate(firstVm.TemplateProxmoxVmId);
+            var api = await ProxmoxManager.GetLeastLoadedHyperVisor(firstLab);
+            int createdVmId = await api.CloneTemplate(firstVm.VmTemplates.First().TemplateVmId);
             var userModule = new UserModule
             {
                 Module = module,

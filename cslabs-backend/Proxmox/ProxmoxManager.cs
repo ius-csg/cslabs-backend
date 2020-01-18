@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CSLabsBackend.Config;
 using CSLabsBackend.Models;
+using CSLabsBackend.Models.ModuleModels;
 using CSLabsBackend.Models.UserModels;
 using CSLabsBackend.Proxmox.Responses;
 using Microsoft.EntityFrameworkCore;
@@ -18,11 +19,13 @@ namespace CSLabsBackend.Proxmox
             _context = context;
             _encryptionKey = appSettings.ProxmoxEncryptionKey;
         }
-        public async Task<ProxmoxApi> GetLeastLoadedHyperVisor(long requiredMemoryGB)
+        public async Task<ProxmoxApi> GetLeastLoadedHyperVisor(Lab lab)
         {
-            long requiredMemory = requiredMemoryGB * 1024 * 1024 * 1024;
-            
+            long requiredMemoryBytes = lab.EstimatedMemoryUsedMb * 1024 * 1024;
+            var firstLabVm = lab.LabVms.First();
+            var hypervisor = firstLabVm.VmTemplates.Select(t => t.HypervisorNode.Hypervisor).First();
             var hypervisorNodes = _context.HypervisorNodes
+                .Where(n => n.HypervisorId == hypervisor.Id)
                 .Include(n => n.Hypervisor)
                 .ToList();
             var list = new List<KeyValuePair<NodeStatus,ProxmoxApi>>();
@@ -33,7 +36,7 @@ namespace CSLabsBackend.Proxmox
                 list.Add(new KeyValuePair<NodeStatus, ProxmoxApi>(nodeStatus, api));
             }
 
-            list = list.Where(p => p.Key.MemoryUsage.Free > requiredMemory).ToList();
+            list = list.Where(p => p.Key.MemoryUsage.Free > requiredMemoryBytes).ToList();
             list.Sort((s1,s2) => s1.Key.CpuUsage - s2.Key.CpuUsage);
             if(list.Count == 0)
                 throw new NoHypervisorAvailableException();

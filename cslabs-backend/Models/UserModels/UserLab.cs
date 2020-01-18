@@ -37,6 +37,10 @@ namespace CSLabsBackend.Models.UserModels
         {
             builder.TimeStamps<UserLab>();
             builder.Entity<UserLab>().HasIndex(u => new {u.UserId, u.LabId}).IsUnique();
+            builder.Entity<UserLab>()
+                .HasOne(u => u.HypervisorNode)
+                .WithMany(n => n.UserLabs)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
