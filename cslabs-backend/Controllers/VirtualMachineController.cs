@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using System.Web;
 using CSLabsBackend.Models.UserModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,18 @@ namespace CSLabsBackend.Controllers
         public async Task<IActionResult> GetTicket(int id)
         {
             var vm = await GetVm(id);
-            return Ok(await ProxmoxManager.GetProxmoxApi(vm.UserLab).GetTicket(vm.Id));
+            var url = vm.UserLab.HypervisorNode.Hypervisor.NoVncUrl
+                .Replace("{node}", vm.UserLab.HypervisorNode.Name)
+                .Replace("{vm}", vm.ProxmoxVmId.ToString());
+          
+            var ticket = await ProxmoxManager.GetProxmoxApi(vm.UserLab).GetTicket(vm.ProxmoxVmId);
+            url += "?port=" + ticket.Port + "&vncticket=" + HttpUtility.UrlEncode(ticket.Ticket);
+            return Ok(new
+            {
+                Ticket = ticket.Ticket,
+                Port = ticket.Port,
+                Url = url
+            });
         }
 
         //Shutdown
@@ -53,6 +65,8 @@ namespace CSLabsBackend.Controllers
         {
             return await DatabaseContext.UserLabVms
                 .Include(v => v.UserLab)
+                .ThenInclude(l => l.HypervisorNode)
+                .ThenInclude(n => n.Hypervisor)
                 .FirstAsync(v => v.Id == id);
         }
 

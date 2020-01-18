@@ -43,8 +43,9 @@ namespace CSLabsBackend.Controllers
             
             var firstLab = module.Labs.First();
             var firstVm = firstLab.LabVms.First();
+            var firstTemplate = firstLab.LabVms.SelectMany(v => v.VmTemplates).First();
             var api = await ProxmoxManager.GetLeastLoadedHyperVisor(firstLab);
-            int createdVmId = await api.CloneTemplate(firstVm.VmTemplates.First().TemplateVmId);
+            int createdVmId = await api.CloneTemplate(firstTemplate.HypervisorNode, firstTemplate.TemplateVmId);
             var userModule = new UserModule
             {
                 Module = module,
@@ -76,6 +77,9 @@ namespace CSLabsBackend.Controllers
         public async Task<IActionResult> Status(int id)
         {
            var userModule =  DatabaseContext.UserModules
+               .Include(u => u.UserLabs)
+               .ThenInclude(l => l.HypervisorNode)
+               .ThenInclude(n => n.Hypervisor)
                .Include(u => u.UserLabs)
                .ThenInclude(l => l.UserLabVms)
                .FirstOrDefault(m => m.UserId == GetUser().Id && m.Id == id);

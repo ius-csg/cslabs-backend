@@ -18,6 +18,8 @@ namespace CSLabsBackend.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var userLab =  DatabaseContext.UserLabs
+                .Include(l => l.HypervisorNode)
+                .ThenInclude(n => n.Hypervisor)
                 .Include(l => l.UserLabVms)
                 .First(m => m.UserId == GetUser().Id && m.Id == id);
             if (userLab == null)

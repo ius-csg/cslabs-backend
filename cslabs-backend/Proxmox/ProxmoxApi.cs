@@ -61,12 +61,12 @@ namespace CSLabsBackend.Proxmox
             var data = result.Response.data;
             var nodeStatus = new NodeStatus
             {
-                CpuUsage = data["cpu"],
+                CpuUsage = data.cpu,
                 MemoryUsage = new MemoryUsage
                 {
-                    Free = data["memory"]["free"],
-                    Used = data["memory"]["used"],
-                    Total = data["memory"]["total"]
+                    Free = data.memory.free,
+                    Used = data.memory.used,
+                    Total = data.memory.total
                 }
             };
             return nodeStatus;
@@ -87,10 +87,10 @@ namespace CSLabsBackend.Proxmox
             await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Shutdown.VmShutdown());
         }
         
-        public async Task<int> CloneTemplate(int vmId)
+        public async Task<int> CloneTemplate(HypervisorNode node, int vmId)
         {
             await LoginIfNotLoggedIn();
-            var vmListResponse = await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu.Vmlist());
+            var vmListResponse = await Task.Run(() => this.client.Nodes[node.Name].Qemu.Vmlist());
             var data = (List<object>)vmListResponse.Response.data;
             List<int> ids = new List<int>();
             foreach (IDictionary<string, object> item in data) {
@@ -99,7 +99,7 @@ namespace CSLabsBackend.Proxmox
 
             int newVmId = ids.Max() + 1;
             Console.WriteLine("VmId: " + vmId);
-            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Clone.CloneVm(newVmId));
+            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Clone.CloneVm(newVmId, target: HypervisorNode.Name));
             
             return newVmId;
         }
