@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Corsinvest.ProxmoxVE.Api;
 using CSLabsBackend.Models;
 using CSLabsBackend.Proxmox.Responses;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CSLabsBackend.Proxmox
 {
@@ -79,7 +80,8 @@ namespace CSLabsBackend.Proxmox
             await LoginIfNotLoggedIn();
             await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Stop.VmStop());
         }
-
+        
+        
         public async Task ResetVM(int vmId)
         {
             await LoginIfNotLoggedIn();
@@ -90,6 +92,19 @@ namespace CSLabsBackend.Proxmox
         {
             await LoginIfNotLoggedIn();
             await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Shutdown.VmShutdown());
+        }
+        
+        public async Task DestroyVm(int vmId)
+        {
+            await LoginIfNotLoggedIn();
+            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].DestroyVm());
+        }
+        
+        public async Task CloneTemplate(HypervisorNode node, int templateId, int vmId)
+        {
+            await LoginIfNotLoggedIn();
+            await Task.Run(() =>
+                this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Clone.CloneVm(vmId, target: HypervisorNode.Name));
         }
         
         public async Task<int> CloneTemplate(HypervisorNode node, int vmId)
@@ -104,8 +119,7 @@ namespace CSLabsBackend.Proxmox
 
             int newVmId = ids.Max() + 1;
             Console.WriteLine("VmId: " + vmId);
-            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Clone.CloneVm(newVmId, target: HypervisorNode.Name));
-            
+            await CloneTemplate(node, vmId, newVmId);
             return newVmId;
         }
 

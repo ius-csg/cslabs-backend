@@ -40,9 +40,19 @@ namespace CSLabsBackend.Controllers
             await ProxmoxManager.GetProxmoxApi(vm.UserLab).ShutdownVm(vm.ProxmoxVmId);
             return Ok();
         }
+
+        [HttpPost("scrub/{id}")]
+        public async Task<IActionResult> Scrub(int id)
+        {
+            var vm = await GetVm(id);
+            if (vm.UserId != GetUser().Id) return Forbid();
+            await ProxmoxManager.GetProxmoxApi(vm.UserLab).DestroyVm(vm.ProxmoxVmId);
+            await ProxmoxManager.GetProxmoxApi(vm.UserLab).CloneTemplate(vm.UserLab.HypervisorNode, vm.ProxmoxVmId);
+            return Ok();
+        }
         
-        //Stop
-        [HttpPost("stop/{id}")]
+        //Reset
+        [HttpPost("reset/{id}")]
         public async Task<IActionResult> Reset(int id)
         {
             var vm = await GetVm(id);

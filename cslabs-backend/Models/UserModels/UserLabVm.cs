@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -24,7 +25,7 @@ namespace CSLabsBackend.Models.UserModels
         public User User { get; set; }
         
         public LabVm LabVm { get; set; }
-        
+
 
         public static void OnModelCreating(ModelBuilder builder)
         {

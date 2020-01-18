@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,14 +15,44 @@ namespace CSLabsBackend.Controllers
     {
         public UserLabController(BaseControllerDependencies dependencies) : base(dependencies) { }
 
-        [HttpGet("{id}/status")]
-        public async Task<IActionResult> Get(int id)
+        [HttpPost("{id}/last-used")]
+        public async Task<IActionResult> UpdateLastUsed(int id)
         {
-            var userLab =  DatabaseContext.UserLabs
+            var userLab = await DatabaseContext.UserLabs
+                .FirstAsync(m => m.UserId == GetUser().Id && m.Id == id);
+            userLab.LastUsed = DateTime.UtcNow;
+            await DatabaseContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpGet("process-last-used")]
+        public async Task<IActionResult> ProcessLastUsed()
+        {
+            var userLabs = await DatabaseContext.UserLabs
                 .Include(l => l.HypervisorNode)
                 .ThenInclude(n => n.Hypervisor)
                 .Include(l => l.UserLabVms)
-                .First(m => m.UserId == GetUser().Id && m.Id == id);
+                .Where(l => l.LastUsed != null && l.LastUsed < DateTime.UtcNow.AddMinutes(-30))
+                .ToListAsync();
+            foreach (var userLab in userLabs)
+            {
+                var api = ProxmoxManager.GetProxmoxApi(userLab);
+                foreach (var userLabVm in userLab.UserLabVms)
+                {
+                    await api.ShutdownVm(userLabVm.ProxmoxVmId);
+                }
+            }
+            return Ok();
+        }
+
+        [HttpGet("{id}/status")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var userLab = await DatabaseContext.UserLabs
+                .Include(l => l.HypervisorNode)
+                .ThenInclude(n => n.Hypervisor)
+                .Include(l => l.UserLabVms)
+                .FirstAsync(m => m.UserId == GetUser().Id && m.Id == id);
             if (userLab == null)
                 return NotFound();
             var dic = new Dictionary<int, string>();
