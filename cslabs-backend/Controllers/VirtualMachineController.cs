@@ -43,12 +43,11 @@ namespace CSLabsBackend.Controllers
         
         //Stop
         [HttpPost("stop/{id}")]
-        public async Task<IActionResult> Reset(int Id)
+        public async Task<IActionResult> Reset(int id)
         {
-            var userLabVm = DatabaseContext.UserLabVms.Find(Id);
-            if (userLabVm.UserId != GetUser().Id)
-                return Forbid();
-            await proxmoxApi.ResetVM("a1", userLabVm.ProxmoxVmId);
+            var vm = await GetVm(id);
+            if (vm.UserId != GetUser().Id) return Forbid();
+            await ProxmoxManager.GetProxmoxApi(vm.UserLab).ResetVM(vm.ProxmoxVmId);
             return Ok();
         }
         

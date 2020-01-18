@@ -80,10 +80,10 @@ namespace CSLabsBackend.Proxmox
             await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Stop.VmStop());
         }
 
-        public async Task ResetVM(string node, int vmId)
+        public async Task ResetVM(int vmId)
         {
-            await loginIfNotLoggedIn();
-            await Task.Run(() => this.client.Nodes[node].Qemu[vmId].Status.Reset.VmReset());
+            await LoginIfNotLoggedIn();
+            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Reset.VmReset());
         }
         
         public async Task ShutdownVm(int vmId)
