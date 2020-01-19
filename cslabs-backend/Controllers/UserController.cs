@@ -73,6 +73,37 @@ namespace CSLabsBackend.Controllers
             return Ok(GetUser());
         }
 
+        [HttpPost("forgot-password/{email}")]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var user = await DatabaseContext.Users
+                .FirstOrDefaultAsync(u => u.SchoolEmail == email || u.PersonalEmail == email);
+            if (user == null)
+                return Ok();
+            var uuid = Guid.NewGuid().ToString();
+            user.PasswordRecoveryCode = uuid;
+            var link = WebAppUrl + "confirm-forgot-password/" + uuid;
+            await DatabaseContext.SaveChangesAsync();
+            if (user.SchoolEmail != null)
+                await CreateEmail().SendForgotPasswordEmail(user.SchoolEmail, link);
+            
+            if (user.PersonalEmail != null)
+                await CreateEmail().SendForgotPasswordEmail(user.PersonalEmail, link);
+
+            return Ok();
+        }
+        
+        [HttpPost("confirm-forgot-password")]
+        public async Task<IActionResult> ConfirmForgotPassword([FromBody] ConfirmForgotPasswordRequest request)
+        {
+            var user = await DatabaseContext.Users
+                .FirstOrDefaultAsync(u => u.PasswordRecoveryCode != null && u.PasswordRecoveryCode == request.PasswordRecoveryCode);
+            if(user == null)
+                return BadRequest("Password recovery code is not correct");
+            await _authenticationService.ChangePassword(user, request.NewPassword);
+            return Ok();
+        }
+
         [HttpPost("verify-email")]
         public async Task<IActionResult> VerifyEmail([FromBody] EmailVerificationRequest request)
         {

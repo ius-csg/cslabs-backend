@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CSLabsBackend.Util;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using static CSLabsBackend.Models.Enums.UserType;
 
 namespace CSLabsBackend.Models.UserModels
@@ -50,6 +51,10 @@ namespace CSLabsBackend.Models.UserModels
 
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]
         public DateTime? TerminationDate { get; set; }
+        
+        [JsonIgnore]
+        [Column(TypeName = "VARCHAR(100)")]
+        public string PasswordRecoveryCode { get; set; }
 
         public void SetNulls()
         {
@@ -67,6 +72,7 @@ namespace CSLabsBackend.Models.UserModels
             builder.Unique<User>(u => u.SchoolEmail);
             builder.Unique<User>(u => u.PersonalEmail);
             builder.Unique<User>(u => u.CardCodeHash);
+            builder.Unique<User>(u => u.PasswordRecoveryCode);
             builder.Entity<User>()
                 .Property(b => b.Password)
                 .HasDefaultValue(null);
