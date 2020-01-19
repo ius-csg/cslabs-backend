@@ -3,6 +3,7 @@ using System.Web;
 using CSLabsBackend.Models.UserModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.ResultOperators.Internal;
 
 namespace CSLabsBackend.Controllers
 {
@@ -13,7 +14,7 @@ namespace CSLabsBackend.Controllers
         public VirtualMachineController(BaseControllerDependencies deps) : base(deps) { }
         
         // GET
-        [HttpGet("get-ticket/{id}")]
+        [HttpGet("{id}/get-ticket")]
         public async Task<IActionResult> GetTicket(int id)
         {
             var vm = await GetVm(id);
@@ -32,31 +33,58 @@ namespace CSLabsBackend.Controllers
         }
 
         //Shutdown
-        [HttpPost("shutdown/{id}")]
+        [HttpPost("{id}/shutdown")]
         public async Task<IActionResult> Shutdown(int id)
         {
             var vm = await GetVm(id);
-            if (vm.UserId != GetUser().Id) return Forbid();
-            await ProxmoxManager.GetProxmoxApi(vm.UserLab).ShutdownVm(vm.ProxmoxVmId);
+            var api = ProxmoxManager.GetProxmoxApi(vm.UserLab);
+            await api.ShutdownVm(vm.ProxmoxVmId);
+            return Ok();
+        }
+
+        [HttpPost("{id}/scrub")]
+        public async Task<IActionResult> Scrub(int id)
+        {
+            var vm = await DatabaseContext.UserLabVms
+                .Include(l => l.VmTemplate)
+                .ThenInclude(l => l.HypervisorNode)
+                .ThenInclude(l => l.Hypervisor)
+                .FirstAsync(v => v.UserId == GetUser().Id && v.Id == id);
+            var api = ProxmoxManager.GetProxmoxApi(vm.VmTemplate.HypervisorNode);
+            await api.DestroyVm(vm.ProxmoxVmId);
+            await api.CloneTemplate(api.HypervisorNode, vm.VmTemplate.TemplateVmId, vm.ProxmoxVmId);
+            var status = await api.GetVmStatus(vm.ProxmoxVmId);
+            while (status.Lock == "clone")
+            {
+                status = await api.GetVmStatus(vm.ProxmoxVmId);
+            }
+            await api.StartVM(vm.ProxmoxVmId);
             return Ok();
         }
         
-        //Shutdown
-        [HttpPost("stop/{id}")]
+        //Reset
+        [HttpPost("{id}/reset")]
+        public async Task<IActionResult> Reset(int id)
+        {
+            var vm = await GetVm(id);
+            await ProxmoxManager.GetProxmoxApi(vm.UserLab).ResetVM(vm.ProxmoxVmId);
+            return Ok();
+        }
+        
+        //Stop
+        [HttpPost("{id}/stop")]
         public async Task<IActionResult> Stop(int id)
         {
             var vm = await GetVm(id);
-            if (vm.UserId != GetUser().Id) return Forbid();
             await ProxmoxManager.GetProxmoxApi(vm.UserLab).StopVM(vm.ProxmoxVmId);
             return Ok();
         }
 
         //StartUp
-        [HttpPost("start/{id}")]
+        [HttpPost("{id}/start")]
         public async Task<IActionResult> StartUp(int id)
         {
             var vm = await GetVm(id);
-            if (vm.UserId != GetUser().Id) return Forbid();
             await ProxmoxManager.GetProxmoxApi(vm.UserLab).StartVM(vm.ProxmoxVmId);
             return Ok();
         }
@@ -67,7 +95,7 @@ namespace CSLabsBackend.Controllers
                 .Include(v => v.UserLab)
                 .ThenInclude(l => l.HypervisorNode)
                 .ThenInclude(n => n.Hypervisor)
-                .FirstAsync(v => v.Id == id);
+                .FirstAsync(v => v.UserId == GetUser().Id && v.Id == id);
         }
 
         

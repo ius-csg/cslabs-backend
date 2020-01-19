@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Corsinvest.ProxmoxVE.Api;
 using CSLabsBackend.Models;
 using CSLabsBackend.Proxmox.Responses;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CSLabsBackend.Proxmox
 {
@@ -81,10 +82,34 @@ namespace CSLabsBackend.Proxmox
         }
         
         
-        public async Task ShutdownVm(int vmId)
+        public async Task ResetVM(int vmId)
         {
             await LoginIfNotLoggedIn();
-            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Shutdown.VmShutdown());
+            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Reset.VmReset());
+        }
+        
+        public async Task ShutdownVm(int vmId, int timeout = 20)
+        {
+            await LoginIfNotLoggedIn();
+            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Shutdown.VmShutdown(timeout: timeout));
+        }
+        
+        public async Task DestroyVm(int vmId)
+        {
+            await LoginIfNotLoggedIn();
+            await StopVM(vmId);
+            var status = await GetVmStatus(vmId);
+            while (!status.IsStopped())
+            {
+                status = await GetVmStatus(vmId);
+            }
+            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].DestroyVm());
+        }
+        
+        public async Task CloneTemplate(HypervisorNode node, int templateId, int vmId)
+        {
+            await LoginIfNotLoggedIn();
+            await Task.Run(() => client.Nodes[HypervisorNode.Name].Qemu[templateId].Clone.CloneVm(vmId, target: node.Name));
         }
         
         public async Task<int> CloneTemplate(HypervisorNode node, int vmId)
@@ -99,8 +124,7 @@ namespace CSLabsBackend.Proxmox
 
             int newVmId = ids.Max() + 1;
             Console.WriteLine("VmId: " + vmId);
-            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Clone.CloneVm(newVmId, target: HypervisorNode.Name));
-            
+            await CloneTemplate(node, vmId, newVmId);
             return newVmId;
         }
 

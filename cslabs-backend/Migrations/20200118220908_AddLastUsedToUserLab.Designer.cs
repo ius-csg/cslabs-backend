@@ -3,14 +3,16 @@ using System;
 using CSLabsBackend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSLabsBackend.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20200118220908_AddLastUsedToUserLab")]
+    partial class AddLastUsedToUserLab
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -422,9 +424,6 @@ namespace CSLabsBackend.Migrations
                     b.Property<int>("UserLabId")
                         .HasColumnName("user_lab_id");
 
-                    b.Property<int>("VmTemplateId")
-                        .HasColumnName("vm_template_id");
-
                     b.HasKey("Id")
                         .HasName("pk_user_lab_vms");
 
@@ -433,9 +432,6 @@ namespace CSLabsBackend.Migrations
 
                     b.HasIndex("UserLabId")
                         .HasName("ix_user_lab_vms_user_lab_id");
-
-                    b.HasIndex("VmTemplateId")
-                        .HasName("ix_user_lab_vms_vm_template_id");
 
                     b.HasIndex("UserId", "LabVmId")
                         .IsUnique()
@@ -581,12 +577,6 @@ namespace CSLabsBackend.Migrations
                         .WithMany("UserLabVms")
                         .HasForeignKey("UserLabId")
                         .HasConstraintName("fk_user_lab_vms_user_labs_user_lab_id")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CSLabsBackend.Models.VmTemplate", "VmTemplate")
-                        .WithMany()
-                        .HasForeignKey("VmTemplateId")
-                        .HasConstraintName("fk_user_lab_vms_vm_template_vm_template_id")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

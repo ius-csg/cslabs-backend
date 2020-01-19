@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,17 +14,44 @@ namespace CSLabsBackend.Controllers
     public class UserLabController : BaseController
     {
         public UserLabController(BaseControllerDependencies dependencies) : base(dependencies) { }
+        
+        [HttpGet("process-last-used")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ProcessLastUsed()
+        {
+            var userLabs = await DatabaseContext.UserLabs
+                .Include(l => l.HypervisorNode)
+                .ThenInclude(n => n.Hypervisor)
+                .Include(l => l.UserLabVms)
+                .Where(l => l.LastUsed != null && l.LastUsed < DateTime.UtcNow.AddMinutes(-30))
+                .ToListAsync();
+            foreach (var userLab in userLabs)
+            {
+                var api = ProxmoxManager.GetProxmoxApi(userLab);
+                userLab.LastUsed = null;
+                await DatabaseContext.SaveChangesAsync();
+                foreach (var userLabVm in userLab.UserLabVms)
+                {
+                    await api.ShutdownVm(userLabVm.ProxmoxVmId);
+                }
+            }
+            return Ok();
+        }
 
         [HttpGet("{id}/status")]
         public async Task<IActionResult> GetStatus(int id)
         {
-            var userLab =  DatabaseContext.UserLabs
+            var userLab = await DatabaseContext.UserLabs
                 .Include(l => l.HypervisorNode)
                 .ThenInclude(n => n.Hypervisor)
                 .Include(l => l.UserLabVms)
-                .First(m => m.UserId == GetUser().Id && m.Id == id);
+                .FirstAsync(m => m.UserId == GetUser().Id && m.Id == id);
             if (userLab == null)
                 return NotFound();
+            
+            userLab.LastUsed = DateTime.UtcNow;
+            await DatabaseContext.SaveChangesAsync();
+
             var dic = new Dictionary<int, string>();
             var api = ProxmoxManager.GetProxmoxApi(userLab);
             foreach (var vm in userLab.UserLabVms)

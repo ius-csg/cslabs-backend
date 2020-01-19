@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using CSLabsBackend.Models.ModuleModels;
 using CSLabsBackend.Util;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CSLabsBackend.Models.UserModels
 {
@@ -25,6 +28,10 @@ namespace CSLabsBackend.Models.UserModels
         
         public LabVm LabVm { get; set; }
         
+        public int VmTemplateId { get; set; }
+        [ForeignKey(nameof(VmTemplateId))]
+        public VmTemplate VmTemplate { get; set; }
+
 
         public static void OnModelCreating(ModelBuilder builder)
         {

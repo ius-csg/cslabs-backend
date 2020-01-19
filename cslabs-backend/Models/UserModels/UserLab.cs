@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -27,6 +28,8 @@ namespace CSLabsBackend.Models.UserModels
         public Lab Lab { get; set; }
         [Required]
         public string Status { get; set; }
+        public DateTime? LastUsed { get; set; }
+        
         [NotMapped]
         public bool HasTopology { get; set; }
         [NotMapped]
