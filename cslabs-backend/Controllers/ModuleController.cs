@@ -29,7 +29,7 @@ namespace CSLabsBackend.Controllers
         {
             return Ok(DatabaseContext.Modules.Where(m => m.Published).ToList());
         }
-        
+
         // GET api/values/5
         [HttpGet("{id}")]
         public Module Get(int id)
