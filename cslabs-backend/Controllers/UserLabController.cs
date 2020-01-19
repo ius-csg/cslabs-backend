@@ -15,7 +15,7 @@ namespace CSLabsBackend.Controllers
         public UserLabController(BaseControllerDependencies dependencies) : base(dependencies) { }
 
         [HttpGet("{id}/status")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetStatus(int id)
         {
             var userLab =  DatabaseContext.UserLabs
                 .Include(l => l.HypervisorNode)
@@ -33,6 +33,36 @@ namespace CSLabsBackend.Controllers
             }
 
             return Ok(dic);
+        }
+        
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var lab = DatabaseContext.UserLabs
+                .Include(u => u.Lab)
+                .Include(u => u.UserLabVms)
+                .ThenInclude(v => v.LabVm)
+                .First(u => u.UserId == GetUser().Id && u.Id == id);
+
+            lab.HasTopology = System.IO.File.Exists("Assets/images/" + id + ".jpg");
+            lab.HasReadme = System.IO.File.Exists("Assets/Pdf/" + id + ".pdf");
+            return Ok(lab);
+        }
+        
+        [AllowAnonymous]
+        [HttpGet("{id}/topology")]
+        public async Task<IActionResult> GetImage(int id)
+        {
+            var image = System.IO.File.OpenRead("Assets/images/" + id + ".jpg");
+            return File(image, "image/jpeg");
+        }
+        
+        [AllowAnonymous]
+        [HttpGet("{id}/readme")]
+        public async Task<IActionResult> GetDocument(int id)
+        {
+            var image = System.IO.File.OpenRead("Assets/Pdf/" + id + ".pdf");
+            return File(image, "application/pdf");
         }
     }
 }

@@ -18,7 +18,7 @@ namespace CSLabsBackend.Models.UserModels
         public int  UserModuleId { get; set; }
         [Required]
         public int LabId { get; set; }
-        
+
         public UserModule UserModule { get; set; }
         [InverseProperty(nameof(UserLabVm.UserLab))]
         public List<UserLabVm> UserLabVms { get; set; }
@@ -27,6 +27,10 @@ namespace CSLabsBackend.Models.UserModels
         public Lab Lab { get; set; }
         [Required]
         public string Status { get; set; }
+        [NotMapped]
+        public bool HasTopology { get; set; }
+        [NotMapped]
+        public bool HasReadme { get; set; }
         
         public int HypervisorNodeId  { get; set; }
         [ForeignKey(nameof(HypervisorNodeId))]
