@@ -33,13 +33,33 @@ namespace CSLabsBackend.Controllers
         }
         
         [HttpGet("{id}")]
-        public async Task<IActionResult> Ge(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var lab = DatabaseContext.Labs
-                .Include(u => u.LabVms)
-                .Include(u => u.ModuleId)
+            var lab = DatabaseContext.UserLabs
+                .Include(u => u.Lab)
+                .Include(u => u.UserLabVms)
+                .ThenInclude(v => v.LabVm)
                 .First(u => u.UserId == GetUser().Id && u.Id == id);
+
+            lab.HasTopology = System.IO.File.Exists("Assets/images/" + id + ".jpg");
+            lab.HasReadme = System.IO.File.Exists("Assets/Pdf/" + id + ".pdf");
             return Ok(lab);
+        }
+        
+        [AllowAnonymous]
+        [HttpGet("{id}/topology")]
+        public async Task<IActionResult> GetImage(int id)
+        {
+            var image = System.IO.File.OpenRead("Assets/images/" + id + ".jpg");
+            return File(image, "image/jpeg");
+        }
+        
+        [AllowAnonymous]
+        [HttpGet("{id}/readme")]
+        public async Task<IActionResult> GetDocument(int id)
+        {
+            var image = System.IO.File.OpenRead("Assets/Pdf/" + id + ".pdf");
+            return File(image, "application/pdf");
         }
     }
 }

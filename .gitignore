@@ -37,3 +37,8 @@ msbuild.wrn
 .vs/
 *.mwb.bak
 appsettings.json
+
+cslabs-backend/Assets/Images/*.jpg
+cslabs-backend/Assets/Pdf/*.pdf
+!cslabs-backend/Assets/Images/.gitkeep
+!cslabs-backend/Assets/Pdf/.gitkeep

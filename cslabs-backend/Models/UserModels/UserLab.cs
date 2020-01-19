@@ -26,6 +26,10 @@ namespace CSLabsBackend.Models.UserModels
         public Lab Lab { get; set; }
         [Required]
         public string Status { get; set; }
+        [NotMapped]
+        public bool HasTopology { get; set; }
+        [NotMapped]
+        public bool HasReadme { get; set; }
         
         public static void OnModelCreating(ModelBuilder builder)
         {

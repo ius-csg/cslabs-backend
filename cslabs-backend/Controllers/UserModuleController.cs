@@ -100,14 +100,14 @@ namespace CSLabsBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var module = await this.DatabaseContext.UserModules
+            var module = await DatabaseContext.UserModules
                 .Include(u => u.Module)
                 .Include(u => u.UserLabs)
                 .ThenInclude(l => l.UserLabVms)
                 .ThenInclude(vm => vm.LabVm)
                 .Include(u => u.UserLabs)
                 .ThenInclude(u => u.Lab)
-                .FirstOrDefaultAsync(UserLab => UserLab.Id == id);
+                .FirstOrDefaultAsync(m => m.UserId == GetUser().Id && m.Id == id);
             if (module == null)
                 return NotFound();
             
