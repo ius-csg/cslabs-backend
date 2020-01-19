@@ -4,5 +4,10 @@ namespace CSLabsBackend.Proxmox.Responses
     {
         public string Status { get; set; }
         public string Lock { get; set; }
+
+        public bool IsStopped()
+        {
+            return Status == "stopped";
+        }
     }
 }

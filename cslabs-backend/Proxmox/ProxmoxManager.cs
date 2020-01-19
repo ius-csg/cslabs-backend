@@ -44,7 +44,7 @@ namespace CSLabsBackend.Proxmox
             return list.First().Value;
         }
 
-        private ProxmoxApi GetProxmoxApi(HypervisorNode node)
+        public ProxmoxApi GetProxmoxApi(HypervisorNode node)
         {
             var password = Cryptography.DecryptString(node.Hypervisor.Password, _encryptionKey);
             return new ProxmoxApi(node, password);

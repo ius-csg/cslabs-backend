@@ -63,6 +63,7 @@ namespace CSLabsBackend.Controllers
                             LabVm = firstVm,
                             User = GetUser(),
                             ProxmoxVmId = createdVmId,
+                            VmTemplate = firstTemplate 
                         }
                     }
                     

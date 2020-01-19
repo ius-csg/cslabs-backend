@@ -88,23 +88,28 @@ namespace CSLabsBackend.Proxmox
             await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Reset.VmReset());
         }
         
-        public async Task ShutdownVm(int vmId)
+        public async Task ShutdownVm(int vmId, int timeout = 20)
         {
             await LoginIfNotLoggedIn();
-            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Shutdown.VmShutdown());
+            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Shutdown.VmShutdown(timeout: timeout));
         }
         
         public async Task DestroyVm(int vmId)
         {
             await LoginIfNotLoggedIn();
+            await StopVM(vmId);
+            var status = await GetVmStatus(vmId);
+            while (!status.IsStopped())
+            {
+                status = await GetVmStatus(vmId);
+            }
             await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].DestroyVm());
         }
         
         public async Task CloneTemplate(HypervisorNode node, int templateId, int vmId)
         {
             await LoginIfNotLoggedIn();
-            await Task.Run(() =>
-                this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Clone.CloneVm(vmId, target: HypervisorNode.Name));
+            await Task.Run(() => client.Nodes[HypervisorNode.Name].Qemu[templateId].Clone.CloneVm(vmId, target: node.Name));
         }
         
         public async Task<int> CloneTemplate(HypervisorNode node, int vmId)
