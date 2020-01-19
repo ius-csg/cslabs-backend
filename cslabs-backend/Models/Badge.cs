@@ -19,12 +19,7 @@ namespace CSLabsBackend.Models
         public string IconPath { get; set; }
         
         public int RequiredNumOfModules { get; set; }
-        
-        [Required]
-        public DateTime CreatedAt { get; set; }
-        [Required]
-        public DateTime UpdatedAt { get; set; }
-        
+
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<Badge>();

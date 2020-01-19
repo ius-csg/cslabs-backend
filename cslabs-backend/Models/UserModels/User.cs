@@ -42,12 +42,6 @@ namespace CSLabsBackend.Models.UserModels
         [Column(TypeName = "VARCHAR(45)")]
         public string UserType { get; set; } = Guest;
 
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]
-        public DateTime CreatedAt { get; set; }
-        
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]
-        public DateTime UpdatedAt { get; set; }
-
         [Column(TypeName = "VARCHAR(100)")]
         public string CardCodeHash { get; set; }
         
