@@ -72,7 +72,8 @@ namespace CSLabsBackend.Controllers
         {
             return Ok(GetUser());
         }
-
+        
+        [AllowAnonymous]
         [HttpPost("forgot-password/{email}")]
         public async Task<IActionResult> ForgotPassword(string email)
         {
@@ -82,7 +83,7 @@ namespace CSLabsBackend.Controllers
                 return Ok();
             var uuid = Guid.NewGuid().ToString();
             user.PasswordRecoveryCode = uuid;
-            var link = WebAppUrl + "confirm-forgot-password/" + uuid;
+            var link = WebAppUrl + "/confirm-forgot-password/" + uuid;
             await DatabaseContext.SaveChangesAsync();
             if (user.SchoolEmail != null)
                 await CreateEmail().SendForgotPasswordEmail(user.SchoolEmail, link);
@@ -93,6 +94,7 @@ namespace CSLabsBackend.Controllers
             return Ok();
         }
         
+        [AllowAnonymous]
         [HttpPost("confirm-forgot-password")]
         public async Task<IActionResult> ConfirmForgotPassword([FromBody] ConfirmForgotPasswordRequest request)
         {
