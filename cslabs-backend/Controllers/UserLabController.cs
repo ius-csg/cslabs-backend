@@ -72,7 +72,7 @@ namespace CSLabsBackend.Controllers
                 .ThenInclude(v => v.LabVm)
                 .First(u => u.UserId == GetUser().Id && u.Id == id);
 
-            lab.HasTopology = System.IO.File.Exists("Assets/images/" + id + ".jpg");
+            lab.HasTopology = System.IO.File.Exists("Assets/Images/" + id + ".jpg");
             lab.HasReadme = System.IO.File.Exists("Assets/Pdf/" + id + ".pdf");
             return Ok(lab);
         }
@@ -81,7 +81,7 @@ namespace CSLabsBackend.Controllers
         [HttpGet("{id}/topology")]
         public async Task<IActionResult> GetImage(int id)
         {
-            var image = System.IO.File.OpenRead("Assets/images/" + id + ".jpg");
+            var image = System.IO.File.OpenRead("Assets/Images/" + id + ".jpg");
             return File(image, "image/jpeg");
         }
         
