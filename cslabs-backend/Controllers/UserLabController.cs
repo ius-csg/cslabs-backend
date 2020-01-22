@@ -83,7 +83,7 @@ namespace CSLabsBackend.Controllers
         {
             var userLab = await DatabaseContext.UserLabs
                 .Include(u => u.Lab)
-                .FirstAsync(u => u.UserId == GetUser().Id && u.Id == id);
+                .FirstAsync(u => u.Id == id);
             var image = System.IO.File.OpenRead("Assets/Images/" + userLab.Lab.Id + ".jpg");
             return File(image, "image/jpeg");
         }
@@ -94,7 +94,7 @@ namespace CSLabsBackend.Controllers
         {
             var userLab = await DatabaseContext.UserLabs
                 .Include(u => u.Lab)
-                .FirstAsync(u => u.UserId == GetUser().Id && u.Id == id);
+                .FirstAsync(u => u.Id == id);
             var image = System.IO.File.OpenRead("Assets/Pdf/" + userLab.Lab.Id + ".pdf");
             return File(image, "application/pdf");
         }
