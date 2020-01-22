@@ -66,22 +66,25 @@ namespace CSLabsBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var lab = DatabaseContext.UserLabs
+            var userLab = await DatabaseContext.UserLabs
                 .Include(u => u.Lab)
                 .Include(u => u.UserLabVms)
                 .ThenInclude(v => v.LabVm)
-                .First(u => u.UserId == GetUser().Id && u.Id == id);
+                .FirstAsync(u => u.UserId == GetUser().Id && u.Id == id);
 
-            lab.HasTopology = System.IO.File.Exists("Assets/Images/" + id + ".jpg");
-            lab.HasReadme = System.IO.File.Exists("Assets/Pdf/" + id + ".pdf");
-            return Ok(lab);
+            userLab.HasTopology = System.IO.File.Exists("Assets/Images/" + userLab.Lab.Id + ".jpg");
+            userLab.HasReadme = System.IO.File.Exists("Assets/Pdf/" + userLab.Lab.Id + ".pdf");
+            return Ok(userLab);
         }
         
         [AllowAnonymous]
         [HttpGet("{id}/topology")]
         public async Task<IActionResult> GetImage(int id)
         {
-            var image = System.IO.File.OpenRead("Assets/Images/" + id + ".jpg");
+            var userLab = await DatabaseContext.UserLabs
+                .Include(u => u.Lab)
+                .FirstAsync(u => u.UserId == GetUser().Id && u.Id == id);
+            var image = System.IO.File.OpenRead("Assets/Images/" + userLab.Lab.Id + ".jpg");
             return File(image, "image/jpeg");
         }
         
@@ -89,7 +92,10 @@ namespace CSLabsBackend.Controllers
         [HttpGet("{id}/readme")]
         public async Task<IActionResult> GetDocument(int id)
         {
-            var image = System.IO.File.OpenRead("Assets/Pdf/" + id + ".pdf");
+            var userLab = await DatabaseContext.UserLabs
+                .Include(u => u.Lab)
+                .FirstAsync(u => u.UserId == GetUser().Id && u.Id == id);
+            var image = System.IO.File.OpenRead("Assets/Pdf/" + userLab.Lab.Id + ".pdf");
             return File(image, "application/pdf");
         }
     }
