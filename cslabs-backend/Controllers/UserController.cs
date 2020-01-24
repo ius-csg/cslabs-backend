@@ -80,7 +80,12 @@ namespace CSLabsBackend.Controllers
             var user = await DatabaseContext.Users
                 .FirstOrDefaultAsync(u => u.SchoolEmail == email || u.PersonalEmail == email);
             if (user == null)
+            {
+                // make sure bots can't tell if a user is found or not.
+                await Task.Delay(new Random().Next(2000, 2500));
                 return Ok();
+            }
+               
             var uuid = Guid.NewGuid().ToString();
             user.PasswordRecoveryCode = uuid;
             var link = WebAppUrl + "/confirm-forgot-password/" + uuid;
