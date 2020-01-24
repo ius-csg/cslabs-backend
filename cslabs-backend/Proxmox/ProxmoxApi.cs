@@ -55,14 +55,18 @@ namespace CSLabsBackend.Proxmox
             await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Start.VmStart());
         }
 
-        public async Task<NodeStatus> GetNodeStatus()
+        public async Task<NodeStatus> GetNodeStatus(HypervisorNode node = null)
         {
+            if (node == null)
+            {
+                node = HypervisorNode;
+            }
             await LoginIfNotLoggedIn();
-            var result =  await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Status.Status());
+            var result =  await Task.Run(() => this.client.Nodes[node.Name].Status.Status());
             var data = result.Response.data;
             var nodeStatus = new NodeStatus
             {
-                CpuUsage = data.cpu,
+                CpuUsage = (int) (data.cpu * 100),
                 MemoryUsage = new MemoryUsage
                 {
                     Free = data.memory.free,
@@ -109,10 +113,12 @@ namespace CSLabsBackend.Proxmox
         public async Task CloneTemplate(HypervisorNode node, int templateId, int vmId)
         {
             await LoginIfNotLoggedIn();
-            await Task.Run(() => client.Nodes[HypervisorNode.Name].Qemu[templateId].Clone.CloneVm(vmId, target: node.Name));
+            var response = await Task.Run(() => client.Nodes[HypervisorNode.Name].Qemu[templateId].Clone.CloneVm(vmId, target: node.Name));
+            if (!response.IsSuccessStatusCode)
+                throw new ProxmoxException("Could not clone template due to: " + response.ReasonPhrase);
         }
-        
-        public async Task<int> CloneTemplate(HypervisorNode node, int vmId)
+
+        private async Task<List<int>> GetVmIds(HypervisorNode node)
         {
             await LoginIfNotLoggedIn();
             var vmListResponse = await Task.Run(() => this.client.Nodes[node.Name].Qemu.Vmlist());
@@ -122,7 +128,30 @@ namespace CSLabsBackend.Proxmox
                 ids.Add(int.Parse((string)item["vmid"]));
             }
 
-            int newVmId = ids.Max() + 1;
+            return ids;
+        }
+        
+        private async Task<List<int>> GetContainerIds(HypervisorNode node)
+        {
+            await LoginIfNotLoggedIn();
+            var vmListResponse = await Task.Run(() => this.client.Nodes[node.Name].Lxc.Vmlist());
+            var data = (List<object>)vmListResponse.Response.data;
+            List<int> ids = new List<int>();
+            foreach (IDictionary<string, object> item in data) {
+                ids.Add(int.Parse((string)item["vmid"]));
+            }
+
+            return ids;
+        }
+        public async Task<int> CloneTemplate(HypervisorNode node, int vmId)
+        {
+            await LoginIfNotLoggedIn();
+            var ids = (await GetVmIds(node)).Concat(await GetContainerIds(node)).ToList();
+
+            int newVmId = 100;
+            if(ids.Count != 0)
+                newVmId = ids.Max() + 1;
+            
             Console.WriteLine("VmId: " + vmId);
             await CloneTemplate(node, vmId, newVmId);
             return newVmId;

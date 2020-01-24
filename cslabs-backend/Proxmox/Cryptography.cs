@@ -46,6 +46,12 @@ namespace CSLabsBackend.Proxmox
             var iv = new byte[16];
             var cipher = new byte[16];
 
+            if (fullCipher.Length < iv.Length)
+            {
+                throw new ArgumentException(
+                    "cipher text is smaller than the initialization vector, are you sure the cipher text is encrypted?",
+                    nameof(cipherText));
+            }
             Buffer.BlockCopy(fullCipher, 0, iv, 0, iv.Length);
             Buffer.BlockCopy(fullCipher, iv.Length, cipher, 0, iv.Length);
             var key = Encoding.UTF8.GetBytes(keyString);
