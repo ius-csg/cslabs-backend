@@ -18,5 +18,19 @@ namespace CSLabsBackend.Email
                 })
                 .SendAsync();
         }
+
+        public static async Task SendForgotPasswordEmail(this IFluentEmail email, string to, string forgotPasswordLink)
+        {
+            var subject = "Forgot Password Confirmation";
+            await email
+                .To(to)
+                .Subject(subject)
+                .UsingTemplateFile("ForgotPasswordEmail.cshtml", new ForgotPasswordEmailViewModel()
+                {
+                    Subject = subject,
+                    ForgotPasswordLink = forgotPasswordLink
+                })
+                .SendAsync();
+        }
     }
 }

@@ -54,7 +54,7 @@ namespace CSLabsBackend.RequestModels
 
         public string GetEmail()
         {
-            return this.SchoolEmail ?? this.PersonalEmail;
+            return string.IsNullOrWhiteSpace(SchoolEmail) ? PersonalEmail : SchoolEmail;
         }
     }
 }

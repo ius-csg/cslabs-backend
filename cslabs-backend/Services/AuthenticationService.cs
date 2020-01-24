@@ -21,6 +21,7 @@ namespace CSLabsBackend.Services
     {
         User Authenticate(string email, string password);
         Task<User> AddUser(User user);
+        Task<User> ChangePassword(User user, string password);
     }
 
     public class AuthenticationService : IAuthenticationService
@@ -39,6 +40,14 @@ namespace CSLabsBackend.Services
             var hasher = new PasswordHasher<User>();
             user.Password = hasher.HashPassword(user, user.Password);
             _databaseContext.Users.Add(user);
+            await _databaseContext.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<User> ChangePassword(User user, string password)
+        {
+            var hasher = new PasswordHasher<User>();
+            user.Password = hasher.HashPassword(user, password);
             await _databaseContext.SaveChangesAsync();
             return user;
         }
