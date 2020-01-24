@@ -66,7 +66,7 @@ namespace CSLabsBackend.Proxmox
             var data = result.Response.data;
             var nodeStatus = new NodeStatus
             {
-                CpuUsage = (int) (data.cpu * 100),
+                CpuUsage = data.cpu * 100,
                 MemoryUsage = new MemoryUsage
                 {
                     Free = data.memory.free,
@@ -118,10 +118,21 @@ namespace CSLabsBackend.Proxmox
                 throw new ProxmoxException("Could not clone template due to: " + response.ReasonPhrase);
         }
 
-        private async Task<List<int>> GetVmIds(HypervisorNode node)
+        private async Task<List<string>> GetNodes()
+        {
+            var nodeList = await Task.Run(() => this.client.Nodes.Index());
+            var nodes = new List<string>();
+            foreach (IDictionary<string, object> item in nodeList.Response.data) {
+                nodes.Add((string)item["node"]);
+            }
+
+            return nodes;
+        }
+
+        private async Task<List<int>> GetVmIds(string node)
         {
             await LoginIfNotLoggedIn();
-            var vmListResponse = await Task.Run(() => this.client.Nodes[node.Name].Qemu.Vmlist());
+            var vmListResponse = await Task.Run(() => this.client.Nodes[node].Qemu.Vmlist());
             var data = (List<object>)vmListResponse.Response.data;
             List<int> ids = new List<int>();
             foreach (IDictionary<string, object> item in data) {
@@ -130,11 +141,23 @@ namespace CSLabsBackend.Proxmox
 
             return ids;
         }
+
+        public async Task<List<int>> GetAllUsedIds()
+        {
+            var nodes = await GetNodes();
+            List<int> ids = new List<int>();
+            foreach (var node in nodes)
+            {
+                ids.AddRange((await GetVmIds(node)).Concat(await GetContainerIds(node)));
+            }
+
+            return ids;
+        }
         
-        private async Task<List<int>> GetContainerIds(HypervisorNode node)
+        private async Task<List<int>> GetContainerIds(string node)
         {
             await LoginIfNotLoggedIn();
-            var vmListResponse = await Task.Run(() => this.client.Nodes[node.Name].Lxc.Vmlist());
+            var vmListResponse = await Task.Run(() => this.client.Nodes[node].Lxc.Vmlist());
             var data = (List<object>)vmListResponse.Response.data;
             List<int> ids = new List<int>();
             foreach (IDictionary<string, object> item in data) {
@@ -146,7 +169,7 @@ namespace CSLabsBackend.Proxmox
         public async Task<int> CloneTemplate(HypervisorNode node, int vmId)
         {
             await LoginIfNotLoggedIn();
-            var ids = (await GetVmIds(node)).Concat(await GetContainerIds(node)).ToList();
+            var ids = await GetAllUsedIds();
 
             int newVmId = 100;
             if(ids.Count != 0)

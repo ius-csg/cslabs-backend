@@ -38,7 +38,7 @@ namespace CSLabsBackend.Proxmox
             }
 
             list = list.Where(p => p.Key.MemoryUsage.Free > requiredMemoryBytes).ToList();
-            list.Sort((s1, s2) => s1.Key.CpuUsage - s2.Key.CpuUsage);
+            list.Sort((s1, s2) => (int)((s1.Key.CpuUsage - s2.Key.CpuUsage) * 100));
             if(list.Count == 0)
                 throw new NoHypervisorAvailableException();
 
