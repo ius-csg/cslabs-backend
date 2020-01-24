@@ -1,0 +1,12 @@
+@{
+    ViewBag.Title = "Please Verify your email address";
+    Layout = "Shared/_Layout.cshtml";
+}
+@model CSLabs.Api.Email.ViewModels.VerifyEmailViewModel
+Hello,
+
+Please take a second to verify your email address. 
+You must verify your email address for it to be used on your account.
+<br/>
+<a href="@Model.VerificationLink">Click here to verify your email.</a>
+
