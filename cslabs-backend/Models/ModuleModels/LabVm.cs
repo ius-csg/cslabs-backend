@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using CSLabsBackend.Util;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,11 @@ namespace CSLabsBackend.Models.ModuleModels
         {
             builder.TimeStamps<LabVm>();
             builder.Unique<LabVm>(u => u.Name);
+        }
+
+        public VmTemplate GetTemplateWithNode(HypervisorNode node)
+        {
+            return VmTemplates.First(t => t.HypervisorNode == node);
         }
     }
 }

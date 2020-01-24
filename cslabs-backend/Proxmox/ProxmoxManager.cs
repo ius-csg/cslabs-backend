@@ -19,30 +19,32 @@ namespace CSLabsBackend.Proxmox
             _context = context;
             _encryptionKey = appSettings.ProxmoxEncryptionKey;
         }
-        public async Task<ProxmoxApi> GetLeastLoadedHyperVisor(Lab lab)
+        public async Task<HypervisorNode> GetLeastLoadedHyperVisorNode(Lab lab)
         {
-            long requiredMemoryBytes = lab.EstimatedMemoryUsedMb * 1024 * 1024;
-            var firstLabVm = lab.LabVms.First();
-            var hypervisor = firstLabVm.VmTemplates.Select(t => t.HypervisorNode.Hypervisor).First();
+            long requiredMemoryBytes = (long) lab.EstimatedMemoryUsedMb * 1024 * 1024;
+            // only support one cluster right now
+            var hypervisor = lab.GetFirstAvailableHypervisor();
+           
             var hypervisorNodes = _context.HypervisorNodes
                 .Where(n => n.HypervisorId == hypervisor.Id)
                 .Include(n => n.Hypervisor)
                 .ToList();
-            var list = new List<KeyValuePair<NodeStatus,ProxmoxApi>>();
+            var api = GetProxmoxApi(hypervisorNodes.First());
+            var list = new List<KeyValuePair<NodeStatus,HypervisorNode>>();
             foreach (var hypervisorNode in hypervisorNodes)
             {
-                var api = GetProxmoxApi(hypervisorNode);
-                var nodeStatus = await api.GetNodeStatus();
-                list.Add(new KeyValuePair<NodeStatus, ProxmoxApi>(nodeStatus, api));
+                var nodeStatus = await api.GetNodeStatus(hypervisorNode);
+                list.Add(new KeyValuePair<NodeStatus, HypervisorNode>(nodeStatus, hypervisorNode));
             }
 
             list = list.Where(p => p.Key.MemoryUsage.Free > requiredMemoryBytes).ToList();
-            list.Sort((s1,s2) => (int)(s1.Key.CpuUsage - s2.Key.CpuUsage));
+            list.Sort((s1, s2) => (int)((s1.Key.CpuUsage - s2.Key.CpuUsage) * 100));
             if(list.Count == 0)
                 throw new NoHypervisorAvailableException();
 
             return list.First().Value;
         }
+        
 
         public ProxmoxApi GetProxmoxApi(HypervisorNode node)
         {
