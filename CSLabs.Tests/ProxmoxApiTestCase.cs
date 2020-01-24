@@ -1,13 +1,12 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CSLabsBackend.Models;
-using CSLabsBackend.Proxmox;
+using CSLabs.Api.Models;
+using CSLabs.Api.Proxmox;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
-using Rundeck;
 
-namespace Rundeck.Tests
+namespace CSLabs.Tests
 {
     public class ProxmoxApiTestCase
     {

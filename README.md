@@ -13,8 +13,8 @@ To connect to a proxmox host, you will need to add them to the DB. The passwords
 access the proxmox host is encrypted so a command is developed to ease the process of adding them.
 
 1. Build the solution
-2. `cd CSLabsConsole/bin/Debug/netcoreapp2.2`
-3. `dotnet CSLabsConsole.dll` 
+2. `cd CSLabs.Console/bin/Debug/netcoreapp2.2`
+3. `dotnet CSLabs.Console.dll` 
 
 This will show you all the commands available:
 
@@ -35,13 +35,13 @@ This will show you all the commands available:
 Command to add a hypervisor:
 
 ```
-dotnet CSLabsConsole.dll add-hypervisor --host <hostname> --username root --password <password given> --novncurl
+dotnet CSLabs.Console.dll add-hypervisor --host <hostname> --username root --password <password given> --novncurl
 ```
 
 Command to add a node:
 
 ```
-dotnet CSLabsConsole.dll add-hypervisor-node --name <node-name> --hypervisorid <the id of the hypervisor added>
+dotnet CSLabs.Console.dll add-hypervisor-node --name <node-name> --hypervisorid <the id of the hypervisor added>
 ```
 
 Documentation in trello 
@@ -62,7 +62,7 @@ Follow these tutorials to get started.
 
 ### Ef Core
 
-Before running any `dotnet ef` commands, cd into `<project-dir>/cslabs-backend`.
+Before running any `dotnet ef` commands, cd into `<project-dir>/CSLabs.Api`.
 To generate a migration based on your latest changes, type:
 
 ```
