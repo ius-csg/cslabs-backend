@@ -1,4 +1,4 @@
-namespace CSLabsBackend.Config
+namespace CSLabs.Api.Config
 {
     public class LdapSettings
     {

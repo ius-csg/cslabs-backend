@@ -1,6 +1,6 @@
 using System;
 
-namespace CSLabsBackend.Services
+namespace CSLabs.Api.Services
 {
     public class AuthenticationFailureException : Exception
     {

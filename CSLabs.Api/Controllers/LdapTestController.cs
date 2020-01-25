@@ -1,8 +1,8 @@
-using CSLabsBackend.Models.UserModels;
-using CSLabsBackend.Services;
+using CSLabs.Api.Models.UserModels;
+using CSLabs.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CSLabsBackend.Controllers
+namespace CSLabs.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
-using CSLabsBackend.Config;
-using CSLabsBackend.Models.UserModels;
+using CSLabs.Api.Config;
+using CSLabs.Api.Models.UserModels;
 using Novell.Directory.Ldap;
 
-namespace CSLabsBackend.Services
+namespace CSLabs.Api.Services
 {
     public class LdapService
     {
