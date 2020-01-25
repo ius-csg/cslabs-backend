@@ -19,11 +19,11 @@ namespace CSLabs.Api.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            _ldapService.CreateEntry(new User
-            {
-                SchoolEmail = "testuser@iu.edu"
-            }, "TestPassword");
-         
+            // _ldapService.CreateEntry(new User
+            // {
+            //     SchoolEmail = "testuser@iu.edu"
+            // }, "TestPassword");
+            _ldapService.Search();
             return Ok();
         }
 

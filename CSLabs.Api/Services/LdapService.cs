@@ -41,6 +41,32 @@ namespace CSLabs.Api.Services
             LdapEntry newEntry = new LdapEntry(dn, userAttributeSet);
             ldapConn.Add(newEntry);
         }
+        
+        public void Search()
+        {
+            LdapConnection ldapConn = new LdapConnection();
+        
+            ldapConn.Connect(_ldapHost, _ldapPort);
+            LdapSearchResults lsc = ldapConn.Search("uid=jgallavi,cn=users,cn=accounts,dc=csg,dc=ius,dc=edu", LdapConnection.SCOPE_SUB, "objectClass=*", null, false);
+
+            while (lsc.HasMore())
+            {
+                LdapEntry nextEntry = null;
+                try
+                {
+                    nextEntry = lsc.Next();
+                }
+                catch (LdapException e)
+                {
+                    Console.WriteLine("Error: " + e.LdapErrorMessage);
+                    //Exception is thrown, go for next entry
+                    continue;
+                }
+
+                Console.WriteLine("\n" + nextEntry.DN);
+            }
+
+        }
 
         public void ModifyAttribute(User user, string attrName, string attrString, string pass)
         {
