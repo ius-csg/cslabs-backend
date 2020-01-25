@@ -32,16 +32,10 @@ This will show you all the commands available:
   decrypt                       Decrypts a string
 ```
 
-Command to add a hypervisor:
+You will need to change the password of the default hypervisor. The password is found in trello in the notes column
 
 ```
-dotnet CSLabs.Console.dll add-hypervisor --host <hostname> --username root --password <password given> --novncurl
-```
-
-Command to add a node:
-
-```
-dotnet CSLabs.Console.dll add-hypervisor-node --name <node-name> --hypervisorid <the id of the hypervisor added>
+dotnet CSLabs.Console.dll change-hypervisor-password --id 1 --password <password given>
 ```
 
 Documentation in trello 
