@@ -1,17 +1,17 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CSLabsBackend.Proxmox;
+using CSLabs.Api.Models;
+using CSLabs.Api.Proxmox;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
-using Rundeck;
 
-namespace Rundeck.Tests
+namespace CSLabs.Tests
 {
     public class ProxmoxApiTestCase
     {
         private ProxmoxApi client;
-
+        private HypervisorNode _hypervisorNode;
         [SetUp]
         public void Setup()
         {
@@ -21,13 +21,23 @@ namespace Rundeck.Tests
 
             IConfiguration configuration = builder.Build();
             var apiSection = configuration.GetSection("Api");
-            client = new ProxmoxApi(apiSection["Host"], apiSection["Username"], apiSection["Password"]);
+            _hypervisorNode = new HypervisorNode
+            {
+                Name = "a1",
+                Hypervisor = new Hypervisor
+                {
+                    Host = apiSection["Host"],
+                    UserName = apiSection["Username"],
+                    Password = apiSection["Password"]
+                }
+            };
+            client = new ProxmoxApi(_hypervisorNode, apiSection["Password"]);
         }
 
         [Test]
         public async Task TestGetTicket()
         {
-            var ticketResponse = await client.GetTicket("a1", 104);
+            var ticketResponse = await client.GetTicket(104);
             Assert.NotNull(ticketResponse.Ticket);
             Assert.Greater(ticketResponse.Ticket.Length, 1);
         }
@@ -35,16 +45,22 @@ namespace Rundeck.Tests
         [Test]
         public async Task TestGetVMStatus()
         {
-            var ticketResponse = await client.GetVmStatus("a1", 104);
+            var ticketResponse = await client.GetVmStatus(104);
             Assert.NotNull(ticketResponse);
         }
         
         [Test]
         public async Task TestCloneTemplate()
         {
-            var newVmId = await client.CloneTemplate("a1", 103);
+            var newVmId = await client.CloneTemplate(_hypervisorNode, 103);
             Assert.NotNull(newVmId);
         }
         
+        [Test]
+        public async Task GetNodeStatus()
+        {
+            var result = await client.GetNodeStatus();
+        }
+
     }
 }

@@ -6,6 +6,51 @@
 * Visual Studio 2019 or the Rider IDE from Jetbrains
 * Copy `appsetting.Example.json` to `appsettings.json`
 
+
+### Managing Hypervisors
+
+To connect to a proxmox host, you will need to add them to the DB. The passwords used to
+access the proxmox host is encrypted so a command is developed to ease the process of adding them.
+
+1. Build the solution
+2. `cd CSLabs.Console/bin/Debug/netcoreapp2.2`
+3. `dotnet CSLabs.Console.dll` 
+
+This will show you all the commands available:
+
+```
+ add-hypervisor                Adds a hypervisor to the database
+
+  add-hypervisor-node           Adds a hypervisor node to the database
+
+  change-hypervisor-password    Changes the password for a hypervisor
+
+  list-hypervisors              Lists hypervisors in the database
+
+  encrypt                       Encrypts a string
+
+  decrypt                       Decrypts a string
+```
+
+Command to add a hypervisor:
+
+```
+dotnet CSLabs.Console.dll add-hypervisor --host <hostname> --username root --password <password given> --novncurl
+```
+
+Command to add a node:
+
+```
+dotnet CSLabs.Console.dll add-hypervisor-node --name <node-name> --hypervisorid <the id of the hypervisor added>
+```
+
+Documentation in trello 
+
+
+Note: On production and staging the novnc url has to be added manually to the nginx config if a new host is added.
+
+
+
 ### Tutorial
 
 Follow these tutorials to get started.
@@ -17,6 +62,7 @@ Follow these tutorials to get started.
 
 ### Ef Core
 
+Before running any `dotnet ef` commands, cd into `<project-dir>/CSLabs.Api`.
 To generate a migration based on your latest changes, type:
 
 ```
