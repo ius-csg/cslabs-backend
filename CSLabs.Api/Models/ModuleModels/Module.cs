@@ -3,8 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
+using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace CSLabs.Api.Models.ModuleModels
 {
@@ -24,6 +28,17 @@ namespace CSLabs.Api.Models.ModuleModels
         
         [NotMapped]
         public int UserModuleId { get; set; }
+
+        public async Task SetUserLabIdIfExists(DefaultContext context, User user)
+        {
+            var userModule = await context.UserModules
+                .Where(um => um.ModuleId == Id && um.UserId == user.Id)
+                .FirstOrDefaultAsync();
+            if (userModule != null)
+            {
+                UserModuleId = userModule.Id;
+            }
+        }
 
         public static void OnModelCreating(ModelBuilder builder)
         {
