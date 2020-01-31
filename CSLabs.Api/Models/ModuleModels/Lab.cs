@@ -43,39 +43,6 @@ namespace CSLabs.Api.Models.ModuleModels
             return LabVms.SelectMany(vm => vm.VmTemplates).Select(t => t.HypervisorNode.Hypervisor)
                 .First();
         }
-        
-        public HypervisorNode GetFirstAvailableHypervisorNodeFromTemplates()
-        {
-            return LabVms.SelectMany(vm => vm.VmTemplates).Select(t => t.HypervisorNode).First();
-        }
-
-        public async Task<UserLab> Instantiate(ProxmoxManager ProxmoxManager, User user)
-        {
-            var node = await ProxmoxManager.GetLeastLoadedHyperVisorNode(this);
-            var api = ProxmoxManager.GetProxmoxApi(GetFirstAvailableHypervisorNodeFromTemplates());
-            List<UserLabVm> vms = new List<UserLabVm>();
-            foreach (var labVm in LabVms)
-            {
-                var template = labVm.GetTemplateWithNode(api.HypervisorNode);
-                int createdVmId = await api.CloneTemplate(node, template.TemplateVmId);
-                vms.Add(new UserLabVm()
-                {
-                    LabVm = labVm,
-                    User = user,
-                    ProxmoxVmId = createdVmId,
-                    VmTemplate = template
-                });
-            }
-
-            return new UserLab
-            {
-                Lab = this,
-                Status = "ON",
-                User = user,
-                HypervisorNode = node,
-                UserLabVms = vms
-            };
-        }
 
         public static void OnModelCreating(ModelBuilder builder)
         {
