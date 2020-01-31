@@ -13,6 +13,7 @@ using AutoMapper;
 using CSLabs.Api.Models.ModuleModels;
 using CSLabs.Api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CSLabs.Api.Controllers
 {
@@ -32,19 +33,18 @@ namespace CSLabs.Api.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public Module Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            return this.DatabaseContext.Modules.Find(id);
+            var module = await this.DatabaseContext.Modules.FindAsync(id);
+            await module.SetUserLabIdIfExists(DatabaseContext, GetUser());
+            return Ok(module);
         }
         
         [HttpGet("code/{code}")]
-        public IActionResult Get(string code)
+        public async Task<IActionResult> Get(string code)
         {
-            var module =  this.DatabaseContext.Modules.First(m => m.SpecialCode == code);
-            var userModule = DatabaseContext.UserModules.FirstOrDefault(m => m.UserId == GetUser().Id && m.ModuleId == module.Id);
-            if (userModule != null) {
-                module.UserModuleId = userModule.Id;
-            }
+            var module = await this.DatabaseContext.Modules.FirstAsync(m => m.SpecialCode == code);
+            await module.SetUserLabIdIfExists(DatabaseContext, GetUser());
             return Ok(module);
         }
 

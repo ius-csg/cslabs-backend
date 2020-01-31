@@ -70,10 +70,8 @@ namespace CSLabs.Api
             ConfigureDatabase(services, appSettings.ConnectionStrings.DefaultConnection);
             ConfigureCors(services, appSettings.CorsUrls);
             ConfigureJWT(services, appSettings.JWTSecret);
-            services.AddTransient<LdapService>();
-            services.ProvideProxmoxApi();
-            services.AddScoped<BaseControllerDependencies>();
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.ProvideAppServices();
         }
 
         private void ConfigureEmail(IServiceCollection services, EmailSettings emailSettings)
@@ -133,10 +131,6 @@ namespace CSLabs.Api
                         ValidateAudience = false
                     };
                 });
-
-         
-            // configure DI for application services
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

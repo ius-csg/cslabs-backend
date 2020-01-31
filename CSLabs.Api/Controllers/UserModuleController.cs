@@ -26,11 +26,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Post(string specialCode)
         {
             var module = await DatabaseContext.Modules
-                .Include(m => m.Labs)
-                .ThenInclude(l => l.LabVms)
-                .ThenInclude(v => v.VmTemplates)
-                .ThenInclude(t => t.HypervisorNode)
-                .ThenInclude(n => n.Hypervisor)
+                .IncludeRelations()
                 .FirstAsync(m => m.SpecialCode == specialCode);
             
             if (module == null)
@@ -43,47 +39,23 @@ namespace CSLabs.Api.Controllers
             
             if (count > 0)
                 return Forbid("Cannot Create Multiple Instances");
-
-            var firstLab = module.Labs.First();
+            
            
             var userModule = new UserModule
             {
                 Module = module,
                 User = GetUser(),
-                UserLabs = new List<UserLab>
+                UserLabs =  module.Labs.Select(lab => new UserLab
                 {
-                    await firstLab.Instantiate(ProxmoxManager, GetUser())
-                }
+                    Lab = lab,
+                    Status = EUserLabStatus.NotStarted,
+                    User = GetUser()
+                }).ToList()
             };
             DatabaseContext.UserModules.Add(userModule);
             await DatabaseContext.SaveChangesAsync();
             return Ok(userModule);
         }
-
-        [HttpGet("{id}/status")]
-        public async Task<IActionResult> Status(int id)
-        {
-            var userModule = DatabaseContext.UserModules
-                .Include(u => u.UserLabs)
-                .ThenInclude(l => l.HypervisorNode)
-                .ThenInclude(n => n.Hypervisor)
-                .Include(u => u.UserLabs)
-                .ThenInclude(l => l.UserLabVms)
-                .FirstOrDefault(m => m.UserId == GetUser().Id && m.Id == id);
-            if (userModule == null)
-                return NotFound();
-            var userLab = userModule.UserLabs.First();
-            var api = ProxmoxManager.GetProxmoxApi(userLab);
-            foreach (var vm in userModule.UserLabs.First().UserLabVms)
-            {
-                var status = await api.GetVmStatus(vm.ProxmoxVmId);
-                if (status.Lock == "clone")
-                    return Ok("Initializing");
-            }
-
-            return Ok("Initialized");
-        }
-
 
         [HttpGet]
         public IActionResult Get()
