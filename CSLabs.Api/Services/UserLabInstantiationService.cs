@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -40,6 +41,7 @@ namespace CSLabs.Api.Services
 
             userLab.HypervisorNode = node;
             userLab.UserLabVms = vms;
+            userLab.EndDateTime = DateTime.UtcNow.AddDays(30);
             userLab.Status = EUserLabStatus.Started;
         }
     }

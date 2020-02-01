@@ -46,6 +46,15 @@ namespace CSLabs.Api.Controllers
             return Ok();
         }
 
+        [HttpGet("process-end-date-time")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ProcessEndDateTime()
+        {
+            // find userLabs that have an EndDateTime paste the current UtcDateTime.
+            // with the found items, destroy all vms and delete the UserLabVm rows.
+            return Ok();
+        }
+
         [HttpPost("{id}/start")]
         public async Task<IActionResult> Start(int id)
         {
