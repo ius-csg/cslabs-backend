@@ -54,8 +54,9 @@ namespace CSLabs.Api.Controllers
                 .IncludeLabHypervisor()
                 .Include(ul => ul.Lab)
                 .FirstAsync(ul => ul.Id == id);
-            if (userLab.UserLabVms.Count > 0) 
-                return BadRequest(new {Mesage = "Lab already started"});
+            if (userLab.UserLabVms.Count > 0)
+                // update the UI.
+                return Ok(userLab);
             await _instantiationService.Instantiate(userLab, ProxmoxManager, GetUser());
             await DatabaseContext.SaveChangesAsync();
             return Ok(userLab);

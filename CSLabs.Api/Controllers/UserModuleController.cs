@@ -44,7 +44,9 @@ namespace CSLabs.Api.Controllers
             UserModule userModule = null;
             
             if (module.Type == EModuleType.MultiUser)
-                userModule = await DatabaseContext.UserModules.FirstAsync(um => um.ModuleId == module.Id);
+                userModule = await DatabaseContext.UserModules
+                    .Include(um => um.UserUserModules)
+                    .FirstOrDefaultAsync(um => um.ModuleId == module.Id);
             
             if (userModule == null)
             {
