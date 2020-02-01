@@ -92,7 +92,8 @@ namespace CSLabs.Api.Controllers
         {
             var userLab = await DatabaseContext.UserLabs
                 .IncludeRelations()
-                .FirstAsync(m => m.UserId == GetUser().Id && m.Id == id);
+                .WhereIncludesUser(GetUser())
+                .FirstAsync(ul =>  ul.Id == id);
             if (userLab == null)
                 return NotFound();
             
@@ -118,7 +119,8 @@ namespace CSLabs.Api.Controllers
                 .Include(l => l.HypervisorNode)
                 .ThenInclude(n => n.Hypervisor)
                 .Include(l => l.UserLabVms)
-                .FirstOrDefault(m => m.UserId == GetUser().Id && m.Id == id);
+                .WhereIncludesUser(GetUser())
+                .FirstOrDefault(m => m.Id == id);
             if (userLab == null)
                 return NotFound();
             var api = ProxmoxManager.GetProxmoxApi(userLab);
@@ -139,7 +141,8 @@ namespace CSLabs.Api.Controllers
                 .Include(u => u.Lab)
                 .Include(u => u.UserLabVms)
                 .ThenInclude(v => v.LabVm)
-                .FirstAsync(u => u.UserId == GetUser().Id && u.Id == id);
+                .WhereIncludesUser(GetUser())
+                .FirstAsync(u => u.Id == id);
             userLab.FillAttachmentProperties();
             return Ok(userLab);
         }

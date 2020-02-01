@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CSLabs.Api.Util;
@@ -55,6 +56,9 @@ namespace CSLabs.Api.Models.UserModels
         [JsonIgnore]
         [Column(TypeName = "VARCHAR(100)")]
         public string PasswordRecoveryCode { get; set; }
+        
+        // many to many link
+        public List<UserUserModule> UserUserModules { get; set; }
 
         public void SetNulls()
         {

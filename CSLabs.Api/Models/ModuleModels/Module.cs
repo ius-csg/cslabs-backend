@@ -5,10 +5,13 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using CSLabs.Api.Models.Enums;
 using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CSLabs.Api.Models.ModuleModels
 {
@@ -26,18 +29,20 @@ namespace CSLabs.Api.Models.ModuleModels
         public string SpecialCode { get; set; }
         public List<Lab> Labs { get; set; }
         
+        [JsonConverter(typeof(StringEnumConverter))]
+        public EModuleType Type { get; set; }
+        
         [NotMapped]
         public int UserModuleId { get; set; }
 
-        public async Task SetUserLabIdIfExists(DefaultContext context, User user)
+        public async Task SetUserModuleIdIfExists(DefaultContext context, User user)
         {
             var userModule = await context.UserModules
-                .Where(um => um.ModuleId == Id && um.UserId == user.Id)
+                .WhereIncludesUser(user)
+                .Where(um => um.ModuleId == Id)
                 .FirstOrDefaultAsync();
             if (userModule != null)
-            {
                 UserModuleId = userModule.Id;
-            }
         }
 
         public static void OnModelCreating(ModelBuilder builder)
@@ -45,6 +50,10 @@ namespace CSLabs.Api.Models.ModuleModels
             builder.TimeStamps<Module>();
             builder.Unique<Module>(u => u.Name);
             builder.Unique<Module>(u => u.SpecialCode);
+            builder.Entity<Module>()
+                .Property(p => p.Type)
+                .HasConversion<string>()
+                .HasDefaultValue(EModuleType.SingleUser.ToString());
         }
     }
 }

@@ -1,5 +1,7 @@
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using CSLabs.Api.Models;
 using CSLabs.Api.Models.UserModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,7 +51,8 @@ namespace CSLabs.Api.Controllers
                 .Include(l => l.VmTemplate)
                 .ThenInclude(l => l.HypervisorNode)
                 .ThenInclude(l => l.Hypervisor)
-                .FirstAsync(v => v.UserId == GetUser().Id && v.Id == id);
+                .WhereIncludesUser(GetUser())
+                .FirstAsync(v => v.Id == id);
             var api = ProxmoxManager.GetProxmoxApi(vm.VmTemplate.HypervisorNode);
             await api.DestroyVm(vm.ProxmoxVmId);
             await api.CloneTemplate(api.HypervisorNode, vm.VmTemplate.TemplateVmId, vm.ProxmoxVmId);
@@ -95,7 +98,8 @@ namespace CSLabs.Api.Controllers
                 .Include(v => v.UserLab)
                 .ThenInclude(l => l.HypervisorNode)
                 .ThenInclude(n => n.Hypervisor)
-                .FirstAsync(v => v.UserId == GetUser().Id && v.Id == id);
+                .WhereIncludesUser(GetUser())
+                .FirstAsync(v => v.Id == id);
         }
 
         

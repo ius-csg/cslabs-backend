@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CSLabs.Api.Models
 {
-    public static class QueryIncludes
+    public static class QueryExtensions
     {
         public static IQueryable<Module> IncludeRelations(this IQueryable<Module> query)
         {
@@ -40,6 +40,21 @@ namespace CSLabs.Api.Models
             return query
                 .Include(vt => vt.HypervisorNode)
                 .ThenInclude(hn => hn.Hypervisor);
+        }
+
+        public static IQueryable<UserLabVm> WhereIncludesUser(this IQueryable<UserLabVm> query, User user)
+        {
+            return query.Where(ulv => ulv.UserLab.UserModule.UserUserModules.Any(uum => uum.UserId == user.Id));
+        }
+        
+        public static IQueryable<UserLab> WhereIncludesUser(this IQueryable<UserLab> query, User user)
+        {
+            return query.Where(ul => ul.UserModule.UserUserModules.Any(uum => uum.UserId == user.Id));
+        }
+        
+        public static IQueryable<UserModule> WhereIncludesUser(this IQueryable<UserModule> query, User user)
+        {
+            return query.Where(um => um.UserUserModules.Any(uum => uum.UserId == user.Id));
         }
     }
 }

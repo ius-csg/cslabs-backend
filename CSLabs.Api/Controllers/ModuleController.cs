@@ -36,7 +36,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var module = await this.DatabaseContext.Modules.FindAsync(id);
-            await module.SetUserLabIdIfExists(DatabaseContext, GetUser());
+            await module.SetUserModuleIdIfExists(DatabaseContext, GetUser());
             return Ok(module);
         }
         
@@ -44,7 +44,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Get(string code)
         {
             var module = await this.DatabaseContext.Modules.FirstAsync(m => m.SpecialCode == code);
-            await module.SetUserLabIdIfExists(DatabaseContext, GetUser());
+            await module.SetUserModuleIdIfExists(DatabaseContext, GetUser());
             return Ok(module);
         }
 

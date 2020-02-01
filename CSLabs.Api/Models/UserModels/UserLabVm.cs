@@ -14,8 +14,6 @@ namespace CSLabs.Api.Models.UserModels
     {
         public int Id { get; set; }
         [Required]
-        public int  UserId { get; set; }
-        [Required]
         public int  UserLabId { get; set; }
         [Required]
         public int LabVmId { get; set; }
@@ -36,7 +34,7 @@ namespace CSLabs.Api.Models.UserModels
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<UserLabVm>();
-            builder.Entity<UserLabVm>().HasIndex(u => new {u.UserId, u.LabVmId}).IsUnique();
+            builder.Entity<UserLabVm>().HasIndex(u => new {u.UserLabId, u.LabVmId}).IsUnique();
         }
     }
 }
