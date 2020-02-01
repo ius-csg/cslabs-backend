@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CSLabsBackend.Models.UserModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -35,11 +37,23 @@ namespace CSLabsBackend.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var lab = DatabaseContext.UserLabs
+            var lab = await DatabaseContext.UserLabs
                 .Include(u => u.Lab)
                 .Include(u => u.UserLabVms)
                 .ThenInclude(v => v.LabVm)
-                .First(u => u.UserId == GetUser().Id && u.Id == id);
+                .FirstAsync(u => u.UserId == GetUser().Id && u.Id == id);
+            
+            if (lab.Status == "Open")
+            {
+                var startDate = lab.CreatedAt;
+                var labDuration = startDate.AddDays(30);
+                TimeSpan timeDifference = labDuration.Subtract(DateTime.Now);
+
+                if (timeDifference == TimeSpan.Zero)
+                {
+                    lab.Status = "Completed";
+                }
+            }
 
             lab.HasTopology = System.IO.File.Exists("Assets/images/" + id + ".jpg");
             lab.HasReadme = System.IO.File.Exists("Assets/Pdf/" + id + ".pdf");
@@ -61,5 +75,25 @@ namespace CSLabsBackend.Controllers
             var image = System.IO.File.OpenRead("Assets/Pdf/" + id + ".pdf");
             return File(image, "application/pdf");
         }
+
+        /*[HttpGet("{id}")]
+        public async Task<IActionResult> LabStatus(int id)
+        {
+            var lab = await DatabaseContext.UserLabs
+                .Include(u => u.Lab)
+                .FirstAsync(u => u.UserId == GetUser().Id && u.Id == id);
+            if (lab.Status == "ON")
+            {
+                var startDate = lab.CreatedAt;
+                var labDuration = startDate.AddDays(30);
+                TimeSpan timeDifference = labDuration.Subtract(DateTime.Now);
+
+                if (timeDifference == TimeSpan.Zero)
+                {
+                    lab.Status = "Completed";
+                }
+            }
+            return Ok(lab);
+        }*/
     }
 }
