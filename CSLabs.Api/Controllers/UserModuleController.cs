@@ -6,6 +6,7 @@ using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.ResponseModels;
 using Microsoft.AspNetCore.Mvc;
 using CSLabs.Api.Models;
+using CSLabs.Api.Models.Enums;
 using CSLabs.Api.Models.ModuleModels;
 using CSLabs.Api.Proxmox;
 using Microsoft.AspNetCore.Authorization;
@@ -34,25 +35,38 @@ namespace CSLabs.Api.Controllers
 
             var count = await DatabaseContext.UserModules
                 .Where(m => m.ModuleId == module.Id)
-                .Where(m => m.UserId == GetUser().Id)
+                .WhereIncludesUser(GetUser())
                 .CountAsync();
             
             if (count > 0)
                 return Forbid("Cannot Create Multiple Instances");
             
-           
-            var userModule = new UserModule
+            UserModule userModule = null;
+            
+            if (module.Type == EModuleType.MultiUser)
+                userModule = await DatabaseContext.UserModules
+                    .Include(um => um.UserUserModules)
+                    .FirstOrDefaultAsync(um => um.ModuleId == module.Id);
+            
+            if (userModule == null)
             {
-                Module = module,
-                User = GetUser(),
-                UserLabs =  module.Labs.Select(lab => new UserLab
+                userModule = new UserModule
                 {
-                    Lab = lab,
-                    Status = EUserLabStatus.NotStarted,
-                    User = GetUser()
-                }).ToList()
-            };
-            DatabaseContext.UserModules.Add(userModule);
+                    Module = module,
+                    UserUserModules = new List<UserUserModule> {new UserUserModule {User = GetUser()}},
+                    UserLabs =  module.Labs.Select(lab => new UserLab
+                    {
+                        Lab = lab,
+                        Status = EUserLabStatus.NotStarted
+                    }).ToList()
+                };
+                DatabaseContext.UserModules.Add(userModule);
+            }
+            else
+            {
+                userModule.UserUserModules.Add(new UserUserModule {User = GetUser()});
+            }
+           
             await DatabaseContext.SaveChangesAsync();
             return Ok(userModule);
         }
@@ -61,7 +75,7 @@ namespace CSLabs.Api.Controllers
         public IActionResult Get()
         {
             return Ok(DatabaseContext.UserModules
-                .Where(m => m.UserId == GetUser().Id)
+                .WhereIncludesUser(GetUser())
                 .Include(u => u.Module)
                 .ToList());
         }
@@ -71,19 +85,17 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var module = await DatabaseContext.UserModules
-                .Include(u => u.Module)
-                .Include(u => u.UserLabs)
-                .ThenInclude(l => l.UserLabVms)
+                .Include(um => um.Module)
+                .Include(um => um.UserLabs)
+                .ThenInclude(ul => ul.UserLabVms)
                 .ThenInclude(vm => vm.LabVm)
-                .Include(u => u.UserLabs)
-                .ThenInclude(u => u.Lab)
-                .FirstOrDefaultAsync(m => m.UserId == GetUser().Id && m.Id == id);
+                .Include(um => um.UserLabs)
+                .ThenInclude(ul => ul.Lab)
+                .WhereIncludesUser(GetUser())
+                .FirstOrDefaultAsync(um => um.Id == id);
             if (module == null)
                 return NotFound();
-
-            if (module.UserId == GetUser().Id)
-                return Ok(module);
-            return Forbid();
+            return Ok(module);
         }
     }
 }

@@ -14,8 +14,7 @@ namespace CSLabs.Api.Models.UserModels
     public class UserLab : Trackable
     {
         public int Id { get; set; }
-        [Required]
-        public int  UserId { get; set; }
+        
         [Required]
         public int  UserModuleId { get; set; }
         [Required]
@@ -24,8 +23,7 @@ namespace CSLabs.Api.Models.UserModels
         public UserModule UserModule { get; set; }
         [InverseProperty(nameof(UserLabVm.UserLab))]
         public List<UserLabVm> UserLabVms { get; set; }
-        
-        public User User { get; set; }
+
         public Lab Lab { get; set; }
         [Required]
         [JsonConverter(typeof(StringEnumConverter))]
@@ -51,7 +49,9 @@ namespace CSLabs.Api.Models.UserModels
         public static void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.TimeStamps<UserLab>();
-            modelBuilder.Entity<UserLab>().HasIndex(u => new {u.UserId, u.LabId}).IsUnique();
+            modelBuilder.Entity<UserLab>().HasIndex(u => new {u.UserModuleId, u.LabId}).IsUnique();
+            modelBuilder.Entity<UserLab>().HasIndex(u => new {u.UserModuleId});
+            modelBuilder.Entity<UserLab>().HasIndex(u => new {u.LabId});
             modelBuilder.Entity<UserLab>()
                 .HasOne(u => u.HypervisorNode)
                 .WithMany(n => n.UserLabs)

@@ -30,10 +30,9 @@ namespace CSLabs.Api.Services
             {
                 var template = labVm.GetTemplateWithNode(api.HypervisorNode);
                 int createdVmId = await api.CloneTemplate(node, template.TemplateVmId);
-                vms.Add(new UserLabVm()
+                vms.Add(new UserLabVm
                 {
                     LabVm = labVm,
-                    User = user,
                     ProxmoxVmId = createdVmId,
                     VmTemplate = template
                 });
