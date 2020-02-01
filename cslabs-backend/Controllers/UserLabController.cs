@@ -43,11 +43,11 @@ namespace CSLabsBackend.Controllers
                 .ThenInclude(v => v.LabVm)
                 .FirstAsync(u => u.UserId == GetUser().Id && u.Id == id);
             
-            if (lab.Status == "Open")
+            if (lab.Status == "In Progress")
             {
                 var startDate = lab.CreatedAt;
-                var labDuration = startDate.AddDays(30);
-                TimeSpan timeDifference = labDuration.Subtract(DateTime.Now);
+                lab.LabEndTime = startDate.AddDays(30);
+                TimeSpan timeDifference = lab.LabEndTime .Subtract(DateTime.Now);
 
                 if (timeDifference == TimeSpan.Zero)
                 {

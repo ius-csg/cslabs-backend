@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -30,6 +31,8 @@ namespace CSLabsBackend.Models.UserModels
         public bool HasTopology { get; set; }
         [NotMapped]
         public bool HasReadme { get; set; }
+        
+        public DateTime LabEndTime { get; set; }
         
         public static void OnModelCreating(ModelBuilder builder)
         {
