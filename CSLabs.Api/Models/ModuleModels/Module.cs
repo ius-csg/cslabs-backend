@@ -53,7 +53,7 @@ namespace CSLabs.Api.Models.ModuleModels
             builder.Entity<Module>()
                 .Property(p => p.Type)
                 .HasConversion<string>()
-                .HasDefaultValue(EModuleType.SingleUser.ToString());
+                .HasDefaultValue(EModuleType.SingleUser);
         }
     }
 }

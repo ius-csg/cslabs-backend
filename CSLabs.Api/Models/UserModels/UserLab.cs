@@ -50,6 +50,8 @@ namespace CSLabs.Api.Models.UserModels
         {
             modelBuilder.TimeStamps<UserLab>();
             modelBuilder.Entity<UserLab>().HasIndex(u => new {u.UserModuleId, u.LabId}).IsUnique();
+            modelBuilder.Entity<UserLab>().HasIndex(u => new {u.UserModuleId});
+            modelBuilder.Entity<UserLab>().HasIndex(u => new {u.LabId});
             modelBuilder.Entity<UserLab>()
                 .HasOne(u => u.HypervisorNode)
                 .WithMany(n => n.UserLabs)

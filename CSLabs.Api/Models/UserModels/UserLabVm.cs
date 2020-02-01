@@ -13,17 +13,17 @@ namespace CSLabs.Api.Models.UserModels
     public class UserLabVm : Trackable
     {
         public int Id { get; set; }
-        [Required]
-        public int  UserLabId { get; set; }
+
         [Required]
         public int LabVmId { get; set; }
         [Required]
         public int ProxmoxVmId { get; set; }
         
+        [Required]
+        public int  UserLabId { get; set; }
+        [ForeignKey(nameof(UserLabId))]
         public UserLab UserLab { get; set; }
-        
-        public User User { get; set; }
-        
+
         public LabVm LabVm { get; set; }
         
         public int VmTemplateId { get; set; }
@@ -35,6 +35,8 @@ namespace CSLabs.Api.Models.UserModels
         {
             builder.TimeStamps<UserLabVm>();
             builder.Entity<UserLabVm>().HasIndex(u => new {u.UserLabId, u.LabVmId}).IsUnique();
+            builder.Entity<UserLabVm>().HasIndex(u => new {u.UserLabId});
+            builder.Entity<UserLabVm>().HasIndex(u => new {u.LabVmId});
         }
     }
 }

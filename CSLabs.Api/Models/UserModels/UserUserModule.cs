@@ -18,6 +18,10 @@ namespace CSLabs.Api.Models.UserModels
 
         public static void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
+            modelBuilder.Entity<UserUserModule>()
+                .HasKey(t => new { t.UserId, t.UserModuleId });
+
             modelBuilder.Entity<UserUserModule>()
                 .HasOne(pt => pt.User)
                 .WithMany(p => p.UserUserModules)
