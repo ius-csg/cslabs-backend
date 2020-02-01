@@ -51,7 +51,29 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> ProcessEndDateTime()
         {
             // find userLabs that have an EndDateTime paste the current UtcDateTime.
+            var userLabs = await DatabaseContext.UserLabs
+                .IncludeRelations()
+                .IncludeHypervisor()
+                .Include(l => l.UserLabVms)
+                .Where(l => l.EndDateTime > DateTime.UtcNow)
+                .ToListAsync();
+            
             // with the found items, destroy all vms and delete the UserLabVm rows.
+            foreach (var userLab in userLabs)
+            {
+                if (userLab.EndDateTime < DateTime.Now)
+                {
+                    var api = ProxmoxManager.GetProxmoxApi(userLab);
+                    foreach (var userLabVm in userLab.UserLabVms)
+                    {
+                        await api.DestroyVm(userLabVm.ProxmoxVmId);
+                        DatabaseContext.UserLabVms.Remove(userLabVm);
+                        await DatabaseContext.SaveChangesAsync();
+                    }
+
+                    userLab.Status = EUserLabStatus.Completed;
+                }
+            }
             return Ok();
         }
 
