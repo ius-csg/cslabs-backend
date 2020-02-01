@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ServiceModel.Security;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -15,13 +16,17 @@ namespace CSLabs.Api.Models.UserModels
         [Required]
         [Column(TypeName = "VARCHAR(100)")]
         public string FirstName { get; set; }
-
+        
         [Column(TypeName = "VARCHAR(100)")]
         public string MiddleName { get; set; }
 
         [Required]
         [Column(TypeName = "VARCHAR(100)")]
         public string LastName { get; set; }
+
+        [Required]
+        [Column(TypeName = "VARCHAR(100)")]
+        public string Username { get; set; }
         
         [NotMapped]
         public string Token { get; set; }
@@ -36,7 +41,7 @@ namespace CSLabs.Api.Models.UserModels
         {
            return SchoolEmail ?? PersonalEmail;
         }
-        
+
         [Column(TypeName = "VARCHAR(100)")]
         public string SchoolEmailVerificationCode { get; set; }
         
@@ -69,6 +74,19 @@ namespace CSLabs.Api.Models.UserModels
             }
             if (SchoolEmail.Length == 0) {
                 SchoolEmail = null;
+            }
+        }
+
+        private string FillUsername()
+        {
+            string username;
+            if (GetEmail().Contains("@iu.edu"))
+            {
+                return username = GetEmail().Remove(GetEmail().Length - 7);
+            }
+            else
+            {
+                return username = GetEmail().Trim(new Char[] {'.', '@'});
             }
         }
 

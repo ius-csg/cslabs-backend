@@ -22,6 +22,7 @@ namespace CSLabs.Api.Services
         User Authenticate(string email, string password);
         Task<User> AddUser(User user);
         Task<User> ChangePassword(User user, string password);
+        User SetJwtToken(User user);
     }
 
     public class AuthenticationService : IAuthenticationService
@@ -68,8 +69,19 @@ namespace CSLabs.Api.Services
             if(hasher.VerifyHashedPassword(user, user.Password, password) == PasswordVerificationResult.Failed) {
                 return null;
             }
-            
 
+
+            SetJwtToken(user);
+
+            // remove password before returning
+            user.Password = null;
+
+            return user;
+        }
+
+        public User SetJwtToken(User user)
+        {
+            //todo: use this after user has successfully been created
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -86,10 +98,6 @@ namespace CSLabs.Api.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             user.Token = tokenHandler.WriteToken(token);
-
-            // remove password before returning
-            user.Password = null;
-
             return user;
         }
         

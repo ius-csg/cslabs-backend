@@ -28,32 +28,47 @@ namespace CSLabs.Api.Services
         
             ldapConn.Bind(_adminDn, _adminPass);
 
-            string username;
-            if (user.GetEmail().Contains("@iu.edu"))
+            if (DoesUserExist(user))
             {
-                username = user.GetEmail().Remove(user.SchoolEmail.Length - 7);
+                //todo: send error up to front end that the account already exists
             }
             else
             {
-                username = user.GetEmail().Trim(new Char[] {'.', '@'});
+                LdapAttributeSet userAttributeSet = new LdapAttributeSet();
+                userAttributeSet.Add(new LdapAttribute("uid", user.GetEmail()));
+                userAttributeSet.Add( new LdapAttribute("objectclass", user.UserType));
+                userAttributeSet.Add( new LdapAttribute("mail", user.GetEmail()));
+                userAttributeSet.Add( new LdapAttribute("givenname", user.FirstName));
+                userAttributeSet.Add( new LdapAttribute("cn", user.FirstName+" "+user.LastName));
+                userAttributeSet.Add( new LdapAttribute("sn", user.LastName));
+                //todo: ask if these are needed (below)
+                userAttributeSet.Add( new LdapAttribute("stdntemail", user.SchoolEmail));
+                userAttributeSet.Add( new LdapAttribute("prsnlemail", user.PersonalEmail));
+                userAttributeSet.Add(new LdapAttribute("userPassword", pass));
+
+                string dn = "ou=cslabs,dc=csg,dc=ius,dc=edu";
+                LdapEntry newEntry = new LdapEntry(dn, userAttributeSet);
+                ldapConn.Add(newEntry);
             }
 
-            LdapSearchResults lsc = ldapConn.Search($"uid={username},cn=users,cn=accounts,dc=csg,dc=ius,dc=edu", LdapConnection.SCOPE_SUB, "objectClass=*", null, false);
+            
+        }
 
-            LdapAttributeSet userAttributeSet = new LdapAttributeSet();
-            userAttributeSet.Add(new LdapAttribute("username", username));
-            userAttributeSet.Add( new LdapAttribute("objectclass", user.UserType));
-            userAttributeSet.Add( new LdapAttribute("email", user.GetEmail()));
-            userAttributeSet.Add( new LdapAttribute("givenname", user.FirstName));
-            userAttributeSet.Add( new LdapAttribute("cn", user.FirstName+" "+user.LastName));
-            userAttributeSet.Add( new LdapAttribute("sn", user.LastName));
-            userAttributeSet.Add( new LdapAttribute("stdntemail", user.SchoolEmail));
-            userAttributeSet.Add( new LdapAttribute("prsnlemail", user.PersonalEmail));
-            userAttributeSet.Add(new LdapAttribute("pass", pass));
+        public bool DoesUserExist(User user)
+        {
+            //todo: search our database for user email
+            LdapConnection ldapConn = new LdapConnection();
+            ldapConn.Connect(_ldapHost, _ldapPort);
 
-            string dn = "ou=cslabsusers,dc=csg,dc=ius,dc=edu";
-            LdapEntry newEntry = new LdapEntry(dn, userAttributeSet);
-            ldapConn.Add(newEntry);
+            string uid = user.GetEmail();
+            if (ldapConn.Search($"uid={uid},cn=users,cn=accounts,dc=csg,dc=ius,dc=edu", LdapConnection.SCOPE_SUB, "objectClass=*", null, false).Count>0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         
         public void Search(string uid)

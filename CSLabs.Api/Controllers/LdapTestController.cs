@@ -23,7 +23,7 @@ namespace CSLabs.Api.Controllers
             // {
             //     SchoolEmail = "testuser@iu.edu"
             // }, "TestPassword");
-            _ldapService.Search();
+            _ldapService.Search("cbenston");
             return Ok();
         }
 
