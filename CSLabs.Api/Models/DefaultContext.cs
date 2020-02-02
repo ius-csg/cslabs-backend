@@ -50,9 +50,6 @@ namespace CSLabs.Api.Models
            HypervisorNode.OnModelCreating(builder);
            // configure many to many relationship
            UserUserModule.OnModelCreating(builder);
-           
-           builder.SnakeCaseDatabase();
-           
        }
        
        public override int SaveChanges(bool acceptAllChangesOnSuccess)
