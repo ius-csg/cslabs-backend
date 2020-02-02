@@ -28,6 +28,9 @@ namespace CSLabs.Api.Models.UserModels
         [Required]
         [JsonConverter(typeof(StringEnumConverter))]
         public EUserLabStatus Status { get; set; }
+        
+        public DateTime? EndDateTime { get; set; }
+        
         public DateTime? LastUsed { get; set; }
         
         [NotMapped]
@@ -57,6 +60,7 @@ namespace CSLabs.Api.Models.UserModels
                 .WithMany(n => n.UserLabs)
                 .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<UserLab>().Property(p => p.Status).HasConversion<string>();
+            modelBuilder.Entity<UserLab>().HasIndex(u => new {u.EndDateTime});
         }
     }
 }
