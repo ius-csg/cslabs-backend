@@ -62,8 +62,10 @@ namespace CSLabs.Api.Proxmox
                 node = HypervisorNode;
             }
             await LoginIfNotLoggedIn();
-            var result =  await Task.Run(() => this.client.Nodes[node.Name].Status.Status());
-            var data = result.Response.data;
+            var response = await Task.Run(() => this.client.Nodes[node.Name].Status.Status());
+            if (!response.IsSuccessStatusCode)
+                throw new ProxmoxException("Could not clone template due to: " + response.ReasonPhrase);
+            var data = response.Response.data;
             var nodeStatus = new NodeStatus
             {
                 CpuUsage = data.cpu * 100,
@@ -78,14 +80,12 @@ namespace CSLabs.Api.Proxmox
 
         }
         
-        
         public async Task StopVM(int vmId)
         {
             await LoginIfNotLoggedIn();
             await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Stop.VmStop());
         }
-        
-        
+
         public async Task ResetVM(int vmId)
         {
             await LoginIfNotLoggedIn();
