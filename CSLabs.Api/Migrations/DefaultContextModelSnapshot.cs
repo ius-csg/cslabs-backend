@@ -536,7 +536,7 @@ namespace CSLabs.Api.Migrations
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorNode", b =>
                 {
                     b.HasOne("CSLabs.Api.Models.Hypervisor", "Hypervisor")
-                        .WithMany()
+                        .WithMany("HypervisorNodes")
                         .HasForeignKey("HypervisorId")
                         .HasConstraintName("fk_hypervisor_nodes_hypervisors_hypervisor_id")
                         .OnDelete(DeleteBehavior.Cascade);
