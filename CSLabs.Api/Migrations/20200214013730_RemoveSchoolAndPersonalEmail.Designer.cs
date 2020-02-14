@@ -3,14 +3,16 @@ using System;
 using CSLabs.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20200214013730_RemoveSchoolAndPersonalEmail")]
+    partial class RemoveSchoolAndPersonalEmail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,26 +60,6 @@ namespace CSLabs.Api.Migrations
                         .HasName("ix_badges_name");
 
                     b.ToTable("badges");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.ContactEmail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id");
-
-                    b.Property<string>("Email")
-                        .HasColumnName("email")
-                        .HasColumnType("VARCHAR(100)");
-
-                    b.HasKey("Id")
-                        .HasName("pk_contact_emails");
-
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasName("ix_contact_emails_email");
-
-                    b.ToTable("contact_emails");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.Hypervisor", b =>

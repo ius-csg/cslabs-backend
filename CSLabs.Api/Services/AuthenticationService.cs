@@ -57,7 +57,7 @@ namespace CSLabs.Api.Services
             // @todo authenticate with kerberos.
             var user = _databaseContext.Users
                 .FirstOrDefault(x =>
-                    (x.SchoolEmail == email || x.PersonalEmail == email));
+                    (x.Email == email));
             
             // return null if user not found
             if (user == null)
@@ -67,7 +67,6 @@ namespace CSLabs.Api.Services
             if(hasher.VerifyHashedPassword(user, user.Password, password) == PasswordVerificationResult.Failed) {
                 return null;
             }
-            
 
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();

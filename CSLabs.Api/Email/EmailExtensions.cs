@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CSLabs.Api.Email.ViewModels;
+using CSLabs.Api.RequestModels;
 using CSLabs.Api.Util;
 using FluentEmail.Core;
+using FluentEmail.Core.Models;
 
 namespace CSLabs.Api.Email
 {
@@ -29,6 +32,22 @@ namespace CSLabs.Api.Email
                 {
                     Subject = subject,
                     ForgotPasswordLink = forgotPasswordLink
+                })
+                .SendAsync();
+        }
+        
+        public static async Task SendNewContactRequestEmail(this IFluentEmail email, List<Address> tosAddresses, ContactUsRequest request )
+        {
+            var subject = $"CSLabs - New contact request from {request.Email}";
+            await email
+                .To(tosAddresses)
+                .Subject(subject)
+                //.AttachFromFilename(contactRequest.UserScreenshot)//possible image attachment
+                .UsingTemplateFile("ContactRequest.cshtml", new ContactRequestViewModel
+                {
+                    Body = request.Body,
+                    Email = request.Email,
+                    Subject = subject
                 })
                 .SendAsync();
         }

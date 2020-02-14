@@ -49,22 +49,12 @@ namespace CSLabs.Api.Controllers
                 return BadRequest(registration.Validate(DatabaseContext));
 
             var user = Map<User>(registration);
-            user.SetNulls();
-            if (user.PersonalEmail != null)
-            {
-                user.PersonalEmailVerificationCode = Guid.NewGuid().ToString();
-                await CreateEmail().SendEmailVerification(user.PersonalEmail,
-                    WebAppUrl + "/verify-email/personal/" + user.PersonalEmailVerificationCode);
-            }
-            else if(user.SchoolEmail != null)
-            {
-                user.SchoolEmailVerificationCode = Guid.NewGuid().ToString();
-                await CreateEmail().SendEmailVerification(user.SchoolEmail,
-                    WebAppUrl + "/verify-email/school/" + user.SchoolEmailVerificationCode);
-            }
+            user.EmailVerificationCode = Guid.NewGuid().ToString();
+            await CreateEmail().SendEmailVerification(user.Email, 
+                WebAppUrl + "/verify-email/" + user.EmailVerificationCode);
             
             await _authenticationService.AddUser(user);
-            return Ok(_authenticationService.Authenticate(registration.GetEmail(), registration.Password));
+            return Ok(_authenticationService.Authenticate(registration.Email, registration.Password));
         }
 
         [HttpGet("current")]
@@ -78,7 +68,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> ForgotPassword(string email)
         {
             var user = await DatabaseContext.Users
-                .FirstOrDefaultAsync(u => u.SchoolEmail == email || u.PersonalEmail == email);
+                .FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
             {
                 // make sure bots can't tell if a user is found or not.
@@ -90,11 +80,7 @@ namespace CSLabs.Api.Controllers
             user.PasswordRecoveryCode = uuid;
             var link = WebAppUrl + "/confirm-forgot-password/" + uuid;
             await DatabaseContext.SaveChangesAsync();
-            if (user.SchoolEmail != null)
-                await CreateEmail().SendForgotPasswordEmail(user.SchoolEmail, link);
-            
-            if (user.PersonalEmail != null)
-                await CreateEmail().SendForgotPasswordEmail(user.PersonalEmail, link);
+            await CreateEmail().SendForgotPasswordEmail(user.Email, link);
 
             return Ok();
         }
@@ -116,18 +102,11 @@ namespace CSLabs.Api.Controllers
         {
             var user = await DatabaseContext
                 .Users
-                .Where(u => 
-                    request.Type == "school" ? 
-                        u.SchoolEmailVerificationCode == request.Code : 
-                        u.PersonalEmailVerificationCode == request.Code)
+                .Where(u => u.EmailVerificationCode == request.Code)
                 .FirstOrDefaultAsync();
             if (user == null)
                 return BadRequest(400);
-
-            if (request.Type == "school")
-                user.SchoolEmailVerificationCode = null;
-            else
-                user.PersonalEmailVerificationCode = null;
+            user.EmailVerificationCode = null;
             await DatabaseContext.SaveChangesAsync();
             return Ok();
         }

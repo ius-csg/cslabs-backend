@@ -19,7 +19,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Post()
         {
             await CreateEmail()
-                .To("jasongallavin@gmail.com")
+                .To("test@test.com")
                 .Subject("Test Email")
                 .UsingTemplateFile("TestEmail.cshtml", new TestEmailViewModel{Message = "Test Email", Subject = "Test Email"})
                 .SendAsync();
