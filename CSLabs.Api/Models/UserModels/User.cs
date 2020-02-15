@@ -27,16 +27,10 @@ namespace CSLabs.Api.Models.UserModels
         [NotMapped]
         public string Token { get; set; }
         
-        [Column(TypeName = "VARCHAR(100)")]
-        public string SchoolEmail { get; set; }
-        
         [Column(TypeName = "VARCHAR(45)")]
-        public string PersonalEmail { get; set; }
+        public string Email { get; set; }
         [Column(TypeName = "VARCHAR(100)")]
-        public string SchoolEmailVerificationCode { get; set; }
-        
-        [Column(TypeName = "VARCHAR(100)")]
-        public string PersonalEmailVerificationCode { get; set; }
+        public string EmailVerificationCode { get; set; }
         
         public int? GraduationYear { get; set; }
 
@@ -60,21 +54,10 @@ namespace CSLabs.Api.Models.UserModels
         // many to many link
         public List<UserUserModule> UserUserModules { get; set; }
 
-        public void SetNulls()
-        {
-            if (PersonalEmail.Length == 0) {
-                PersonalEmail = null;
-            }
-            if (SchoolEmail.Length == 0) {
-                SchoolEmail = null;
-            }
-        }
-
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<User>();
-            builder.Unique<User>(u => u.SchoolEmail);
-            builder.Unique<User>(u => u.PersonalEmail);
+            builder.Unique<User>(u => u.Email);
             builder.Unique<User>(u => u.CardCodeHash);
             builder.Unique<User>(u => u.PasswordRecoveryCode);
             builder.Entity<User>()

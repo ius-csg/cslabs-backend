@@ -1,0 +1,14 @@
+@{
+    ViewBag.Title = Model.Subject;
+    Layout = "Shared/_Layout.cshtml";
+}
+@model CSLabs.Api.Email.ViewModels.ContactRequestViewModel
+
+<p>
+    There is a new contact request from the CSLabs Application from @Model.Email.
+</p>
+<p>Body:</p>
+
+<p>
+    @Model.Body
+</p>
