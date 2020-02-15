@@ -36,6 +36,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var module = await this.DatabaseContext.Modules.FindAsync(id);
+            if (!User.Identity.IsAuthenticated) return Ok(module);
             await module.SetUserModuleIdIfExists(DatabaseContext, GetUser());
             return Ok(module);
         }
