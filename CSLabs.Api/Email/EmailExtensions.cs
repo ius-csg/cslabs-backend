@@ -45,7 +45,7 @@ namespace CSLabs.Api.Email
                 //.AttachFromFilename(contactRequest.UserScreenshot)//possible image attachment
                 .UsingTemplateFile("ContactRequest.cshtml", new ContactRequestViewModel
                 {
-                    Body = request.Body,
+                    Body = request.Message,
                     Email = request.Email,
                     Subject = subject
                 })

@@ -1,22 +1,20 @@
-using System;
+
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net.Mime;
-using CSLabs.Api.Models;
 using CSLabs.Api.Util;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 
 namespace CSLabs.Api.RequestModels
 {
     public class ContactUsRequest
     {
+        [Required]
         [RegularExpression(@"^.+@.+\..+$", ErrorMessage = "This must be a valid email")]
         public string Email { get; set; }
-
-        public IFormFile UserScreenshot { get; set; }
-        
-        public string Body { get; set; } 
+        [ImageFile(MaxFileSizeMB = 3)]
+        [MaxLength(10, ErrorMessage = "There cannot be more than 10 screenshots")]
+        public List<IFormFile> Screenshots { get; set; } = new List<IFormFile>();
+        [Required]
+        public string Message { get; set; } 
     }
 }
