@@ -12,6 +12,7 @@ using System.Xml;
 using AutoMapper;
 using CSLabs.Api.Models.ModuleModels;
 using CSLabs.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,9 +34,12 @@ namespace CSLabs.Api.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(int id)
         {
-            var module = await this.DatabaseContext.Modules.FindAsync(id);
+            var module = await this.DatabaseContext.Modules
+                .Where(m => m.Published)
+                .FirstAsync(m => m.Id == id);
             if (!User.Identity.IsAuthenticated) return Ok(module);
             await module.SetUserModuleIdIfExists(DatabaseContext, GetUser());
             return Ok(module);
