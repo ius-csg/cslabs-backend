@@ -19,13 +19,8 @@ namespace CSLabs.Api.RequestModels
         [Required]
         public string LastName { get; set; }
         
-        [RegularExpression(@"^.+@iu[s]?\.edu$", ErrorMessage = "The email must end with @iu(s).edu")]
-        [EitherRequired(nameof(PersonalEmail))]
-        public string SchoolEmail { get; set; }
-       
-        [RegularExpression(@"^.+@.+\..+$", ErrorMessage = "Personal email must be a valid email address")]
-        [EitherRequired(nameof(SchoolEmail))]
-        public string PersonalEmail { get; set; }
+        [RegularExpression(@"^.+@.+\..+$", ErrorMessage = "This must be a valid email")]
+        public string Email { get; set; }
         
         public int? GraduationYear { get; set; }
         
@@ -35,13 +30,9 @@ namespace CSLabs.Api.RequestModels
         
         public GenericErrorResponse Validate(DefaultContext dbContext)
         {
-            if (!string.IsNullOrEmpty(SchoolEmail) && dbContext.Users.Count(u => u.SchoolEmail == SchoolEmail) != 0)
+            if (!string.IsNullOrEmpty(Email) && dbContext.Users.Count(u => u.Email == Email) != 0)
             {
-                return new GenericErrorResponse { Message = "The specified school email is already in use"};
-            }
-            if (!string.IsNullOrEmpty(PersonalEmail) && dbContext.Users.Count(u => u.PersonalEmail == PersonalEmail) != 0)
-            {
-                return new GenericErrorResponse { Message = "The specified personal email is already in use"};
+                return new GenericErrorResponse { Message = "The specified email is already in use"};
             }
 
             return null;
@@ -50,11 +41,6 @@ namespace CSLabs.Api.RequestModels
         public bool IsValid(DefaultContext dbContext)
         {
             return Validate(dbContext) == null;
-        }
-
-        public string GetEmail()
-        {
-            return string.IsNullOrWhiteSpace(SchoolEmail) ? PersonalEmail : SchoolEmail;
         }
     }
 }
