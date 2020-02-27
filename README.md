@@ -1,10 +1,22 @@
 # cslabs-backend
 
-### Requirements
+### Setup
 
 * [.NET Core](https://dotnet.microsoft.com/download) Download .net core 2.2 SDK
 * Visual Studio 2019 or the Rider IDE from Jetbrains
 * Copy `appsetting.Example.json` to `appsettings.json`
+* Replace Email section of `appsettings.json` with the testing mailtrap credentials in [Email Credentials](https://trello.com/c/ytg2ndaX) card in Trello
+* [Install MariaDB](#MariaDB-Setup) Choose no password when it asks you
+* cd into `CSLabs.Api` and run `dotnet ef database update`
+
+#### Setup steps for connecting to a proxmox server
+
+* Build the project
+* Copy `CSLabs.Api/appsettings.json` to `CSLabs.Console/bin/Debug/netcoreapp2.2`
+* Change directory into Console build directory `cd CSLabs.Console/bin/Debug/netcoreapp2.2` 
+* `dotnet CSLabsConsole.dll change-hypervisor-password --id 1 --password <proxmox root password>` You can get the password from 
+[this Trello card](https://trello.com/c/WFFm6iwa)
+* Connect to the VPN whenever you need to test with the proxmox server.
 
 
 ### Managing Hypervisors
