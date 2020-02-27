@@ -14,7 +14,7 @@
 * Build the project
 * Copy `CSLabs.Api/appsettings.json` to `CSLabs.Console/bin/Debug/netcoreapp2.2`
 * Change directory into Console build directory `cd CSLabs.Console/bin/Debug/netcoreapp2.2` 
-* `dotnet CSLabsConsole.dll change-hypervisor-password --id 1 --password <proxmox root password>` You can get the password from 
+* `dotnet CSLabs.Console.dll change-hypervisor-password --id 1 --password <proxmox root password>` You can get the password from 
 [this Trello card](https://trello.com/c/WFFm6iwa)
 * Connect to the VPN whenever you need to test with the proxmox server.
 
