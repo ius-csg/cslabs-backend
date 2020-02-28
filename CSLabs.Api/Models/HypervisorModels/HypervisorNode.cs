@@ -5,7 +5,7 @@ using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
 
-namespace CSLabs.Api.Models
+namespace CSLabs.Api.Models.HypervisorModels
 {
     public class HypervisorNode
     {

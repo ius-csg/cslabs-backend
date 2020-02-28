@@ -3,6 +3,7 @@ using AutoMapper.Configuration;
 using CSLabs.Api.Config;
 using CSLabs.Api.Models;
 using CSLabs.Api.Models.Enums;
+using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Models.ModuleModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore.Internal;

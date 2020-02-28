@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
 

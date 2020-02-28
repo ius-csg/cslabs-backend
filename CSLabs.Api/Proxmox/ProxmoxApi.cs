@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Corsinvest.ProxmoxVE.Api;
 using CSLabs.Api.Models;
+using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Proxmox.Responses;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace CSLabs.Api.Proxmox
 {
@@ -49,10 +51,11 @@ namespace CSLabs.Api.Proxmox
             };
         }
         
-        public async Task StartVM(int vmId)
+        public async Task StartVM(int vmId, string targetNode = null)
         {
+            var node = targetNode ?? HypervisorNode.Name;
             await LoginIfNotLoggedIn();
-            await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Start.VmStart());
+            await Task.Run(() => this.client.Nodes[node].Qemu[vmId].Status.Start.VmStart());
         }
 
         public async Task<NodeStatus> GetNodeStatus(HypervisorNode node = null)
@@ -110,10 +113,11 @@ namespace CSLabs.Api.Proxmox
             await Task.Run(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].DestroyVm());
         }
         
-        public async Task CloneTemplate(HypervisorNode node, int templateId, int vmId)
+        public async Task CloneTemplate(HypervisorNode node, int templateId, int vmId, string srcNode = null)
         {
+            var sourceNode = srcNode ?? HypervisorNode.Name;
             await LoginIfNotLoggedIn();
-            var response = await Task.Run(() => client.Nodes[HypervisorNode.Name].Qemu[templateId].Clone.CloneVm(vmId, target: node.Name));
+            var response = await Task.Run(() => client.Nodes[sourceNode].Qemu[templateId].Clone.CloneVm(vmId, target: node.Name));
             if (!response.IsSuccessStatusCode)
                 throw new ProxmoxException("Could not clone template due to: " + response.ReasonPhrase);
         }
@@ -129,7 +133,7 @@ namespace CSLabs.Api.Proxmox
             return nodes;
         }
 
-        private async Task<List<int>> GetVmIds(string node)
+        private async Task<List<int>> GetQemuIds(string node)
         {
             await LoginIfNotLoggedIn();
             var vmListResponse = await Task.Run(() => this.client.Nodes[node].Qemu.Vmlist());
@@ -141,14 +145,15 @@ namespace CSLabs.Api.Proxmox
 
             return ids;
         }
+        
 
-        public async Task<List<int>> GetAllUsedIds()
+        public async Task<List<int>> GetAllUsedVmIds()
         {
             var nodes = await GetNodes();
             List<int> ids = new List<int>();
             foreach (var node in nodes)
             {
-                ids.AddRange((await GetVmIds(node)).Concat(await GetContainerIds(node)));
+                ids.AddRange((await GetQemuIds(node)).Concat(await GetContainerIds(node)));
             }
 
             return ids;
@@ -166,10 +171,10 @@ namespace CSLabs.Api.Proxmox
 
             return ids;
         }
-        public async Task<int> CloneTemplate(HypervisorNode node, int vmId)
+        public async Task<int> CloneTemplate(HypervisorNode node, int vmId, string srcNode = null)
         {
             await LoginIfNotLoggedIn();
-            var ids = await GetAllUsedIds();
+            var ids = await GetAllUsedVmIds();
 
             int newVmId = 100;
             if(ids.Count != 0)
@@ -193,6 +198,89 @@ namespace CSLabs.Api.Proxmox
                 Lock = lockValue,
                 Status = statusResponse.Response.data.status
             };
+        }
+
+        public async Task<int> CreateBridge(string targetNode = null)
+        {
+            await LoginIfNotLoggedIn();
+            string node = targetNode ?? this.HypervisorNode.Name;
+            var interfaceId = await GetNextAvailableBridgeId();
+            var interfaceName = "vmbr" + interfaceId;
+            var response = await Task.Run(() => this.client.Nodes[node].Network.CreateNetwork(iface: interfaceName, type: "bridge", autostart: true));
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ProxmoxException("CreateInterface Failed with response" +
+                                           JsonConvert.SerializeObject(response.Response));
+            }
+
+            return interfaceId;
+        }
+
+        public async Task ApplyNetworkConfiguration(string targetNode = null)
+        {
+            await LoginIfNotLoggedIn();
+            string node = targetNode ?? this.HypervisorNode.Name;
+            var response = await Task.Run(() => this.client.Nodes[node].Network.ReloadNetworkConfig());
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ProxmoxException("ApplyNetworkConfiguration Failed with response" +
+                                           JsonConvert.SerializeObject(response.Response));
+            }
+        }
+
+        public async Task AddBridgeToVm(int vmId, int bridgeId, int interfaceNumber = 0, string targetNode = null)
+        {
+            await LoginIfNotLoggedIn();
+            string node = targetNode ?? this.HypervisorNode.Name;
+            var configResponse = await Task.Run(() => this.client.Nodes[node].Qemu[vmId].Config.VmConfig());
+            var responseData = configResponse.Response.data;
+            var responseStr = JsonConvert.SerializeObject(responseData);
+            var dic = new Dictionary<int, string>
+            {
+                {interfaceNumber, "model=virtio,bridge=vmbr" + bridgeId + ",firewall=1"}
+            };
+            var updateReponse = await Task.Run(() => this.client.Nodes[node].Qemu[vmId].Config.UpdateVmAsync(netN: dic));
+            if (!updateReponse.IsSuccessStatusCode)
+            {
+                throw new ProxmoxException("AddBridgeToVm Failed with response" +
+                                           JsonConvert.SerializeObject(updateReponse.Response));
+            }
+        }
+
+        private async Task<int> GetNextAvailableBridgeId()
+        {
+            await LoginIfNotLoggedIn();
+            var interfaces = await GetBridgeIds();
+            int newVmbrId = 10;
+            if(interfaces.Count != 0)
+                newVmbrId = interfaces.Max() + 1;
+            if (newVmbrId < 10)
+                newVmbrId = 10;
+            return newVmbrId;
+        }
+
+        public async Task<List<int>> GetBridgeIds(string targetNode = null)
+        {
+            await LoginIfNotLoggedIn();
+            string node = targetNode ?? this.HypervisorNode.Name;
+            var response = await Task.Run(() => this.client.Nodes[node].Network.Index());
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new ProxmoxException("GetInterfaces Failed with response" +
+                                           JsonConvert.SerializeObject(response.Response));
+            }
+
+            List<int> interfaces = new List<int>();
+            foreach (var responseInterface in response.Response.data)
+            {
+                string name = responseInterface.iface;
+                if (name.Contains("vmbr"))
+                {
+                    string strNum = name.Substring(4);
+                    interfaces.Add(int.Parse(strNum));
+                }
+            }
+            return interfaces;
         }
     }
 }

@@ -87,9 +87,11 @@ namespace CSLabs.Api.Controllers
             if (userLab.UserLabVms.Count > 0)
                 // update the UI.
                 return Ok(userLab);
-            await _instantiationService.Instantiate(userLab, ProxmoxManager, GetUser());
+            await _instantiationService.Instantiate(userLab, ProxmoxManager, AppSettings.Proxmox.RootRouter);
             await DatabaseContext.SaveChangesAsync();
-            return Ok(userLab);
+            var userLabResponse = Map<UserLab>(userLab);
+            userLabResponse.UserLabVms = userLabResponse.UserLabVms.Where(vm => !vm.IsRootRouter).ToList();
+            return Ok(userLabResponse);
         }
         
         [HttpPost("{id}/complete")]
@@ -112,8 +114,7 @@ namespace CSLabs.Api.Controllers
             }
             
             userLab.Status = EUserLabStatus.Completed;
-           
-            await _instantiationService.Instantiate(userLab, ProxmoxManager, GetUser());
+            
             await DatabaseContext.SaveChangesAsync();
             return Ok(userLab);
         }
@@ -175,7 +176,9 @@ namespace CSLabs.Api.Controllers
                 .WhereIncludesUser(GetUser())
                 .FirstAsync(u => u.Id == id);
             userLab.FillAttachmentProperties();
-            return Ok(userLab);
+            var userLabResponse = Map<UserLab>(userLab);
+            userLabResponse.UserLabVms = userLabResponse.UserLabVms.Where(vm => !vm.IsRootRouter).ToList();
+            return Ok(userLabResponse);
         }
         
         [AllowAnonymous]

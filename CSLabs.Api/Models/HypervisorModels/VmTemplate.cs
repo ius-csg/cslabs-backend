@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using CSLabs.Api.Models.ModuleModels;
 
-namespace CSLabs.Api.Models
+namespace CSLabs.Api.Models.HypervisorModels
 {
     public class VmTemplate
     {

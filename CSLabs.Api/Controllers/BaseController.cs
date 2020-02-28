@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using AutoMapper;
+using CSLabs.Api.Config;
 using CSLabs.Api.Models;
 using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.Proxmox;
@@ -19,6 +20,8 @@ namespace CSLabs.Api.Controllers
         
         protected string WebAppUrl { get; set; }
 
+        protected AppSettings AppSettings { get; set; }
+        
         protected IFluentEmail CreateEmail()
         {
             return EmailFactory.Create();
@@ -36,6 +39,7 @@ namespace CSLabs.Api.Controllers
             this.ProxmoxManager = dependencies.ProxmoxManager;
             this.EmailFactory = dependencies.EmailFactory;
             this.WebAppUrl = dependencies.AppSettings.WebAppUrl;
+            this.AppSettings = dependencies.AppSettings;
         }
 
         public User GetUser()

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Models.ModuleModels;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,9 @@ namespace CSLabs.Api.Models.UserModels
         [ForeignKey(nameof(HypervisorNodeId))]
         [JsonIgnore]
         public HypervisorNode HypervisorNode { get; set; }
+        
+        [InverseProperty(nameof(HypervisorNetworkInterface.UserLab))]
+        public List<HypervisorNetworkInterface> Interfaces { get; set; }
         
         public static void OnModelCreating(ModelBuilder modelBuilder)
         {

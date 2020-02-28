@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
 
-namespace CSLabs.Api.Models
+namespace CSLabs.Api.Models.HypervisorModels
 {
     public class Hypervisor
     {
