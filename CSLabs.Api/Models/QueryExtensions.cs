@@ -30,11 +30,16 @@ namespace CSLabs.Api.Models
         {
             return query
                 .Include(l => l.Lab)
+                .ThenInclude(l => l.BridgeTemplates)
+                .Include(l => l.Lab)
                 .ThenInclude(n => n.LabVms)
                 .ThenInclude(l => l.VmTemplate)
                 .ThenInclude(l => l.HypervisorVmTemplates)
                 .ThenInclude(vt => vt.HypervisorNode)
-                .ThenInclude(hn => hn.Hypervisor);
+                .ThenInclude(hn => hn.Hypervisor)
+                .Include(l => l.Lab)
+                .ThenInclude(n => n.LabVms)
+                .ThenInclude(n => n.TemplateInterfaces);
         }
         
         public static IQueryable<UserLab> IncludeHypervisor(this IQueryable<UserLab> query)
