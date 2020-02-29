@@ -22,7 +22,7 @@ namespace CSLabs.Api.Services
         
         private HypervisorNode GetFirstAvailableHypervisorNodeFromTemplates(List<LabVm> labVms)
         {
-            return labVms.SelectMany(vm => vm.VmTemplates).Select(t => t.HypervisorNode).First();
+            return labVms.SelectMany(vm => vm.VmTemplate.HypervisorVmTemplates).Select(t => t.HypervisorNode).First();
         }
 
         public async Task Instantiate(UserLab userLab, ProxmoxManager ProxmoxManager)
@@ -41,8 +41,8 @@ namespace CSLabs.Api.Services
                 {
                     LabVm = labVm,
                     ProxmoxVmId = createdVmId,
-                    VmTemplate = template,
-                    IsCoreRouter = template.IsCoreRouter
+                    HypervisorVmTemplate = template,
+                    IsCoreRouter = template.VmTemplate.IsCoreRouter
                 });
             }
 

@@ -19,8 +19,9 @@ namespace CSLabs.Api.Models.ModuleModels
 
         public Lab Lab { get; set; }
 
-        [InverseProperty(nameof(VmTemplate.LabVm))]
-        public List<VmTemplate> VmTemplates { get; set; } = new List<VmTemplate>();
+        public int VmTemplateId  { get; set; }
+        [ForeignKey(nameof(VmTemplateId))]
+        public VmTemplate VmTemplate { get; set; }
         
         [InverseProperty(nameof(VmInterfaceTemplate.LabVm))]
         public List<VmInterfaceTemplate> TemplateInterfaces { get; set; }
@@ -31,9 +32,9 @@ namespace CSLabs.Api.Models.ModuleModels
             builder.Unique<LabVm>(u => u.Name);
         }
 
-        public VmTemplate GetTemplateWithNode(HypervisorNode node)
+        public HypervisorVmTemplate GetTemplateWithNode(HypervisorNode node)
         {
-            return VmTemplates.First(t => t.HypervisorNode == node);
+            return VmTemplate.HypervisorVmTemplates.First(t => t.HypervisorNode == node);
         }
     }
 }

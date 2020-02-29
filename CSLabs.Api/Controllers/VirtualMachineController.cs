@@ -51,7 +51,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Scrub(int id)
         {
             var vm = await DatabaseContext.UserLabVms
-                .Include(l => l.VmTemplate)
+                .Include(l => l.HypervisorVmTemplate)
                 .ThenInclude(l => l.HypervisorNode)
                 .ThenInclude(l => l.Hypervisor)
                 .WhereIncludesUser(GetUser())
@@ -59,9 +59,9 @@ namespace CSLabs.Api.Controllers
             if (vm.IsCoreRouter) {
                 return NotFound();
             }
-            var api = ProxmoxManager.GetProxmoxApi(vm.VmTemplate.HypervisorNode);
+            var api = ProxmoxManager.GetProxmoxApi(vm.HypervisorVmTemplate.HypervisorNode);
             await api.DestroyVm(vm.ProxmoxVmId);
-            await api.CloneTemplate(api.HypervisorNode, vm.VmTemplate.TemplateVmId, vm.ProxmoxVmId);
+            await api.CloneTemplate(api.HypervisorNode, vm.HypervisorVmTemplate.TemplateVmId, vm.ProxmoxVmId);
             var status = await api.GetVmStatus(vm.ProxmoxVmId);
             while (status.Lock == "clone") {
                 status = await api.GetVmStatus(vm.ProxmoxVmId);

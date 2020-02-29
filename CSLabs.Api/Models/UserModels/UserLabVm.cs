@@ -29,9 +29,9 @@ namespace CSLabs.Api.Models.UserModels
         [ForeignKey(nameof(UserLabId))]
         public UserLab UserLab { get; set; }
 
-        public int VmTemplateId { get; set; }
-        [ForeignKey(nameof(VmTemplateId))]
-        public VmTemplate VmTemplate { get; set; }
+        public int HypervisorVmTemplateId { get; set; }
+        [ForeignKey(nameof(HypervisorVmTemplateId))]
+        public HypervisorVmTemplate HypervisorVmTemplate { get; set; }
         
         [InverseProperty(nameof(VmInterfaceInstance.UserLabVm))]
         public List<VmInterfaceInstance> InterfaceInstances { get; set; } = new List<VmInterfaceInstance>();

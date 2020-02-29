@@ -44,7 +44,7 @@ namespace CSLabs.Api.Models.ModuleModels
          */
         public Hypervisor GetFirstAvailableHypervisor()
         {
-            return LabVms.SelectMany(vm => vm.VmTemplates).Select(t => t.HypervisorNode.Hypervisor)
+            return LabVms.SelectMany(vm => vm.VmTemplate.HypervisorVmTemplates).Select(t => t.HypervisorNode.Hypervisor)
                 .First();
         }
 

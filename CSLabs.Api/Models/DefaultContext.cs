@@ -39,6 +39,8 @@ namespace CSLabs.Api.Models
         
         public DbSet<VmInterfaceTemplate> VmInterfaceTemplates { get; set; }
         public DbSet<VmInterfaceInstance> VmInterfaceInstances { get; set; }
+        
+        public DbSet<HypervisorVmTemplate> HypervisorVmTemplates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
        {
