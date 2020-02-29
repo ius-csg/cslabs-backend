@@ -4,7 +4,7 @@
 
 * [.NET Core](https://dotnet.microsoft.com/download) Download .net core 2.2 SDK
 * Install entity framework tools `dotnet tool install --global dotnet-ef`
-* Visual Studio 2019 or the Rider IDE from Jetbrains
+* The Official IDE is Rider. Visual Studio 2019 Can be used as a fallback but you have to set the launch profile to CSLabsBackend
 * Copy `appsetting.Example.json` to `appsettings.json`
 * Replace Email section of `appsettings.json` with the testing mailtrap credentials in [Email Credentials](https://trello.com/c/ytg2ndaX) card in Trello
 * [Install MariaDB](#MariaDB-Setup) Choose no password when it asks you
