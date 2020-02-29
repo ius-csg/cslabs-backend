@@ -13,14 +13,14 @@ namespace CSLabs.Api.Controllers
     public class BaseController: ControllerBase
     {
         protected readonly DefaultContext DatabaseContext;
-        private readonly IMapper mapper;
+        protected IMapper Mapper { get;}
         private User user = null;
         protected readonly ProxmoxManager ProxmoxManager;
-        private IFluentEmailFactory EmailFactory { get; set; }
+        private IFluentEmailFactory EmailFactory { get; }
         
-        protected string WebAppUrl { get; set; }
+        protected string WebAppUrl { get; }
 
-        protected AppSettings AppSettings { get; set; }
+        protected AppSettings AppSettings { get;}
         
         protected IFluentEmail CreateEmail()
         {
@@ -29,13 +29,13 @@ namespace CSLabs.Api.Controllers
 
         protected T Map<T>(object value)
         {
-            return mapper.Map<T>(value);
+            return Mapper.Map<T>(value);
         }
         
         public BaseController(BaseControllerDependencies dependencies)
         {
             this.DatabaseContext = dependencies.DatabaseContext;
-            this.mapper = dependencies.Mapper;
+            this.Mapper = dependencies.Mapper;
             this.ProxmoxManager = dependencies.ProxmoxManager;
             this.EmailFactory = dependencies.EmailFactory;
             this.WebAppUrl = dependencies.AppSettings.WebAppUrl;

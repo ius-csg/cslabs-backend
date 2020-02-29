@@ -25,23 +25,15 @@ namespace CSLabs.Api.Services
             return labVms.SelectMany(vm => vm.VmTemplates).Select(t => t.HypervisorNode).First();
         }
 
-        public async Task Instantiate(UserLab userLab, ProxmoxManager ProxmoxManager, RootRouterSettings routerSettings)
+        public async Task Instantiate(UserLab userLab, ProxmoxManager ProxmoxManager)
         {
             var node = await ProxmoxManager.GetLeastLoadedHyperVisorNode(userLab.Lab);
             var api = ProxmoxManager.GetProxmoxApi(GetFirstAvailableHypervisorNodeFromTemplates(userLab.Lab.LabVms));
             List<UserLabVm> vms = new List<UserLabVm>();
 
-            var lanInterface = new HypervisorNetworkInterface {InterfaceId = await api.CreateBridge()};
+            var lanBridge = new HypervisorBridgeInstance {InterfaceId = await api.CreateBridge()};
 
-            userLab.Interfaces = new List<HypervisorNetworkInterface> {lanInterface};
-            int createdRouterId = await api.CloneTemplate(node, routerSettings.TemplateId, routerSettings.Node);
-            var router = new UserLabVm
-            {
-                Interfaces = new List<HypervisorNetworkInterface> {lanInterface},
-                IsRootRouter = true,
-                ProxmoxVmId = createdRouterId
-            };
-            vms.Add(router);
+            userLab.BridgeInstances = new List<HypervisorBridgeInstance> {lanBridge};
             
             foreach (var labVm in userLab.Lab.LabVms)
             {
@@ -52,13 +44,14 @@ namespace CSLabs.Api.Services
                     LabVm = labVm,
                     ProxmoxVmId = createdVmId,
                     VmTemplate = template,
-                    Interfaces = new List<HypervisorNetworkInterface> {lanInterface}
+                    IsCoreRouter = template.IsCoreRouter,
+                    BridgeInstances = new List<HypervisorBridgeInstance> {lanBridge}
                 });
             }
 
             foreach (var vm in vms)
             {
-                await api.AddBridgeToVm(vm.ProxmoxVmId, lanInterface.InterfaceId, vm.IsRootRouter ? 1 : 0, node.Name);
+                await api.AddBridgeToVm(vm.ProxmoxVmId, lanBridge.InterfaceId, vm.IsCoreRouter ? 1 : 0, node.Name);
             }
 
             await api.ApplyNetworkConfiguration();
@@ -72,6 +65,26 @@ namespace CSLabs.Api.Services
             userLab.UserLabVms = vms;
             userLab.EndDateTime = DateTime.UtcNow.AddDays(30);
             userLab.Status = EUserLabStatus.Started;
+        }
+
+        public async Task Deconstruct(UserLab userLab, ProxmoxManager proxmoxManager)
+        {
+            var api = proxmoxManager.GetProxmoxApi(userLab);
+            foreach (var userLabVm in userLab.UserLabVms)
+            {
+                await api.DestroyVm(userLabVm.ProxmoxVmId);
+                _context.UserLabVms.Remove(userLabVm);
+                await _context.SaveChangesAsync();
+            }
+            
+            foreach (var bridge in userLab.BridgeInstances)
+            {
+                await api.DestroyBridge(bridge.InterfaceId);
+                _context.HypervisorBridgeInstances.Remove(bridge);
+                await _context.SaveChangesAsync();
+            }
+
+            userLab.Status = EUserLabStatus.Completed;
         }
     }
 }

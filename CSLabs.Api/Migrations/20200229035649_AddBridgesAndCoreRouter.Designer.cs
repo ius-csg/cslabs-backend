@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    [Migration("20200228034551_AddInterfacesAndRouters")]
-    partial class AddInterfacesAndRouters
+    [Migration("20200229035649_AddBridgesAndCoreRouter")]
+    partial class AddBridgesAndCoreRouter
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -117,37 +117,6 @@ namespace CSLabs.Api.Migrations
                     b.ToTable("hypervisors");
                 });
 
-            modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorNetworkInterface", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id");
-
-                    b.Property<int>("InterfaceId")
-                        .HasColumnName("interface_id");
-
-                    b.Property<int>("UserLabId")
-                        .HasColumnName("user_lab_id");
-
-                    b.Property<int>("UserLabVmId")
-                        .HasColumnName("user_lab_vm_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_hypervisor_network_interfaces");
-
-                    b.HasIndex("InterfaceId")
-                        .IsUnique()
-                        .HasName("ix_hypervisor_network_interfaces_interface_id");
-
-                    b.HasIndex("UserLabId")
-                        .HasName("ix_hypervisor_network_interfaces_user_lab_id");
-
-                    b.HasIndex("UserLabVmId")
-                        .HasName("ix_hypervisor_network_interfaces_user_lab_vm_id");
-
-                    b.ToTable("hypervisor_network_interfaces");
-                });
-
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorNode", b =>
                 {
                     b.Property<int>("Id")
@@ -182,6 +151,9 @@ namespace CSLabs.Api.Migrations
 
                     b.Property<int>("HypervisorNodeId")
                         .HasColumnName("hypervisor_node_id");
+
+                    b.Property<bool>("IsCoreRouter")
+                        .HasColumnName("is_core_router");
 
                     b.Property<int>("LabVmId")
                         .HasColumnName("lab_vm_id");
@@ -341,6 +313,37 @@ namespace CSLabs.Api.Migrations
                     b.ToTable("modules");
                 });
 
+            modelBuilder.Entity("CSLabs.Api.Models.UserModels.HypervisorBridgeInstance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id");
+
+                    b.Property<int>("InterfaceId")
+                        .HasColumnName("interface_id");
+
+                    b.Property<int>("UserLabId")
+                        .HasColumnName("user_lab_id");
+
+                    b.Property<int>("UserLabVmId")
+                        .HasColumnName("user_lab_vm_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_hypervisor_bridge_instances");
+
+                    b.HasIndex("InterfaceId")
+                        .IsUnique()
+                        .HasName("ix_hypervisor_bridge_instances_interface_id");
+
+                    b.HasIndex("UserLabId")
+                        .HasName("ix_hypervisor_bridge_instances_user_lab_id");
+
+                    b.HasIndex("UserLabVmId")
+                        .HasName("ix_hypervisor_bridge_instances_user_lab_vm_id");
+
+                    b.ToTable("hypervisor_bridge_instances");
+                });
+
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.User", b =>
                 {
                     b.Property<int>("Id")
@@ -490,10 +493,10 @@ namespace CSLabs.Api.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
-                    b.Property<bool>("IsRootRouter")
-                        .HasColumnName("is_root_router");
+                    b.Property<bool>("IsCoreRouter")
+                        .HasColumnName("is_core_router");
 
-                    b.Property<int?>("LabVmId")
+                    b.Property<int>("LabVmId")
                         .HasColumnName("lab_vm_id");
 
                     b.Property<int>("ProxmoxVmId")
@@ -507,7 +510,7 @@ namespace CSLabs.Api.Migrations
                     b.Property<int>("UserLabId")
                         .HasColumnName("user_lab_id");
 
-                    b.Property<int?>("VmTemplateId")
+                    b.Property<int>("VmTemplateId")
                         .HasColumnName("vm_template_id");
 
                     b.HasKey("Id")
@@ -577,21 +580,6 @@ namespace CSLabs.Api.Migrations
                     b.ToTable("user_user_module");
                 });
 
-            modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorNetworkInterface", b =>
-                {
-                    b.HasOne("CSLabs.Api.Models.UserModels.UserLab", "UserLab")
-                        .WithMany("Interfaces")
-                        .HasForeignKey("UserLabId")
-                        .HasConstraintName("fk_hypervisor_network_interfaces_user_labs_user_lab_id")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CSLabs.Api.Models.UserModels.UserLabVm", "UserLabVm")
-                        .WithMany("Interfaces")
-                        .HasForeignKey("UserLabVmId")
-                        .HasConstraintName("fk_hypervisor_network_interfaces_user_lab_vms_user_lab_vm_id")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorNode", b =>
                 {
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.Hypervisor", "Hypervisor")
@@ -634,6 +622,21 @@ namespace CSLabs.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("CSLabs.Api.Models.UserModels.HypervisorBridgeInstance", b =>
+                {
+                    b.HasOne("CSLabs.Api.Models.UserModels.UserLab", "UserLab")
+                        .WithMany("BridgeInstances")
+                        .HasForeignKey("UserLabId")
+                        .HasConstraintName("fk_hypervisor_bridge_instances_user_labs_user_lab_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CSLabs.Api.Models.UserModels.UserLabVm", "UserLabVm")
+                        .WithMany("BridgeInstances")
+                        .HasForeignKey("UserLabVmId")
+                        .HasConstraintName("fk_hypervisor_bridge_instances_user_lab_vms_user_lab_vm_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserLab", b =>
                 {
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.HypervisorNode", "HypervisorNode")
@@ -660,7 +663,8 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.LabVm", "LabVm")
                         .WithMany()
                         .HasForeignKey("LabVmId")
-                        .HasConstraintName("fk_user_lab_vms_lab_vms_lab_vm_id");
+                        .HasConstraintName("fk_user_lab_vms_lab_vms_lab_vm_id")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CSLabs.Api.Models.UserModels.UserLab", "UserLab")
                         .WithMany("UserLabVms")
@@ -671,7 +675,8 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.VmTemplate", "VmTemplate")
                         .WithMany()
                         .HasForeignKey("VmTemplateId")
-                        .HasConstraintName("fk_user_lab_vms_vm_template_vm_template_id");
+                        .HasConstraintName("fk_user_lab_vms_vm_template_vm_template_id")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserModule", b =>

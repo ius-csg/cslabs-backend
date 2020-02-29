@@ -20,6 +20,9 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> GetTicket(int id)
         {
             var vm = await GetVm(id);
+            if (vm.IsCoreRouter) {
+                return NotFound();
+            }
             var url = vm.UserLab.HypervisorNode.Hypervisor.NoVncUrl
                 .Replace("{node}", vm.UserLab.HypervisorNode.Name)
                 .Replace("{vm}", vm.ProxmoxVmId.ToString());
@@ -53,12 +56,14 @@ namespace CSLabs.Api.Controllers
                 .ThenInclude(l => l.Hypervisor)
                 .WhereIncludesUser(GetUser())
                 .FirstAsync(v => v.Id == id);
+            if (vm.IsCoreRouter) {
+                return NotFound();
+            }
             var api = ProxmoxManager.GetProxmoxApi(vm.VmTemplate.HypervisorNode);
             await api.DestroyVm(vm.ProxmoxVmId);
             await api.CloneTemplate(api.HypervisorNode, vm.VmTemplate.TemplateVmId, vm.ProxmoxVmId);
             var status = await api.GetVmStatus(vm.ProxmoxVmId);
-            while (status.Lock == "clone")
-            {
+            while (status.Lock == "clone") {
                 status = await api.GetVmStatus(vm.ProxmoxVmId);
             }
             await api.StartVM(vm.ProxmoxVmId);
@@ -70,6 +75,9 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Reset(int id)
         {
             var vm = await GetVm(id);
+            if (vm.IsCoreRouter) {
+                return NotFound();
+            }
             await ProxmoxManager.GetProxmoxApi(vm.UserLab).ResetVM(vm.ProxmoxVmId);
             return Ok();
         }
@@ -79,6 +87,9 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Stop(int id)
         {
             var vm = await GetVm(id);
+            if (vm.IsCoreRouter) {
+                return NotFound();
+            }
             await ProxmoxManager.GetProxmoxApi(vm.UserLab).StopVM(vm.ProxmoxVmId);
             return Ok();
         }
@@ -88,6 +99,9 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> StartUp(int id)
         {
             var vm = await GetVm(id);
+            if (vm.IsCoreRouter) {
+                return NotFound();
+            }
             await ProxmoxManager.GetProxmoxApi(vm.UserLab).StartVM(vm.ProxmoxVmId);
             return Ok();
         }

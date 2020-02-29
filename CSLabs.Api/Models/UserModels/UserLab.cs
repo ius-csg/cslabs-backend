@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using AutoMapper;
 using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Models.ModuleModels;
 using CSLabs.Api.Util;
@@ -44,14 +46,21 @@ namespace CSLabs.Api.Models.UserModels
             HasTopology = System.IO.File.Exists("Assets/Images/" + LabId + ".jpg");
             HasReadme = System.IO.File.Exists("Assets/Pdf/" + LabId + ".pdf");
         }
+
+        public UserLab GetResponse(IMapper mapper)
+        {
+            var response = mapper.Map<UserLab>(this);
+            response.UserLabVms = response.UserLabVms.Where(vm => !vm.IsCoreRouter).ToList();
+            return response;
+        }
         
         public int? HypervisorNodeId  { get; set; }
         [ForeignKey(nameof(HypervisorNodeId))]
         [JsonIgnore]
         public HypervisorNode HypervisorNode { get; set; }
         
-        [InverseProperty(nameof(HypervisorNetworkInterface.UserLab))]
-        public List<HypervisorNetworkInterface> Interfaces { get; set; }
+        [InverseProperty(nameof(HypervisorBridgeInstance.UserLab))]
+        public List<HypervisorBridgeInstance> BridgeInstances { get; set; }
         
         public static void OnModelCreating(ModelBuilder modelBuilder)
         {

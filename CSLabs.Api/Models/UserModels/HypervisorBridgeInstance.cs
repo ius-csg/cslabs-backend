@@ -1,12 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
 
-namespace CSLabs.Api.Models.HypervisorModels
+namespace CSLabs.Api.Models.UserModels
 {
-    public class HypervisorNetworkInterface
+    public class HypervisorBridgeInstance
     {
         public int Id { get; set; }
         [Required]
@@ -24,7 +23,7 @@ namespace CSLabs.Api.Models.HypervisorModels
 
         public static void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Unique<HypervisorNetworkInterface>(i => i.InterfaceId);
+            modelBuilder.Unique<HypervisorBridgeInstance>(i => i.InterfaceId);
         }
     }
 }

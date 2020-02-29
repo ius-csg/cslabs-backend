@@ -34,7 +34,7 @@ namespace CSLabs.Api.Models
         
         public DbSet<ContactEmail> ContactEmails { get; set; }
         
-        public DbSet<HypervisorNetworkInterface> HypervisorNetworkInterfaces { get; set; }
+        public DbSet<HypervisorBridgeInstance> HypervisorBridgeInstances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
        {
@@ -58,7 +58,7 @@ namespace CSLabs.Api.Models
            // configure many to many relationship
            UserUserModule.OnModelCreating(builder);
            ContactEmail.OnModelCreating(builder);
-           HypervisorNetworkInterface.OnModelCreating(builder);
+           HypervisorBridgeInstance.OnModelCreating(builder);
            builder.SnakeCaseDatabase();
            
        }
