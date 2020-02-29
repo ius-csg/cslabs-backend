@@ -34,7 +34,11 @@ namespace CSLabs.Api.Models
         
         public DbSet<ContactEmail> ContactEmails { get; set; }
         
-        public DbSet<HypervisorBridgeInstance> HypervisorBridgeInstances { get; set; }
+        public DbSet<BridgeTemplate> BridgeTemplates { get; set; }
+        public DbSet<BridgeInstance> BridgeInstances { get; set; }
+        
+        public DbSet<VmInterfaceTemplate> VmInterfaceTemplates { get; set; }
+        public DbSet<VmInterfaceInstance> VmInterfaceInstances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
        {
@@ -58,7 +62,10 @@ namespace CSLabs.Api.Models
            // configure many to many relationship
            UserUserModule.OnModelCreating(builder);
            ContactEmail.OnModelCreating(builder);
-           HypervisorBridgeInstance.OnModelCreating(builder);
+           BridgeInstance.OnModelCreating(builder);
+           VmInterfaceTemplate.OnModelCreating(builder);
+           VmInterfaceInstance.OnModelCreating(builder);
+           BridgeTemplate.OnModelCreating(builder);
            builder.SnakeCaseDatabase();
            
        }

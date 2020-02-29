@@ -29,40 +29,45 @@ namespace CSLabs.Api.Services
         {
             var node = await ProxmoxManager.GetLeastLoadedHyperVisorNode(userLab.Lab);
             var api = ProxmoxManager.GetProxmoxApi(GetFirstAvailableHypervisorNodeFromTemplates(userLab.Lab.LabVms));
-            List<UserLabVm> vms = new List<UserLabVm>();
-
-            var lanBridge = new HypervisorBridgeInstance {InterfaceId = await api.CreateBridge()};
-
-            userLab.BridgeInstances = new List<HypervisorBridgeInstance> {lanBridge};
+            foreach (var bridgeTemplate in userLab.Lab.BridgeTemplates) {
+                userLab.BridgeInstances.Add(new BridgeInstance {HypervisorInterfaceId = await api.CreateBridge(), BridgeTemplate = bridgeTemplate});
+            }
             
             foreach (var labVm in userLab.Lab.LabVms)
             {
                 var template = labVm.GetTemplateWithNode(api.HypervisorNode);
                 int createdVmId = await api.CloneTemplate(node, template.TemplateVmId);
-                vms.Add(new UserLabVm
+                userLab.UserLabVms.Add(new UserLabVm
                 {
                     LabVm = labVm,
                     ProxmoxVmId = createdVmId,
                     VmTemplate = template,
-                    IsCoreRouter = template.IsCoreRouter,
-                    BridgeInstances = new List<HypervisorBridgeInstance> {lanBridge}
+                    IsCoreRouter = template.IsCoreRouter
                 });
             }
 
-            foreach (var vm in vms)
+            foreach (var vm in userLab.UserLabVms)
             {
-                await api.AddBridgeToVm(vm.ProxmoxVmId, lanBridge.InterfaceId, vm.IsCoreRouter ? 1 : 0, node.Name);
+                foreach (var templateInterface in vm.LabVm.TemplateInterfaces)
+                {
+                    var bridge = userLab.BridgeInstances.First(b => b.BridgeTemplate == templateInterface.BridgeTemplate);
+                    await api.AddBridgeToVm(vm.ProxmoxVmId, bridge.HypervisorInterfaceId, templateInterface.InterfaceNumber, node.Name);
+                    vm.InterfaceInstances.Add(new VmInterfaceInstance
+                    {
+                        BridgeInstance = bridge,
+                        Template = templateInterface
+                    });
+                }
             }
 
             await api.ApplyNetworkConfiguration();
             
-            foreach (var vm in vms)
+            foreach (var vm in userLab.UserLabVms)
             {
                 await api.StartVM(vm.ProxmoxVmId, node.Name);
             }
             
             userLab.HypervisorNode = node;
-            userLab.UserLabVms = vms;
             userLab.EndDateTime = DateTime.UtcNow.AddDays(30);
             userLab.Status = EUserLabStatus.Started;
         }
@@ -79,8 +84,8 @@ namespace CSLabs.Api.Services
             
             foreach (var bridge in userLab.BridgeInstances)
             {
-                await api.DestroyBridge(bridge.InterfaceId);
-                _context.HypervisorBridgeInstances.Remove(bridge);
+                await api.DestroyBridge(bridge.HypervisorInterfaceId);
+                _context.BridgeInstances.Remove(bridge);
                 await _context.SaveChangesAsync();
             }
 

@@ -33,8 +33,8 @@ namespace CSLabs.Api.Models.UserModels
         [ForeignKey(nameof(VmTemplateId))]
         public VmTemplate VmTemplate { get; set; }
         
-        [InverseProperty(nameof(HypervisorBridgeInstance.UserLabVm))]
-        public List<HypervisorBridgeInstance> BridgeInstances { get; set; } = new List<HypervisorBridgeInstance>();
+        [InverseProperty(nameof(VmInterfaceInstance.UserLabVm))]
+        public List<VmInterfaceInstance> InterfaceInstances { get; set; } = new List<VmInterfaceInstance>();
 
 
         public static void OnModelCreating(ModelBuilder builder)

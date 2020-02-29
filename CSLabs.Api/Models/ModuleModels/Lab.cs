@@ -36,6 +36,9 @@ namespace CSLabs.Api.Models.ModuleModels
         public int EstimatedCpusUsed { get; set; }
         public int EstimatedMemoryUsedMb { get; set; }
 
+        [InverseProperty(nameof(BridgeTemplate.Lab))]
+        public List<BridgeTemplate> BridgeTemplates { get; set; }
+
         /**
          * Requires LabVms.VmTemplates.HypervisorNode.Hypervisor is all included
          */

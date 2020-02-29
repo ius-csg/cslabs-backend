@@ -21,6 +21,9 @@ namespace CSLabs.Api.Models.ModuleModels
 
         [InverseProperty(nameof(VmTemplate.LabVm))]
         public List<VmTemplate> VmTemplates { get; set; } = new List<VmTemplate>();
+        
+        [InverseProperty(nameof(VmInterfaceTemplate.LabVm))]
+        public List<VmInterfaceTemplate> TemplateInterfaces { get; set; }
 
         public static void OnModelCreating(ModelBuilder builder)
         {

@@ -25,7 +25,7 @@ namespace CSLabs.Api.Models.UserModels
 
         public UserModule UserModule { get; set; }
         [InverseProperty(nameof(UserLabVm.UserLab))]
-        public List<UserLabVm> UserLabVms { get; set; }
+        public List<UserLabVm> UserLabVms { get; set; } = new List<UserLabVm>();
 
         public Lab Lab { get; set; }
         [Required]
@@ -59,8 +59,8 @@ namespace CSLabs.Api.Models.UserModels
         [JsonIgnore]
         public HypervisorNode HypervisorNode { get; set; }
         
-        [InverseProperty(nameof(HypervisorBridgeInstance.UserLab))]
-        public List<HypervisorBridgeInstance> BridgeInstances { get; set; }
+        [InverseProperty(nameof(BridgeInstance.UserLab))]
+        public List<BridgeInstance> BridgeInstances { get; set; } = new List<BridgeInstance>();
         
         public static void OnModelCreating(ModelBuilder modelBuilder)
         {

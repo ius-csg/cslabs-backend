@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    [Migration("20200229035649_AddBridgesAndCoreRouter")]
-    partial class AddBridgesAndCoreRouter
+    [Migration("20200229044211_AddBridgesInterfacesAndRouters")]
+    partial class AddBridgesInterfacesAndRouters
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -173,6 +173,31 @@ namespace CSLabs.Api.Migrations
                     b.ToTable("vm_template");
                 });
 
+            modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.BridgeTemplate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id");
+
+                    b.Property<int>("LabId")
+                        .HasColumnName("lab_id");
+
+                    b.Property<string>("Name")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_bridge_templates");
+
+                    b.HasIndex("LabId")
+                        .HasName("ix_bridge_templates_lab_id");
+
+                    b.HasIndex("LabId", "Name")
+                        .IsUnique()
+                        .HasName("ix_bridge_templates_lab_id_name");
+
+                    b.ToTable("bridge_templates");
+                });
+
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Lab", b =>
                 {
                     b.Property<int>("Id")
@@ -313,14 +338,48 @@ namespace CSLabs.Api.Migrations
                     b.ToTable("modules");
                 });
 
-            modelBuilder.Entity("CSLabs.Api.Models.UserModels.HypervisorBridgeInstance", b =>
+            modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.VmInterfaceTemplate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnName("id");
 
-                    b.Property<int>("InterfaceId")
-                        .HasColumnName("interface_id");
+                    b.Property<int>("HypervisorBridgeTemplateId")
+                        .HasColumnName("hypervisor_bridge_template_id");
+
+                    b.Property<int>("InterfaceNumber")
+                        .HasColumnName("interface_number");
+
+                    b.Property<int>("LabVmId")
+                        .HasColumnName("lab_vm_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_vm_interface_templates");
+
+                    b.HasIndex("HypervisorBridgeTemplateId")
+                        .HasName("ix_vm_interface_templates_hypervisor_bridge_template_id");
+
+                    b.HasIndex("LabVmId")
+                        .HasName("ix_vm_interface_templates_lab_vm_id");
+
+                    b.HasIndex("InterfaceNumber", "LabVmId")
+                        .IsUnique()
+                        .HasName("ix_vm_interface_templates_interface_number_lab_vm_id");
+
+                    b.ToTable("vm_interface_templates");
+                });
+
+            modelBuilder.Entity("CSLabs.Api.Models.UserModels.BridgeInstance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id");
+
+                    b.Property<int>("BridgeTemplateId")
+                        .HasColumnName("bridge_template_id");
+
+                    b.Property<int>("HypervisorInterfaceId")
+                        .HasColumnName("hypervisor_interface_id");
 
                     b.Property<int>("UserLabId")
                         .HasColumnName("user_lab_id");
@@ -329,19 +388,22 @@ namespace CSLabs.Api.Migrations
                         .HasColumnName("user_lab_vm_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_hypervisor_bridge_instances");
+                        .HasName("pk_bridge_instances");
 
-                    b.HasIndex("InterfaceId")
-                        .IsUnique()
-                        .HasName("ix_hypervisor_bridge_instances_interface_id");
+                    b.HasIndex("BridgeTemplateId")
+                        .HasName("ix_bridge_instances_bridge_template_id");
 
                     b.HasIndex("UserLabId")
-                        .HasName("ix_hypervisor_bridge_instances_user_lab_id");
+                        .HasName("ix_bridge_instances_user_lab_id");
 
                     b.HasIndex("UserLabVmId")
-                        .HasName("ix_hypervisor_bridge_instances_user_lab_vm_id");
+                        .HasName("ix_bridge_instances_user_lab_vm_id");
 
-                    b.ToTable("hypervisor_bridge_instances");
+                    b.HasIndex("UserLabVmId", "HypervisorInterfaceId")
+                        .IsUnique()
+                        .HasName("ix_bridge_instances_user_lab_vm_id_hypervisor_interface_id");
+
+                    b.ToTable("bridge_instances");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.User", b =>
@@ -580,6 +642,36 @@ namespace CSLabs.Api.Migrations
                     b.ToTable("user_user_module");
                 });
 
+            modelBuilder.Entity("CSLabs.Api.Models.UserModels.VmInterfaceInstance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id");
+
+                    b.Property<int>("BridgeInstanceId")
+                        .HasColumnName("bridge_instance_id");
+
+                    b.Property<int>("UserLabVmId")
+                        .HasColumnName("user_lab_vm_id");
+
+                    b.Property<int>("VmInterfaceTemplateId")
+                        .HasColumnName("vm_interface_template_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_vm_interface_instances");
+
+                    b.HasIndex("BridgeInstanceId")
+                        .HasName("ix_vm_interface_instances_bridge_instance_id");
+
+                    b.HasIndex("UserLabVmId")
+                        .HasName("ix_vm_interface_instances_user_lab_vm_id");
+
+                    b.HasIndex("VmInterfaceTemplateId")
+                        .HasName("ix_vm_interface_instances_vm_interface_template_id");
+
+                    b.ToTable("vm_interface_instances");
+                });
+
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorNode", b =>
                 {
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.Hypervisor", "Hypervisor")
@@ -604,6 +696,15 @@ namespace CSLabs.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.BridgeTemplate", b =>
+                {
+                    b.HasOne("CSLabs.Api.Models.ModuleModels.Lab", "Lab")
+                        .WithMany("BridgeTemplates")
+                        .HasForeignKey("LabId")
+                        .HasConstraintName("fk_bridge_templates_labs_lab_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Lab", b =>
                 {
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Module")
@@ -622,18 +723,39 @@ namespace CSLabs.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CSLabs.Api.Models.UserModels.HypervisorBridgeInstance", b =>
+            modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.VmInterfaceTemplate", b =>
                 {
+                    b.HasOne("CSLabs.Api.Models.ModuleModels.BridgeTemplate", "BridgeTemplate")
+                        .WithMany()
+                        .HasForeignKey("HypervisorBridgeTemplateId")
+                        .HasConstraintName("fk_vm_interface_templates_bridge_templates_hypervisor_bridge_te~")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CSLabs.Api.Models.ModuleModels.LabVm", "LabVm")
+                        .WithMany("TemplateInterfaces")
+                        .HasForeignKey("LabVmId")
+                        .HasConstraintName("fk_vm_interface_templates_lab_vms_lab_vm_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CSLabs.Api.Models.UserModels.BridgeInstance", b =>
+                {
+                    b.HasOne("CSLabs.Api.Models.ModuleModels.BridgeTemplate", "BridgeTemplate")
+                        .WithMany()
+                        .HasForeignKey("BridgeTemplateId")
+                        .HasConstraintName("fk_bridge_instances_bridge_templates_bridge_template_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("CSLabs.Api.Models.UserModels.UserLab", "UserLab")
                         .WithMany("BridgeInstances")
                         .HasForeignKey("UserLabId")
-                        .HasConstraintName("fk_hypervisor_bridge_instances_user_labs_user_lab_id")
+                        .HasConstraintName("fk_bridge_instances_user_labs_user_lab_id")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CSLabs.Api.Models.UserModels.UserLabVm", "UserLabVm")
-                        .WithMany("BridgeInstances")
+                        .WithMany()
                         .HasForeignKey("UserLabVmId")
-                        .HasConstraintName("fk_hypervisor_bridge_instances_user_lab_vms_user_lab_vm_id")
+                        .HasConstraintName("fk_bridge_instances_user_lab_vms_user_lab_vm_id")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -700,6 +822,27 @@ namespace CSLabs.Api.Migrations
                         .WithMany("UserUserModules")
                         .HasForeignKey("UserModuleId")
                         .HasConstraintName("fk_user_user_module_user_modules_user_module_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CSLabs.Api.Models.UserModels.VmInterfaceInstance", b =>
+                {
+                    b.HasOne("CSLabs.Api.Models.UserModels.BridgeInstance", "BridgeInstance")
+                        .WithMany("InterfaceInstances")
+                        .HasForeignKey("BridgeInstanceId")
+                        .HasConstraintName("fk_vm_interface_instances_bridge_instances_bridge_instance_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CSLabs.Api.Models.UserModels.UserLabVm", "UserLabVm")
+                        .WithMany("InterfaceInstances")
+                        .HasForeignKey("UserLabVmId")
+                        .HasConstraintName("fk_vm_interface_instances_user_lab_vms_user_lab_vm_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CSLabs.Api.Models.ModuleModels.VmInterfaceTemplate", "Template")
+                        .WithMany()
+                        .HasForeignKey("VmInterfaceTemplateId")
+                        .HasConstraintName("fk_vm_interface_instances_vm_interface_templates_vm_interface_t~")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
