@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    [Migration("20200229044211_AddBridgesInterfacesAndRouters")]
+    [Migration("20200229045653_AddBridgesInterfacesAndRouters")]
     partial class AddBridgesInterfacesAndRouters
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,7 +183,12 @@ namespace CSLabs.Api.Migrations
                         .HasColumnName("lab_id");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnName("name");
+
+                    b.Property<string>("Uuid")
+                        .IsRequired()
+                        .HasColumnName("uuid");
 
                     b.HasKey("Id")
                         .HasName("pk_bridge_templates");
@@ -194,6 +199,10 @@ namespace CSLabs.Api.Migrations
                     b.HasIndex("LabId", "Name")
                         .IsUnique()
                         .HasName("ix_bridge_templates_lab_id_name");
+
+                    b.HasIndex("LabId", "Uuid")
+                        .IsUnique()
+                        .HasName("ix_bridge_templates_lab_id_uuid");
 
                     b.ToTable("bridge_templates");
                 });
@@ -344,8 +353,12 @@ namespace CSLabs.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnName("id");
 
-                    b.Property<int>("HypervisorBridgeTemplateId")
-                        .HasColumnName("hypervisor_bridge_template_id");
+                    b.Property<int>("BridgeTemplateId")
+                        .HasColumnName("bridge_template_id");
+
+                    b.Property<string>("BridgeTemplateUuid")
+                        .IsRequired()
+                        .HasColumnName("bridge_template_uuid");
 
                     b.Property<int>("InterfaceNumber")
                         .HasColumnName("interface_number");
@@ -356,8 +369,8 @@ namespace CSLabs.Api.Migrations
                     b.HasKey("Id")
                         .HasName("pk_vm_interface_templates");
 
-                    b.HasIndex("HypervisorBridgeTemplateId")
-                        .HasName("ix_vm_interface_templates_hypervisor_bridge_template_id");
+                    b.HasIndex("BridgeTemplateId")
+                        .HasName("ix_vm_interface_templates_bridge_template_id");
 
                     b.HasIndex("LabVmId")
                         .HasName("ix_vm_interface_templates_lab_vm_id");
@@ -727,8 +740,8 @@ namespace CSLabs.Api.Migrations
                 {
                     b.HasOne("CSLabs.Api.Models.ModuleModels.BridgeTemplate", "BridgeTemplate")
                         .WithMany()
-                        .HasForeignKey("HypervisorBridgeTemplateId")
-                        .HasConstraintName("fk_vm_interface_templates_bridge_templates_hypervisor_bridge_te~")
+                        .HasForeignKey("BridgeTemplateId")
+                        .HasConstraintName("fk_vm_interface_templates_bridge_templates_bridge_template_id")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CSLabs.Api.Models.ModuleModels.LabVm", "LabVm")

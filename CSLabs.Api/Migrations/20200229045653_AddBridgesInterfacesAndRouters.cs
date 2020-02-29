@@ -25,7 +25,8 @@ namespace CSLabs.Api.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    name = table.Column<string>(nullable: true),
+                    name = table.Column<string>(nullable: false),
+                    uuid = table.Column<string>(nullable: false),
                     lab_id = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -81,14 +82,15 @@ namespace CSLabs.Api.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     interface_number = table.Column<int>(nullable: false),
                     lab_vm_id = table.Column<int>(nullable: false),
-                    hypervisor_bridge_template_id = table.Column<int>(nullable: false)
+                    bridge_template_uuid = table.Column<string>(nullable: false),
+                    bridge_template_id = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_vm_interface_templates", x => x.id);
                     table.ForeignKey(
-                        name: "fk_vm_interface_templates_bridge_templates_hypervisor_bridge_te~",
-                        column: x => x.hypervisor_bridge_template_id,
+                        name: "fk_vm_interface_templates_bridge_templates_bridge_template_id",
+                        column: x => x.bridge_template_id,
                         principalTable: "bridge_templates",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -166,6 +168,12 @@ namespace CSLabs.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "ix_bridge_templates_lab_id_uuid",
+                table: "bridge_templates",
+                columns: new[] { "lab_id", "uuid" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "ix_vm_interface_instances_bridge_instance_id",
                 table: "vm_interface_instances",
                 column: "bridge_instance_id");
@@ -181,9 +189,9 @@ namespace CSLabs.Api.Migrations
                 column: "vm_interface_template_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_vm_interface_templates_hypervisor_bridge_template_id",
+                name: "ix_vm_interface_templates_bridge_template_id",
                 table: "vm_interface_templates",
-                column: "hypervisor_bridge_template_id");
+                column: "bridge_template_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_vm_interface_templates_lab_vm_id",

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Util;
@@ -13,9 +14,11 @@ namespace CSLabs.Api.Models.ModuleModels
         public int LabVmId  { get; set; }
         [ForeignKey(nameof(LabVmId))]
         public LabVm LabVm { get; set; }
-        
-        public int HypervisorBridgeTemplateId  { get; set; }
-        [ForeignKey(nameof(HypervisorBridgeTemplateId))]
+        // used to link the bridge on the frontend so the references can be linked on the backend.
+        [Required]
+        public string BridgeTemplateUuid { get; set; }
+        public int BridgeTemplateId  { get; set; }
+        [ForeignKey(nameof(BridgeTemplateId))]
         public BridgeTemplate BridgeTemplate { get; set; }
 
         public static void OnModelCreating(ModelBuilder modelBuilder)
