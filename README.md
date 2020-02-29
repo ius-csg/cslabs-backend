@@ -10,6 +10,10 @@
 * [Install MariaDB](#MariaDB-Setup) Choose no password when it asks you
 * cd into `CSLabs.Api` and run `dotnet ef database update`
 
+* Note: Every time changes are pulled from the repository, it is a good idea to perform this
+step again: cd into `CSLabs.Api` and run `dotnet ef database update`
+
+
 #### Setup steps for connecting to a proxmox server
 
 These steps are only required if you plan on starting a lab.
