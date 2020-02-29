@@ -12,6 +12,8 @@
 
 #### Setup steps for connecting to a proxmox server
 
+These steps are only required if you plan on starting a lab.
+
 * Build the project
 * Copy `CSLabs.Api/appsettings.json` to `CSLabs.Console/bin/Debug/netcoreapp2.2`
 * Change directory into Console build directory `cd CSLabs.Console/bin/Debug/netcoreapp2.2` 
