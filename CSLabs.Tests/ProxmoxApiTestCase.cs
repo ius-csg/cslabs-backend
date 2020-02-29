@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CSLabs.Api.Models;
+using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Proxmox;
 using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
@@ -23,7 +24,7 @@ namespace CSLabs.Tests
             var apiSection = configuration.GetSection("Api");
             _hypervisorNode = new HypervisorNode
             {
-                Name = "a1",
+                Name = apiSection["Node"],
                 Hypervisor = new Hypervisor
                 {
                     Host = apiSection["Host"],
@@ -62,5 +63,20 @@ namespace CSLabs.Tests
             var result = await client.GetNodeStatus();
         }
 
+        
+        [Test]
+        public async Task GetInterfaces()
+        {
+            await client.GetBridgeIds();
+        }
+
+        [Test]
+        public async Task AddBridgeToVm()
+        {
+            var bridgeId = await client.CreateBridge();
+            await client.AddBridgeToVm(111, bridgeId);
+            await client.ApplyNetworkConfiguration();
+        }
+        
     }
 }

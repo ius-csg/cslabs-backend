@@ -10,6 +10,7 @@ namespace CSLabs.Api.Util
         public AutoMapperProfile()
         {
             CreateMap<RegistrationRequest, User>();
+            CreateMap<UserLab, UserLab>();
         }
     }
 }

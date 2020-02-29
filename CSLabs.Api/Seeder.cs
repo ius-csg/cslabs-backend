@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper.Configuration;
 using CSLabs.Api.Config;
 using CSLabs.Api.Models;
 using CSLabs.Api.Models.Enums;
+using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Models.ModuleModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -14,7 +16,7 @@ namespace CSLabs.Api
     {
         public static void Seed(DefaultContext context, AppSettings settings)
         {
-            if (!context.Modules.Any())
+            if (!EnumerableExtensions.Any(context.Modules))
             {
                 context.Modules.Add(new Module
                 {
@@ -36,12 +38,15 @@ namespace CSLabs.Api
                                 new LabVm
                                 {
                                     Name = "Test Pilot VM",
-                                    VmTemplates = new List<VmTemplate>
+                                    VmTemplate = new VmTemplate
                                     {
-                                        new VmTemplate
+                                        HypervisorVmTemplates = new List<HypervisorVmTemplate>
                                         {
-                                            HypervisorNodeId = 1,
-                                            TemplateVmId = 109
+                                            new HypervisorVmTemplate
+                                            {
+                                                HypervisorNodeId = 1,
+                                                TemplateVmId = 109
+                                            }
                                         }
                                     }
                                 }

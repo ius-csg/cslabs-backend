@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommandLine;
 using CSLabs.Api.Config;
 using CSLabs.Api.Models;
+using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Proxmox;
 using Newtonsoft.Json;
 

@@ -1,9 +1,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using CSLabs.Api.Models.ModuleModels;
 
-namespace CSLabs.Api.Models
+namespace CSLabs.Api.Models.HypervisorModels
 {
-    public class VmTemplate
+    public class HypervisorVmTemplate
     {
         public int Id { get; set; }
         public int HypervisorNodeId  { get; set; }
@@ -12,8 +11,8 @@ namespace CSLabs.Api.Models
         
         public int TemplateVmId { get; set; }
         
-        public int LabVmId  { get; set; }
-        [ForeignKey(nameof(LabVmId))]
-        public LabVm LabVm { get; set; }
+        public int VmTemplateId  { get; set; }
+        [ForeignKey(nameof(VmTemplateId))]
+        public VmTemplate VmTemplate { get; set; }
     }
 }

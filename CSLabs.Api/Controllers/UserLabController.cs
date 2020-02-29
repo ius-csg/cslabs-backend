@@ -55,23 +55,16 @@ namespace CSLabs.Api.Controllers
                 .IncludeRelations()
                 .IncludeHypervisor()
                 .Include(l => l.UserLabVms)
+                .Include(l => l.BridgeInstances)
                 .Where(l => l.Status == EUserLabStatus.Started)
                 .Where(l => l.EndDateTime < DateTime.UtcNow)
                 .ToListAsync();
             
+            
             // with the found items, destroy all vms and delete the UserLabVm rows.
             foreach (var userLab in userLabs)
             {
-                var api = ProxmoxManager.GetProxmoxApi(userLab);
-                foreach (var userLabVm in userLab.UserLabVms)
-                {
-                    await api.DestroyVm(userLabVm.ProxmoxVmId);
-                    DatabaseContext.UserLabVms.Remove(userLabVm);
-                    await DatabaseContext.SaveChangesAsync();
-                }
-
-                userLab.Status = EUserLabStatus.Completed;
-                await DatabaseContext.SaveChangesAsync();
+                await _instantiationService.Deconstruct(userLab, ProxmoxManager);
             }
             return Ok();
         }
@@ -87,9 +80,9 @@ namespace CSLabs.Api.Controllers
             if (userLab.UserLabVms.Count > 0)
                 // update the UI.
                 return Ok(userLab);
-            await _instantiationService.Instantiate(userLab, ProxmoxManager, GetUser());
+            await _instantiationService.Instantiate(userLab, ProxmoxManager);
             await DatabaseContext.SaveChangesAsync();
-            return Ok(userLab);
+            return Ok(userLab.GetResponse(Mapper));
         }
         
         [HttpPost("{id}/complete")]
@@ -100,22 +93,12 @@ namespace CSLabs.Api.Controllers
                 .IncludeLabHypervisor()
                 .Include(ul => ul.Lab)
                 .FirstAsync(ul => ul.Id == id);
-            var api = ProxmoxManager.GetProxmoxApi(userLab);
-
             if (userLab.UserLabVms.Count == 0)
                 return BadRequest(new {Message = "Lab not instantiated"});
-            
-            foreach (var vm in userLab.UserLabVms)
-            {
-                await api.DestroyVm(vm.Id);
-                DatabaseContext.Remove(vm);
-            }
-            
-            userLab.Status = EUserLabStatus.Completed;
-           
-            await _instantiationService.Instantiate(userLab, ProxmoxManager, GetUser());
+
+            await _instantiationService.Deconstruct(userLab, ProxmoxManager);
             await DatabaseContext.SaveChangesAsync();
-            return Ok(userLab);
+            return Ok(userLab.GetResponse(Mapper));
         }
 
         [HttpGet("{id}/status")]
@@ -175,7 +158,7 @@ namespace CSLabs.Api.Controllers
                 .WhereIncludesUser(GetUser())
                 .FirstAsync(u => u.Id == id);
             userLab.FillAttachmentProperties();
-            return Ok(userLab);
+            return Ok(userLab.GetResponse(Mapper));
         }
         
         [AllowAnonymous]

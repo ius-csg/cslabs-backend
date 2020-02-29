@@ -13,5 +13,6 @@ namespace CSLabs.Api.Config
         public string ProxmoxEncryptionKey { get; set; }
         
         public string WebAppUrl { get; set; }
+
     }
 }

@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using AutoMapper;
+using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Models.ModuleModels;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +25,7 @@ namespace CSLabs.Api.Models.UserModels
 
         public UserModule UserModule { get; set; }
         [InverseProperty(nameof(UserLabVm.UserLab))]
-        public List<UserLabVm> UserLabVms { get; set; }
+        public List<UserLabVm> UserLabVms { get; set; } = new List<UserLabVm>();
 
         public Lab Lab { get; set; }
         [Required]
@@ -43,11 +46,21 @@ namespace CSLabs.Api.Models.UserModels
             HasTopology = System.IO.File.Exists("Assets/Images/" + LabId + ".jpg");
             HasReadme = System.IO.File.Exists("Assets/Pdf/" + LabId + ".pdf");
         }
+
+        public UserLab GetResponse(IMapper mapper)
+        {
+            var response = mapper.Map<UserLab>(this);
+            response.UserLabVms = response.UserLabVms.Where(vm => !vm.IsCoreRouter).ToList();
+            return response;
+        }
         
         public int? HypervisorNodeId  { get; set; }
         [ForeignKey(nameof(HypervisorNodeId))]
         [JsonIgnore]
         public HypervisorNode HypervisorNode { get; set; }
+        
+        [InverseProperty(nameof(BridgeInstance.UserLab))]
+        public List<BridgeInstance> BridgeInstances { get; set; } = new List<BridgeInstance>();
         
         public static void OnModelCreating(ModelBuilder modelBuilder)
         {

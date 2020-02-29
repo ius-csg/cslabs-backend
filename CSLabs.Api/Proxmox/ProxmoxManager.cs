@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CSLabs.Api.Config;
 using CSLabs.Api.Models;
+using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Models.ModuleModels;
 using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.Proxmox.Responses;
