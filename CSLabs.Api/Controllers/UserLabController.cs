@@ -40,7 +40,7 @@ namespace CSLabs.Api.Controllers
                 await DatabaseContext.SaveChangesAsync();
                 foreach (var userLabVm in userLab.UserLabVms)
                 {
-                    await api.ShutdownVm(userLabVm.ProxmoxVmId);
+                    await api.StopVM(userLabVm.ProxmoxVmId);
                 }
             }
             return Ok();
