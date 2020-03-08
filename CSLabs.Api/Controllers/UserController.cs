@@ -110,5 +110,22 @@ namespace CSLabs.Api.Controllers
             await DatabaseContext.SaveChangesAsync();
             return Ok();
         }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        {
+            var user = await DatabaseContext
+                .Users
+                .Where(u => u.Id == GetUser().Id)
+                .FirstOrDefaultAsync();
+            if (user == null)
+                return BadRequest("Not a valid user");
+
+            if (request.CurrentPassword != user.Password) return Ok();
+            user.Password = request.NewPassword;
+            await DatabaseContext.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }
