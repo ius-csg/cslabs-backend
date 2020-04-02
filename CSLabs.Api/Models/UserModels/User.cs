@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using static CSLabs.Api.Models.Enums.UserType;
+using Newtonsoft.Json.Converters;
 
 namespace CSLabs.Api.Models.UserModels
 {
@@ -35,8 +35,8 @@ namespace CSLabs.Api.Models.UserModels
         public int? GraduationYear { get; set; }
 
         [Required]
-        [Column(TypeName = "VARCHAR(45)")]
-        public string UserType { get; set; } = Guest;
+        [JsonConverter(typeof(StringEnumConverter))]
+        public EUserRole Role { get; set; } = EUserRole.Guest;
 
         [Column(TypeName = "VARCHAR(100)")]
         public string CardCodeHash { get; set; }
@@ -53,6 +53,16 @@ namespace CSLabs.Api.Models.UserModels
         
         // many to many link
         public List<UserUserModule> UserUserModules { get; set; }
+        
+        public bool CanEditModules()
+        {
+            return Role == EUserRole.Creator || Role == EUserRole.Admin;
+        }
+
+        public bool IsAdmin()
+        {
+            return Role == EUserRole.Admin;
+        }
 
         public static void OnModelCreating(ModelBuilder builder)
         {
@@ -63,6 +73,7 @@ namespace CSLabs.Api.Models.UserModels
             builder.Entity<User>()
                 .Property(b => b.Password)
                 .HasDefaultValue(null);
+            builder.Entity<User>().Property(p => p.Role).HasConversion<string>();
         }
     }
 }

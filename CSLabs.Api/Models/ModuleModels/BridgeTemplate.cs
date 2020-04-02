@@ -12,6 +12,8 @@ namespace CSLabs.Api.Models.ModuleModels
         [Required]
         public string Name { get; set; }
         
+        public bool IsCoreBridge { get; set; }
+        
         // a id generated on the frontend to link template bridges and interfaces
         [Required]
         public string Uuid { get; set; }
