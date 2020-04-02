@@ -2,13 +2,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Threading.Tasks;
+using CSLabs.Api.Models.Enums;
 using CSLabs.Api.Models.HypervisorModels;
-using CSLabs.Api.Models.UserModels;
-using CSLabs.Api.Proxmox;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
-using static CSLabs.Api.Models.Enums.LabTypes;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace CSLabs.Api.Models.ModuleModels
 {
@@ -20,15 +19,12 @@ namespace CSLabs.Api.Models.ModuleModels
         public string Name { get; set; }
 
         [Required]
-        [Column(TypeName = "VARCHAR(45)")]
-        public string LabType { get; set; } = Permanent;
+        [JsonConverter(typeof(StringEnumConverter))]
+        public ELabType Type { get; set; } = ELabType.Permanent;
 
         [Required]
         public int ModuleId { get; set; }
-
-        // The user who created the Lab
-        [Required]
-        public int UserId { get; set; }
+        
         public int LabDifficulty { get; set; }
         
         public List<LabVm> LabVms { get; set; }
@@ -52,6 +48,7 @@ namespace CSLabs.Api.Models.ModuleModels
         {
             builder.TimeStamps<Lab>();
             builder.Unique<Lab>(u => u.Name);
+            builder.Entity<Lab>().Property(p => p.Type).HasConversion<string>();
         }
     }
 }

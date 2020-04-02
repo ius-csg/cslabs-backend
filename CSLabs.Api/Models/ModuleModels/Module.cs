@@ -29,6 +29,11 @@ namespace CSLabs.Api.Models.ModuleModels
         public string SpecialCode { get; set; }
         public List<Lab> Labs { get; set; }
         
+        public int? OwnerId  { get; set; }
+        [ForeignKey(nameof(OwnerId))]
+        [JsonIgnore]
+        public User Owner { get; set; }
+        
         [JsonConverter(typeof(StringEnumConverter))]
         public EModuleType Type { get; set; }
         
