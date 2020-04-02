@@ -42,6 +42,8 @@ namespace CSLabs.Api.Models.ModuleModels
 
         public async Task SetUserModuleIdIfExists(DefaultContext context, User user)
         {
+            if (user == null)
+                return;
             var userModule = await context.UserModules
                 .WhereIncludesUser(user)
                 .Where(um => um.ModuleId == Id)

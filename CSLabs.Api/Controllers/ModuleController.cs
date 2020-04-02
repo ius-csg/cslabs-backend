@@ -47,6 +47,7 @@ namespace CSLabs.Api.Controllers
         }
         
         [HttpGet("code/{code}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(string code)
         {
             var module = await this.DatabaseContext.Modules.FirstAsync(m => m.SpecialCode == code);
