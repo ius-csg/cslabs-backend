@@ -22,6 +22,7 @@ namespace CSLabs.Api.Services
         User Authenticate(string email, string password);
         Task<User> AddUser(User user);
         Task<User> ChangePassword(User user, string password);
+        string HashPassword(string password);
     }
 
     public class AuthenticationService : IAuthenticationService
@@ -44,6 +45,12 @@ namespace CSLabs.Api.Services
             return user;
         }
 
+        public string HashPassword(string password)
+        { 
+            var hasher = new PasswordHasher<User>();
+            return hasher.HashPassword(null, password);
+        }
+        
         public async Task<User> ChangePassword(User user, string password)
         {
             var hasher = new PasswordHasher<User>();

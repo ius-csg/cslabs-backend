@@ -114,15 +114,14 @@ namespace CSLabs.Api.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
         {
-            var user = await DatabaseContext
-                .Users
-                .Where(u => u.Id == GetUser().Id)
-                .FirstOrDefaultAsync();
-            if (user == null)
-                return BadRequest("Not a valid user");
-
-            if (request.CurrentPassword != user.Password) return Ok();
-            user.Password = request.NewPassword;
+            var user = GetUser();
+            var currentHashedPassword = this._authenticationService.HashPassword(request.CurrentPassword);
+            var newHashedPassword = this._authenticationService.HashPassword(request.NewPassword);
+            if (currentHashedPassword != user.Password) return BadRequest(new GenericErrorResponse
+            {
+                Message = "Wrong Password, Please try again!"
+            });
+            user.Password = newHashedPassword;
             await DatabaseContext.SaveChangesAsync();
 
             return Ok();
