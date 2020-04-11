@@ -56,13 +56,13 @@ namespace CSLabs.Api.Controllers
         }
         
         
-        [HttpGet("module-editor/{uuid}")]
-        public async Task<IActionResult> GetForModuleEditor(string uuid)
+        [HttpGet("module-editor/{id}")]
+        public async Task<IActionResult> GetForModuleEditor(int id)
         {
             var module = await this.DatabaseContext
                 .Modules
                 .Include(m => m.Labs)
-                .FirstAsync(m => m.SpecialCode == uuid);
+                .FirstAsync(m => m.Id == id);
             if (!GetUser().CanEditModules()) {
                 return Forbid("You are not allowed to edit modules");
             }
