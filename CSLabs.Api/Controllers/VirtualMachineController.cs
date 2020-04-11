@@ -33,7 +33,8 @@ namespace CSLabs.Api.Controllers
             {
                 Ticket = ticket.Ticket,
                 Port = ticket.Port,
-                Url = url
+                Url = url,
+                BaseUrl = 
             });
         }
 
