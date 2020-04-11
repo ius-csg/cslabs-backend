@@ -34,7 +34,8 @@ namespace CSLabs.Api.Controllers
                 Ticket = ticket.Ticket,
                 Port = ticket.Port,
                 Url = url,
-                BaseUrl = 
+                FastBaseUrl = AppSettings.NoVnc.FastBaseUrl,
+                ReliableBaseUrl = AppSettings.NoVnc.ReliableBaseUrl
             });
         }
 
