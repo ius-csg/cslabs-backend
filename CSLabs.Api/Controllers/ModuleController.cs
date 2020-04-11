@@ -80,20 +80,10 @@ namespace CSLabs.Api.Controllers
             if (!GetUser().CanEditModules()) {
                 return Forbid("You are not allowed to edit modules");
             }
-            
-            var module = await this.DatabaseContext
-                .Modules
-                .Where(m => m.OwnerId == GetUser().Id)
-                .ToListAsync();
-            
-            if (GetUser().IsAdmin())
-            {
-                module = await this.DatabaseContext
-                    .Modules
-                    .ToListAsync();
-            }
-            
-            return Ok(module);
+            var query = this.DatabaseContext.Modules.AsQueryable();
+            if (!GetUser().IsAdmin())
+                query = query.Where(m => m.OwnerId == GetUser().Id);
+            return Ok(await query.ToListAsync());
         }
         
         // POST api/values
