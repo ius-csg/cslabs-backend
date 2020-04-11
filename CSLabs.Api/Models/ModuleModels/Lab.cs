@@ -24,6 +24,9 @@ namespace CSLabs.Api.Models.ModuleModels
 
         [Required]
         public int ModuleId { get; set; }
+        [ForeignKey(nameof(ModuleId))]
+        [JsonIgnore]
+        public Module Module { get; set; }
         
         public int LabDifficulty { get; set; }
         
