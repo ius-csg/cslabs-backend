@@ -73,6 +73,19 @@ namespace CSLabs.Api.Controllers
             return Ok(module);
         }
 
+        // GET api/module/modules-editor
+        [HttpGet("modules-editor")]
+        public async Task<IActionResult> GetUsersModules()
+        {
+            if (!GetUser().CanEditModules()) {
+                return Forbid("You are not allowed to edit modules");
+            }
+            var query = this.DatabaseContext.Modules.AsQueryable();
+            if (!GetUser().IsAdmin())
+                query = query.Where(m => m.OwnerId == GetUser().Id);
+            return Ok(await query.ToListAsync());
+        }
+        
         // POST api/values
         [HttpPost]
         public async Task<IActionResult> Upsert([FromBody] Module module)
