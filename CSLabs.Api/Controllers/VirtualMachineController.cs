@@ -35,7 +35,9 @@ namespace CSLabs.Api.Controllers
                 Port = ticket.Port,
                 Url = url,
                 FastBaseUrl = AppSettings.NoVnc.FastBaseUrl,
-                ReliableBaseUrl = AppSettings.NoVnc.ReliableBaseUrl
+                ReliableBaseUrl = AppSettings.NoVnc.ReliableBaseUrl,
+                HealthCheckUrl = AppSettings.NoVnc.HealthCheckUrl,
+                UseHttpsForHealthCheckRequest = AppSettings.NoVnc.UseHttpsForHealthCheckRequest
             });
         }
 
