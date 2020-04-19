@@ -54,7 +54,7 @@ namespace CSLabs.Api.Controllers
            var hypervisor = await DatabaseContext.Hypervisors.FirstOrDefaultAsync();
             var vmTemplate = new VmTemplate
             {
-                Name = ovaFile.Name,
+                Name = ovaFile.FileName,
                 Owner = GetUser(),
                 IsCoreRouter = false,
             };
@@ -75,34 +75,6 @@ namespace CSLabs.Api.Controllers
             DatabaseContext.Database.CommitTransaction();
             return Ok(vmTemplate);
         }
-
-        [HttpPost("test-vm")]
-        [AllowAnonymous]
-        public async Task<IActionResult> AttemptVm()
-        {
-            var hypervisor = await DatabaseContext.Hypervisors.FirstOrDefaultAsync();
-            var path = "/mnt/pve/nasapp/private/VmTemplate_5";
-            var filePath = string.Join("/", path, "5.ova");
-            var node = await ProxmoxManager.GetPrimaryHypervisorNode(hypervisor);
-            var api = ProxmoxManager.GetProxmoxApi(node);
-            // await api.AddDiskToVm(180, "nasapp:180/vm-180-disk-0.qcow2");
-            await api.ConvertVmToTemplate(180);
-            // using (var sftp = new SftpClient(_vmTemplateService.GetConnectionInfoFromHypervisor(hypervisor)))
-            // {
-            //     sftp.Connect();
-            //     sftp.ChangeDirectory(path);
-            //     using (var ssh = new SshClient(_vmTemplateService.GetConnectionInfoFromHypervisor(hypervisor)))
-            //     {
-            //         ssh.Connect();
-            //       
-            //         await _vmTemplateService.CreateAndUploadVm(ssh, sftp, hypervisor, filePath, path);
-            //         ssh.Disconnect();
-            //     }
-            //     
-            //     sftp.Disconnect();
-            // }
-
-            return Ok();
-        }
+        
     }
 }

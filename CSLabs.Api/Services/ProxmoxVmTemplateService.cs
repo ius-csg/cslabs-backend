@@ -31,7 +31,7 @@ namespace CSLabs.Api.Services
         public async Task<int> UploadVmTemplate(IFormFile ovaFile, Hypervisor hypervisor, VmTemplate vmTemplate)
         {
             var safeFileName = vmTemplate.Id + ".ova";
-            var baseDir = "/mnt/pve/nasapp/private";
+            var baseDir = "/root/uploads";
             var dirName = "VmTemplate_" + vmTemplate.Id;
             var dirPath = string.Join("/", baseDir, dirName);
             var filePath =string.Join("/", dirPath, safeFileName);
@@ -58,11 +58,25 @@ namespace CSLabs.Api.Services
                     await api.ConvertVmToTemplate(vmId);
                     ssh.Disconnect();
                 }
-                
+
+                Cleanup(sftp, dirPath);
                 sftp.Disconnect();
             }
 
             return vmId;
+        }
+
+        private void Cleanup(SftpClient sftp, string path)
+        {
+            var files = sftp.ListDirectory(path);
+            foreach (var file in files)
+            {
+                if (!file.IsDirectory)
+                {
+                    sftp.DeleteFile(file.FullName);
+                }
+            }
+            sftp.DeleteDirectory(path);
         }
 
         public ConnectionInfo GetConnectionInfoFromHypervisor(Hypervisor hypervisor)
@@ -75,10 +89,11 @@ namespace CSLabs.Api.Services
 
         public async Task ExtractOva(SshClient ssh, string filePath, string dirPath)
         {
-            var result = ssh.RunCommand("tar -xf " + filePath + " -C " + dirPath);
+            var result = ssh.RunCommand($"tar -oxf {filePath} -C {dirPath}");
+            Console.WriteLine("Extract Error: " + result.Error);
             if (result.Error != "")
             {
-                throw new Exception("Extraction process failed!");
+                throw new Exception("Extraction process failed! Error: " + result.Error);
             }
         }
         public async Task<int> CreateVmAndImportDisk(SshClient ssh, SftpClient sftp, ProxmoxApi api, string dirPath)
@@ -105,7 +120,7 @@ namespace CSLabs.Api.Services
             var result = ssh.RunCommand($"qm importdisk {vmId} {vmdk.FullName} nasapp -format qcow2");
             if (result.Error != "")
             {
-                throw new Exception("Failed to import disk!");
+                throw new Exception("Failed to import disk! Error: " + result.Error);
             }
 
             return vmId;
