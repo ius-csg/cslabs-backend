@@ -41,6 +41,8 @@ namespace CSLabs.Api.Models
         public DbSet<VmInterfaceInstance> VmInterfaceInstances { get; set; }
         
         public DbSet<HypervisorVmTemplate> HypervisorVmTemplates { get; set; }
+        
+        public DbSet<VmTemplate> VmTemplates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
        {
@@ -68,6 +70,7 @@ namespace CSLabs.Api.Models
            VmInterfaceTemplate.OnModelCreating(builder);
            VmInterfaceInstance.OnModelCreating(builder);
            BridgeTemplate.OnModelCreating(builder);
+           VmTemplate.OnModelCreating(builder);
            builder.SnakeCaseDatabase();
            
        }

@@ -3,14 +3,16 @@ using System;
 using CSLabs.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20200419044154_AddNameToVmTemplate")]
+    partial class AddNameToVmTemplate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,9 +129,6 @@ namespace CSLabs.Api.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name");
-
-                    b.Property<bool>("Primary")
-                        .HasColumnName("primary");
 
                     b.HasKey("Id")
                         .HasName("pk_hypervisor_nodes");

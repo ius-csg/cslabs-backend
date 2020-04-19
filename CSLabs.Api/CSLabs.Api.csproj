@@ -27,6 +27,7 @@
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql.Design" Version="1.1.2" />
     <PackageReference Include="ScottBrady91.AspNet.Identity.ConfigurablePasswordHasher" Version="1.0.0" />
     <PackageReference Include="Sgw.KebabCaseRouteTokens" Version="1.1.0" />
+    <PackageReference Include="SSH.NET" Version="2016.1.0" />
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.*" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.4.*" />
     <PackageReference Include="System.ServiceModel.NetTcp" Version="4.4.*" />

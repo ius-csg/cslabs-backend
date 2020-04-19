@@ -33,5 +33,6 @@ namespace CSLabs.Api.Controllers
             }
             return Ok(lab);
         }
+        
     }
 }
