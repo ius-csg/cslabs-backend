@@ -169,16 +169,20 @@ namespace CSLabs.Api.Proxmox
 
             return ids;
         }
-        public async Task<int> CloneTemplate(HypervisorNode node, int vmId, string srcNode = null)
-        {
-            await LoginIfNotLoggedIn();
-            var ids = await GetAllUsedVmIds();
 
+        private async Task<int> GetNextAvailableVmId()
+        {
+            var ids = await GetAllUsedVmIds();
             int newVmId = 100;
             if(ids.Count != 0)
                 newVmId = ids.Max() + 1;
-            
-            Console.WriteLine("VmId: " + vmId);
+            return newVmId;
+        }
+        
+        public async Task<int> CloneTemplate(HypervisorNode node, int vmId, string srcNode = null)
+        {
+            await LoginIfNotLoggedIn();
+            var newVmId = await GetNextAvailableVmId();
             await CloneTemplate(node, vmId, newVmId);
             return newVmId;
         }
@@ -197,6 +201,19 @@ namespace CSLabs.Api.Proxmox
                 Status = statusResponse.Response.data.status
             };
         }
+        
+        public async Task<string> GetVmUnusedDisk(int vmId)
+        {
+            await LoginIfNotLoggedIn();
+            var statusResponse = await PerformRequest(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Config.GetRest());
+            var data = statusResponse.Response.data;
+            if (((IDictionary<String, object>) data).ContainsKey("unused0"))
+            {
+                return data.unused0;
+            }
+
+            return null;
+        }
 
         public async Task<int> CreateBridge(string targetNode = null)
         {
@@ -206,6 +223,15 @@ namespace CSLabs.Api.Proxmox
             var interfaceName = "vmbr" + bridgeId;
             await PerformRequest(() => this.client.Nodes[node].Network.CreateNetwork(iface: interfaceName, type: "bridge", autostart: true));
             return bridgeId;
+        }
+        
+        public async Task<int> CreateVm(string name, int memoryMb, string targetNode = null)
+        {
+            await LoginIfNotLoggedIn();
+            string node = targetNode ?? this.HypervisorNode.Name;
+            var vmId = await GetNextAvailableVmId();
+            await PerformRequest(() => this.client.Nodes[node].Qemu.CreateVm(vmid: vmId, memory: memoryMb, cores: 1, name: name));
+            return vmId;
         }
 
         public async Task DestroyBridge(int bridgeId, string targetNode = null)
@@ -232,6 +258,22 @@ namespace CSLabs.Api.Proxmox
                 {interfaceNumber, "model=virtio,bridge=vmbr" + bridgeId + ",firewall=1"}
             };
             await PerformRequest(() => this.client.Nodes[node].Qemu[vmId].Config.UpdateVmAsync(netN: dic));
+        }
+        
+        public async Task AddDiskToVm(int vmId, string disk, string targetNode = null)
+        {
+            await LoginIfNotLoggedIn();
+            string node = targetNode ?? this.HypervisorNode.Name;
+            // var optionsStr = string.Join(",", options.ToList().Select(pair => pair.Key + "=" + pair.Value));
+            var scsiOptions = new Dictionary<int, string> {{0, disk}};
+            await PerformRequest(() => this.client.Nodes[node].Qemu[vmId].Config.UpdateVmAsync(scsiN: scsiOptions));
+        }
+        
+        public async Task ConvertVmToTemplate(int vmId, string targetNode = null)
+        {
+            await LoginIfNotLoggedIn();
+            string node = targetNode ?? this.HypervisorNode.Name;
+            await PerformRequest(() => this.client.Nodes[node].Qemu[vmId].Template.CreateRest());
         }
 
         private async Task<int> GetNextAvailableBridgeId()
