@@ -50,13 +50,13 @@ namespace CSLabs.Api.Controllers
             if (!GetUser().CanEditModules()) {
                 return Forbid("You are not allowed to edit labs");
             }
-            var module = await DatabaseContext.Modules
-                .Where(m => m.Id == lab.ModuleId)
-                .FirstOrDefaultAsync();
+            var module = await DatabaseContext.Modules.Where(m => m.Id == lab.ModuleId).FirstOrDefaultAsync();
             // prevent someone from editing another user's module unless they are admin.
             if (lab.Id != 0 && module.OwnerId != GetUser().Id && !GetUser().IsAdmin()) {
                 return Forbid("You are not allowed to edit this module");
             }
+
+            lab.LinkBrideTemplates();
             
             if (lab.Id == 0)
                 await DatabaseContext.Labs.AddAsync(lab);

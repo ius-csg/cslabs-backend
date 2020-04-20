@@ -61,6 +61,18 @@ namespace CSLabs.Api.Models.ModuleModels
                 HasReadme = true;
         }
 
+        public void LinkBrideTemplates()
+        {
+            var bridgeTemplates = BridgeTemplates.ToDictionary(t => t.Uuid);
+            foreach (var vm in LabVms)
+            {
+                foreach (var templateInterface in vm.TemplateInterfaces)
+                {
+                    templateInterface.BridgeTemplate = bridgeTemplates[templateInterface.BridgeTemplateUuid];
+                }
+            }
+        }
+
         public async Task DeleteMissingProperties(DefaultContext context)
         {
             var labVmIds = LabVms.Select(t => t.Id).ToList();
