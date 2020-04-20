@@ -2,6 +2,7 @@ using AutoMapper;
 using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.RequestModels;
 using CSLabs.Api.Models;
+using CSLabs.Api.Models.ModuleModels;
 
 namespace CSLabs.Api.Util
 {
@@ -11,6 +12,7 @@ namespace CSLabs.Api.Util
         {
             CreateMap<RegistrationRequest, User>();
             CreateMap<UserLab, UserLab>();
+            CreateMap<Lab, LabRequest>();
         }
     }
 }
