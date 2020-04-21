@@ -3,14 +3,16 @@ using System;
 using CSLabs.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20200418203352_AddOwnerIdToVmTemplate")]
+    partial class AddOwnerIdToVmTemplate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,9 +130,6 @@ namespace CSLabs.Api.Migrations
                         .IsRequired()
                         .HasColumnName("name");
 
-                    b.Property<bool>("Primary")
-                        .HasColumnName("primary");
-
                     b.HasKey("Id")
                         .HasName("pk_hypervisor_nodes");
 
@@ -179,9 +178,6 @@ namespace CSLabs.Api.Migrations
 
                     b.Property<bool>("IsCoreRouter")
                         .HasColumnName("is_core_router");
-
-                    b.Property<string>("Name")
-                        .HasColumnName("name");
 
                     b.Property<int?>("OwnerId")
                         .HasColumnName("owner_id");

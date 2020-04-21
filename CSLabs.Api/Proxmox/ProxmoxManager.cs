@@ -22,10 +22,21 @@ namespace CSLabs.Api.Proxmox
         }
         public async Task<HypervisorNode> GetLeastLoadedHyperVisorNode(Lab lab)
         {
-            long requiredMemoryBytes = (long) lab.EstimatedMemoryUsedMb * 1024 * 1024;
+            return await GetLeastLoadedHyperVisorNode(lab.GetFirstAvailableHypervisor(), lab.EstimatedMemoryUsedMb);
+        }
+
+        public async Task<HypervisorNode> GetPrimaryHypervisorNode(Hypervisor hypervisor)
+        {
+            return await _context.HypervisorNodes
+                .Where(n => n.HypervisorId == hypervisor.Id && n.Primary)
+                .FirstAsync();
+        }
+        
+        public async Task<HypervisorNode> GetLeastLoadedHyperVisorNode(Hypervisor hypervisor, int estimatedMemoryUsedMb)
+        {
+            long requiredMemoryBytes = estimatedMemoryUsedMb * 1024 * 1204;
             // only support one cluster right now
-            var hypervisor = lab.GetFirstAvailableHypervisor();
-           
+
             var hypervisorNodes = _context.HypervisorNodes
                 .Where(n => n.HypervisorId == hypervisor.Id)
                 .Include(n => n.Hypervisor)
@@ -56,6 +67,11 @@ namespace CSLabs.Api.Proxmox
         public ProxmoxApi GetProxmoxApi(UserLab userLab)
         {
             return GetProxmoxApi(userLab.HypervisorNode);
+        }
+        
+        public string GetProxmoxPassword(Hypervisor hypervisor)
+        {
+            return Cryptography.DecryptString(hypervisor.Password, _encryptionKey);
         }
     }
 }

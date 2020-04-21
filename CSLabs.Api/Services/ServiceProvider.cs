@@ -26,6 +26,7 @@ namespace CSLabs.Api.Services
             services.ProvideProxmoxApi();
             services.AddScoped<BaseControllerDependencies>();
             services.AddTransient<UserLabInstantiationService>();
+            services.AddTransient<ProxmoxVmTemplateService>();
         }
     }
 }

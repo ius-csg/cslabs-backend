@@ -12,7 +12,8 @@ namespace CSLabs.Api.Models.HypervisorModels
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        
+        // determines if this is the primary node for the given hypervisor
+        public bool Primary { get; set; }
         public int HypervisorId  { get; set; }
         [ForeignKey(nameof(HypervisorId))]
         public Hypervisor Hypervisor { get; set; }

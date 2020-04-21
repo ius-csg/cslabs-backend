@@ -11,7 +11,8 @@ namespace CSLabs.Api.Config
         public string[] CorsUrls { get; set; }
         
         public string ProxmoxEncryptionKey { get; set; }
-        
+
+        public NoVncSettings NoVnc { get; set; }
         public string WebAppUrl { get; set; }
 
     }

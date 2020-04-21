@@ -31,7 +31,7 @@ namespace CSLabs.Api
                             Name = "Test Pilot Lab",
                             EstimatedCpusUsed = 1,
                             EstimatedMemoryUsedMb = 4096,
-                            LabType = LabTypes.Permanent,
+                            Type = ELabType.Permanent,
                             LabDifficulty = 1,
                             LabVms = new List<LabVm>
                             {

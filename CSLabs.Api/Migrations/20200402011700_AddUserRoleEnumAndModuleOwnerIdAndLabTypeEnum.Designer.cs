@@ -3,14 +3,16 @@ using System;
 using CSLabs.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20200402011700_AddUserRoleEnumAndModuleOwnerIdAndLabTypeEnum")]
+    partial class AddUserRoleEnumAndModuleOwnerIdAndLabTypeEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -128,9 +130,6 @@ namespace CSLabs.Api.Migrations
                         .IsRequired()
                         .HasColumnName("name");
 
-                    b.Property<bool>("Primary")
-                        .HasColumnName("primary");
-
                     b.HasKey("Id")
                         .HasName("pk_hypervisor_nodes");
 
@@ -180,17 +179,8 @@ namespace CSLabs.Api.Migrations
                     b.Property<bool>("IsCoreRouter")
                         .HasColumnName("is_core_router");
 
-                    b.Property<string>("Name")
-                        .HasColumnName("name");
-
-                    b.Property<int?>("OwnerId")
-                        .HasColumnName("owner_id");
-
                     b.HasKey("Id")
                         .HasName("pk_vm_template");
-
-                    b.HasIndex("OwnerId")
-                        .HasName("ix_vm_template_owner_id");
 
                     b.ToTable("vm_template");
                 });
@@ -741,15 +731,6 @@ namespace CSLabs.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.VmTemplate", b =>
-                {
-                    b.HasOne("CSLabs.Api.Models.UserModels.User", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .HasConstraintName("fk_vm_template_users_owner_id")
-                        .OnDelete(DeleteBehavior.SetNull);
-                });
-
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.BridgeTemplate", b =>
                 {
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Lab", "Lab")
@@ -761,7 +742,7 @@ namespace CSLabs.Api.Migrations
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Lab", b =>
                 {
-                    b.HasOne("CSLabs.Api.Models.ModuleModels.Module", "Module")
+                    b.HasOne("CSLabs.Api.Models.ModuleModels.Module")
                         .WithMany("Labs")
                         .HasForeignKey("ModuleId")
                         .HasConstraintName("fk_labs_modules_module_id")

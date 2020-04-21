@@ -12,6 +12,7 @@ using System.Xml;
 using AutoMapper;
 using CSLabs.Api.Models.ModuleModels;
 using CSLabs.Api.Models;
+using CSLabs.Api.Models.UserModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -46,29 +47,67 @@ namespace CSLabs.Api.Controllers
         }
         
         [HttpGet("code/{code}")]
+        [AllowAnonymous]
         public async Task<IActionResult> Get(string code)
         {
             var module = await this.DatabaseContext.Modules.FirstAsync(m => m.SpecialCode == code);
             await module.SetUserModuleIdIfExists(DatabaseContext, GetUser());
             return Ok(module);
         }
+        
+        
+        [HttpGet("module-editor/{id}")]
+        public async Task<IActionResult> GetForModuleEditor(int id)
+        {
+            var module = await this.DatabaseContext
+                .Modules
+                .Include(m => m.Labs)
+                .FirstAsync(m => m.Id == id);
+            if (!GetUser().CanEditModules()) {
+                return Forbid("You are not allowed to edit modules");
+            }
+            // prevent someone from editing another user's module unless they are admin.
+            if (module.OwnerId != GetUser().Id && !GetUser().IsAdmin()) {
+                return Forbid("You are not allowed to edit this module");
+            }
+            return Ok(module);
+        }
 
+        // GET api/module/modules-editor
+        [HttpGet("modules-editor")]
+        public async Task<IActionResult> GetUsersModules()
+        {
+            if (!GetUser().CanEditModules()) {
+                return Forbid("You are not allowed to edit modules");
+            }
+            var query = this.DatabaseContext.Modules.AsQueryable();
+            if (!GetUser().IsAdmin())
+                query = query.Where(m => m.OwnerId == GetUser().Id);
+            return Ok(await query.ToListAsync());
+        }
+        
         // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Upsert([FromBody] Module module)
         {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            if (!GetUser().CanEditModules()) {
+                return Forbid("You are not allowed to edit modules");
+            }
+            // prevent someone from editing another user's module unless they are admin.
+            if (module.Id != 0 && module.OwnerId != GetUser().Id && !GetUser().IsAdmin()) {
+                return Forbid("You are not allowed to edit this module");
+            }
+            // do not affect labs when saved, labs are saved in a separate request
+            module.Labs = null;
+            DatabaseContext.Entry(module).State = EntityState.Modified;
+            module.Owner = GetUser();
+            if (module.Id != 0)
+                DatabaseContext.Update(module);
+            else
+                DatabaseContext.Add(module);
+            await DatabaseContext.SaveChangesAsync();
+            await DatabaseContext.Entry(module).Collection(m => m.Labs).LoadAsync();
+            return Ok(module);
         }
     }
 }

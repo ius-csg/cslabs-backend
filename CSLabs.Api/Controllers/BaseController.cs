@@ -46,6 +46,8 @@ namespace CSLabs.Api.Controllers
         {
             if (user != null)
                 return user;
+            if (this.User.Identity.Name == null)
+                return null;
             try
             {
                 user = this.DatabaseContext.Users.SingleOrDefault(u => u.Id == int.Parse(this.User.Identity.Name));
