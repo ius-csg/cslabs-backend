@@ -10,6 +10,7 @@ using CSLabs.Api.Email.ViewModels;
 using CSLabs.Api.Util;
 using FluentEmail.Core;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -108,6 +109,24 @@ namespace CSLabs.Api.Controllers
                 return BadRequest(400);
             user.EmailVerificationCode = null;
             await DatabaseContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
+        {
+            var user = GetUser();
+            var newHashedPassword = this._authenticationService.HashPassword(request.NewPassword);
+            var hasher = new PasswordHasher<User>();
+            if(hasher.VerifyHashedPassword(user, user.Password, request.CurrentPassword) == PasswordVerificationResult.Failed) {
+                return BadRequest(new GenericErrorResponse
+                {
+                    Message = "Wrong Password, Please try again!"
+                });
+            }
+            user.Password = newHashedPassword;
+            await DatabaseContext.SaveChangesAsync();
+
             return Ok();
         }
     }
