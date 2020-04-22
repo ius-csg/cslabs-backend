@@ -160,23 +160,5 @@ namespace CSLabs.Api.Controllers
             userLab.FillAttachmentProperties();
             return Ok(userLab.GetResponse(Mapper));
         }
-        
-        [AllowAnonymous]
-        [HttpGet("{id}/topology")]
-        public async Task<IActionResult> GetImage(int id)
-        {
-            var userLab = await DatabaseContext.UserLabs.FirstAsync(u => u.Id == id);
-            var image = System.IO.File.OpenRead("Assets/Images/" + userLab.LabId + ".jpg");
-            return File(image, "image/jpeg");
-        }
-        
-        [AllowAnonymous]
-        [HttpGet("{id}/readme")]
-        public async Task<IActionResult> GetDocument(int id)
-        {
-            var userLab = await DatabaseContext.UserLabs.FirstAsync(u => u.Id == id);
-            var image = System.IO.File.OpenRead("Assets/Pdf/" + userLab.LabId + ".pdf");
-            return File(image, "application/pdf");
-        }
     }
 }

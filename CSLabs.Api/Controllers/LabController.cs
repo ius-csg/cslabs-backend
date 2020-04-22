@@ -106,5 +106,29 @@ namespace CSLabs.Api.Controllers
             await DatabaseContext.SaveChangesAsync();
             return Ok();
         }
+        
+        [AllowAnonymous]
+        [HttpGet("{id}/topology")]
+        public async Task<IActionResult> GetTopology(int id)
+        {
+            var filePath = "Assets/Images/" + id + ".jpg";
+            if (!System.IO.File.Exists(filePath)) {
+                return NotFound();
+            }
+            var file = System.IO.File.OpenRead(filePath);
+            return File(file, "image/jpeg");
+        }
+        
+        [AllowAnonymous]
+        [HttpGet("{id}/readme")]
+        public async Task<IActionResult> GetReadme(int id)
+        {
+            var filePath = "Assets/Pdf/" + id + ".pdf";
+            if (!System.IO.File.Exists(filePath)) {
+                return NotFound();
+            }
+            var file = System.IO.File.OpenRead(filePath);
+            return File(file, "application/pdf");
+        }
     }
 }
