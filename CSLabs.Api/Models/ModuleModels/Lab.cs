@@ -33,6 +33,7 @@ namespace CSLabs.Api.Models.ModuleModels
         
         public int LabDifficulty { get; set; }
         
+        [InverseProperty(nameof(LabVm.Lab))]
         public List<LabVm> LabVms { get; set; } = new List<LabVm>();
         
         public int EstimatedCpusUsed { get; set; }

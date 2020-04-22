@@ -14,11 +14,6 @@ namespace CSLabs.Api.Models.UserModels
         // 0-4 is reserved, 5 and higher is used for the application.
         // references back to the actual bridge id in the hypervisor ex. proxmox
         public int HypervisorInterfaceId {get;set;}
-                
-        public int UserLabVmId  { get; set; }
-        [ForeignKey(nameof(UserLabVmId))]
-        public UserLabVm UserLabVm { get; set; }
-        
         public int BridgeTemplateId  { get; set; }
         [ForeignKey(nameof(BridgeTemplateId))]
         public BridgeTemplate BridgeTemplate { get; set; }
@@ -32,8 +27,8 @@ namespace CSLabs.Api.Models.UserModels
 
         public static void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<BridgeInstance>().HasIndex(i => i.UserLabVmId);
-            modelBuilder.Unique<BridgeInstance>(i => new {i.UserLabVmId, InterfaceId = i.HypervisorInterfaceId});
+            modelBuilder.Entity<BridgeInstance>().HasIndex(i => i.UserLabId);
+            modelBuilder.Unique<BridgeInstance>(i => new {i.UserLabId, InterfaceId = i.HypervisorInterfaceId});
         }
     }
 }

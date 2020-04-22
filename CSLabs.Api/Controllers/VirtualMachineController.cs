@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using System.Web;
 using CSLabs.Api.Models;
 using CSLabs.Api.Models.UserModels;
+using CSLabs.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,14 +12,20 @@ namespace CSLabs.Api.Controllers
     [ApiController]
     public class VirtualMachineController : BaseController
     {
-        public VirtualMachineController(BaseControllerDependencies deps) : base(deps) { }
+        private UserLabInstantiationService _userLabInstantiation;
+
+        public VirtualMachineController(BaseControllerDependencies deps,
+            UserLabInstantiationService userLabInstantiation) : base(deps)
+        {
+            _userLabInstantiation = userLabInstantiation;
+        }
         
         // GET
         [HttpGet("{id}/get-ticket")]
         public async Task<IActionResult> GetTicket(int id)
         {
             var vm = await GetVm(id);
-            if (vm.IsCoreRouter) {
+            if (vm == null || vm.IsCoreRouter) {
                 return NotFound();
             }
             var url = vm.UserLab.HypervisorNode.Hypervisor.NoVncUrl
@@ -44,6 +51,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Shutdown(int id)
         {
             var vm = await GetVm(id);
+            if (vm == null) return NotFound();
             var api = ProxmoxManager.GetProxmoxApi(vm.UserLab);
             await api.ShutdownVm(vm.ProxmoxVmId);
             return Ok();
@@ -56,6 +64,8 @@ namespace CSLabs.Api.Controllers
                 .Include(l => l.HypervisorVmTemplate)
                 .ThenInclude(l => l.HypervisorNode)
                 .ThenInclude(l => l.Hypervisor)
+                .Include(l => l.UserLab)
+                .ThenInclude(l => l.BridgeInstances)
                 .WhereIncludesUser(GetUser())
                 .FirstAsync(v => v.Id == id);
             if (vm.IsCoreRouter) {
@@ -64,6 +74,7 @@ namespace CSLabs.Api.Controllers
             var api = ProxmoxManager.GetProxmoxApi(vm.HypervisorVmTemplate.HypervisorNode);
             await api.DestroyVm(vm.ProxmoxVmId);
             await api.CloneTemplate(api.HypervisorNode, vm.HypervisorVmTemplate.TemplateVmId, vm.ProxmoxVmId);
+            await _userLabInstantiation.LinkVmToBridges(vm.UserLab, vm, api, vm.HypervisorVmTemplate.HypervisorNode);
             var status = await api.GetVmStatus(vm.ProxmoxVmId);
             while (status.Lock == "clone") {
                 status = await api.GetVmStatus(vm.ProxmoxVmId);
@@ -77,7 +88,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Reset(int id)
         {
             var vm = await GetVm(id);
-            if (vm.IsCoreRouter) {
+            if (vm == null || vm.IsCoreRouter) {
                 return NotFound();
             }
             await ProxmoxManager.GetProxmoxApi(vm.UserLab).ResetVM(vm.ProxmoxVmId);
@@ -89,7 +100,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Stop(int id)
         {
             var vm = await GetVm(id);
-            if (vm.IsCoreRouter) {
+            if (vm == null || vm.IsCoreRouter) {
                 return NotFound();
             }
             await ProxmoxManager.GetProxmoxApi(vm.UserLab).StopVM(vm.ProxmoxVmId);
@@ -101,7 +112,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> StartUp(int id)
         {
             var vm = await GetVm(id);
-            if (vm.IsCoreRouter) {
+            if (vm == null || vm.IsCoreRouter) {
                 return NotFound();
             }
             await ProxmoxManager.GetProxmoxApi(vm.UserLab).StartVM(vm.ProxmoxVmId);
@@ -115,7 +126,7 @@ namespace CSLabs.Api.Controllers
                 .ThenInclude(l => l.HypervisorNode)
                 .ThenInclude(n => n.Hypervisor)
                 .WhereIncludesUser(GetUser())
-                .FirstAsync(v => v.Id == id);
+                .FirstOrDefaultAsync(v => v.Id == id);
         }
 
         

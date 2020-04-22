@@ -16,7 +16,7 @@ namespace CSLabs.Api.Models.ModuleModels
         public string Name { get; set; }
         [Required]
         public int LabId { get; set; }
-
+        [ForeignKey(nameof(LabId))]
         public Lab Lab { get; set; }
         
         public bool IsCoreRouter { get; set; }
@@ -31,7 +31,7 @@ namespace CSLabs.Api.Models.ModuleModels
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<LabVm>();
-            builder.Unique<LabVm>(u => u.Name);
+            builder.Unique<LabVm>(u => new {u.Name, u.LabId});
         }
 
         public HypervisorVmTemplate GetTemplateWithNode(HypervisorNode node)

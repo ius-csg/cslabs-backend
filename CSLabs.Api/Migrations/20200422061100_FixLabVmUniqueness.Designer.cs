@@ -3,14 +3,16 @@ using System;
 using CSLabs.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20200422061100_FixLabVmUniqueness")]
+    partial class FixLabVmUniqueness
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -493,6 +495,10 @@ namespace CSLabs.Api.Migrations
                         .HasColumnName("user_lab_id")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserLabVmId")
+                        .HasColumnName("user_lab_vm_id")
+                        .HasColumnType("int");
+
                     b.HasKey("Id")
                         .HasName("pk_bridge_instances");
 
@@ -502,9 +508,12 @@ namespace CSLabs.Api.Migrations
                     b.HasIndex("UserLabId")
                         .HasName("ix_bridge_instances_user_lab_id");
 
-                    b.HasIndex("UserLabId", "HypervisorInterfaceId")
+                    b.HasIndex("UserLabVmId")
+                        .HasName("ix_bridge_instances_user_lab_vm_id");
+
+                    b.HasIndex("UserLabVmId", "HypervisorInterfaceId")
                         .IsUnique()
-                        .HasName("ix_bridge_instances_user_lab_id_hypervisor_interface_id");
+                        .HasName("ix_bridge_instances_user_lab_vm_id_hypervisor_interface_id");
 
                     b.ToTable("bridge_instances");
                 });
@@ -920,6 +929,13 @@ namespace CSLabs.Api.Migrations
                         .WithMany("BridgeInstances")
                         .HasForeignKey("UserLabId")
                         .HasConstraintName("fk_bridge_instances_user_labs_user_lab_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CSLabs.Api.Models.UserModels.UserLabVm", "UserLabVm")
+                        .WithMany()
+                        .HasForeignKey("UserLabVmId")
+                        .HasConstraintName("fk_bridge_instances_user_lab_vms_user_lab_vm_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
