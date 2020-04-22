@@ -16,6 +16,7 @@ namespace CSLabs.Api.Services
         {
             services.AddDbContextPool<DefaultContext>(options => options.UseMySql(connectionString, mySqlOptions => {
                 // change the version if needed.
+                options.UseSnakeCaseNamingConvention();
                 mySqlOptions.ServerVersion(new Version(10, 2, 13), ServerType.MariaDb);
             }));
         }

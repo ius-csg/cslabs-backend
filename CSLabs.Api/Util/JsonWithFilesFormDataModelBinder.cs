@@ -12,10 +12,10 @@ namespace CSLabs.Api.Util
 {
     public class JsonWithFilesFormDataModelBinder : IModelBinder
     {
-        private readonly IOptions<MvcJsonOptions> _jsonOptions;
+        private readonly IOptions<MvcNewtonsoftJsonOptions> _jsonOptions;
         private readonly FormFileModelBinder _formFileModelBinder;
  
-        public JsonWithFilesFormDataModelBinder(IOptions<MvcJsonOptions> jsonOptions, ILoggerFactory loggerFactory)
+        public JsonWithFilesFormDataModelBinder(IOptions<MvcNewtonsoftJsonOptions> jsonOptions, ILoggerFactory loggerFactory)
         {
             _jsonOptions = jsonOptions;
             _formFileModelBinder = new FormFileModelBinder(loggerFactory);
@@ -68,7 +68,7 @@ namespace CSLabs.Api.Util
                     bindingContext.ModelState.TryAddModelError(modelName, message);
                 }
             }
- 
+      
             // Set the successfully constructed model as the result of the model binding
             bindingContext.Result = ModelBindingResult.Success(model);
         }

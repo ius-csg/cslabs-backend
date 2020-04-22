@@ -83,5 +83,28 @@ namespace CSLabs.Api.Controllers
             lab.DetectAttachments();
             return Ok(lab);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteLab(int id)
+        {
+            if (!GetUser().CanEditModules()) {
+                return Forbid("You are not allowed to edit labs");
+            }
+
+            var lab = await DatabaseContext.Labs.FirstAsync(l => l.Id == id);
+            var module = await DatabaseContext.Modules.Where(m => m.Id == lab.ModuleId).FirstOrDefaultAsync();
+            // prevent someone from editing another user's module unless they are admin.
+            if (module.OwnerId != GetUser().Id && !GetUser().IsAdmin()) {
+                return Forbid("You are not allowed to edit this module");
+            }
+
+            if (await DatabaseContext.UserLabs.Where(ul => ul.Lab == lab).AnyAsync()) {
+                return Forbid("You cannot delete a lab with active labs");
+            }
+
+            DatabaseContext.Labs.Remove(lab);
+            await DatabaseContext.SaveChangesAsync();
+            return Ok();
+        }
     }
 }

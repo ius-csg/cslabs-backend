@@ -1,33 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using AutoMapper;
 using CSLabs.Api.Config;
-using CSLabs.Api.Controllers;
-using CSLabs.Api.Models;
 using CSLabs.Api.Services;
-using CSLabs.Api.Proxmox;
 using CSLabs.Api.Util;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using Sgw.KebabCaseRouteTokens;
 
 namespace CSLabs.Api
 {
@@ -46,28 +33,29 @@ namespace CSLabs.Api
         public void ConfigureServices(IServiceCollection services)
         {
             var appSettings = ConfigureAppSettings(services);
+            services.AddRouting(options =>
+            {
+                options.ConstraintMap["slugify"] = typeof(SlugifyParameterTransformer);
+                options.LowercaseUrls = true;
+            });
             services
                 .AddMvc(options =>
                 {
-                    options
-                        .Conventions
-                        .Add(new KebabCaseRouteTokenReplacementControllerModelConvention());
-                    
-                    var methodNamePrefixes = new string[] {"Create", "Delete", "Update", "Get", "Find"};
-
-                    options
-                        .Conventions
-                        .Add(new KebabCaseRouteTokenReplacementActionModelConvention(methodNamePrefixes));
+                    options.Conventions.Add(new RouteTokenTransformerConvention(
+                        new SlugifyParameterTransformer()));
+                    options.EnableEndpointRouting = false;
+                    // options.Conventions.Add(new KebabCaseRouteTokenReplacementControllerModelConvention());
+                    // options.Conventions.Add(
+                    //     new KebabCaseRouteTokenReplacementActionModelConvention("Create", "Delete", "Update", "Get", "Find"));
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-                .AddJsonOptions(options =>
+                .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });
 
             ConfigureEmail(services, appSettings.Email);
-            ConfigureDatabase(services, appSettings.ConnectionStrings.DefaultConnection);
+            services.ConfigureDatabase(appSettings.ConnectionStrings.DefaultConnection);
             ConfigureCors(services, appSettings.CorsUrls);
             ConfigureJWT(services, appSettings.JWTSecret);
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -82,14 +70,7 @@ namespace CSLabs.Api
                 .AddRazorRenderer(Path.Join(Environment.CurrentDirectory, "Views"))
                 .AddSmtpSender(emailSettings.Host, emailSettings.Port, emailSettings.UserName, emailSettings.Password);
         }
-
-        private void ConfigureDatabase(IServiceCollection services, string connectionString)
-        {
-            services.AddDbContextPool<DefaultContext>(options => options.UseMySql(connectionString, mySqlOptions => {
-                // change the version if needed.
-                mySqlOptions.ServerVersion(new Version(10, 2, 13), ServerType.MariaDb);
-            }));
-        }
+        
         private AppSettings ConfigureAppSettings(IServiceCollection services)
         {
             var appSettings = Configuration.Get<AppSettings>();
@@ -144,9 +125,15 @@ namespace CSLabs.Api
                 app.UseHsts();
             }
             app.UseCors(CorsPolicyName);
+            app.UseRouting();
 //            app.UseHttpsRedirection();
             app.UseAuthentication();
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller:slugify}/{action:slugify}/{id?}");
+            });
         }
     }
 }

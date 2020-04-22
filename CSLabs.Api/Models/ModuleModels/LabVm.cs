@@ -18,6 +18,8 @@ namespace CSLabs.Api.Models.ModuleModels
         public int LabId { get; set; }
 
         public Lab Lab { get; set; }
+        
+        public bool IsCoreRouter { get; set; }
 
         public int VmTemplateId  { get; set; }
         [ForeignKey(nameof(VmTemplateId))]

@@ -4,12 +4,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Corsinvest.ProxmoxVE.Api;
-using CSLabs.Api.Models;
 using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Proxmox.Responses;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Remotion.Linq.Parsing.Structure.NodeTypeProviders;
 
 namespace CSLabs.Api.Proxmox
 {

@@ -15,10 +15,11 @@ using Newtonsoft.Json.Converters;
 
 namespace CSLabs.Api.Models.ModuleModels
 {
-    public class Module : Trackable
+    public class Module : Trackable, IPrimaryKeyModel
     {
         public int Id { get; set; }
         [Required]
+        [UniqueInDB(ColumnName = "name")]
         public string Name { get; set; }
         [Required]
         public string Description { get; set; }

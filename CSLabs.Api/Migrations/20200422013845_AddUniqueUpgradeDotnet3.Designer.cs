@@ -3,14 +3,16 @@ using System;
 using CSLabs.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20200422013845_AddUniqueUpgradeDotnet3")]
+    partial class AddUniqueUpgradeDotnet3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -329,10 +331,6 @@ namespace CSLabs.Api.Migrations
                         .HasColumnName("created_at")
                         .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
-
-                    b.Property<bool>("IsCoreRouter")
-                        .HasColumnName("is_core_router")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("LabId")
                         .HasColumnName("lab_id")

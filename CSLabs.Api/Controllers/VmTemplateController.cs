@@ -35,8 +35,7 @@ namespace CSLabs.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetTemplates()
         {
-            var query = DatabaseContext.VmTemplates
-                .Where(t => !t.IsCoreRouter);
+            var query = DatabaseContext.VmTemplates.AsQueryable();
             if (!GetUser().IsAdmin())
                 query = query.Where(t => t.Owner == GetUser() || t.Owner == null);
             return Ok(await query.ToListAsync());
