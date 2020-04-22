@@ -13,6 +13,7 @@ using AutoMapper;
 using CSLabs.Api.Models.ModuleModels;
 using CSLabs.Api.Models;
 using CSLabs.Api.Models.UserModels;
+using CSLabs.Api.RequestModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -63,6 +64,17 @@ namespace CSLabs.Api.Controllers
                 .Modules
                 .Include(m => m.Labs)
                 .FirstAsync(m => m.Id == id);
+            var labIds = module.Labs.Select(l => l.Id);
+            // efficiently detect if labs have user labs
+            var totals = await DatabaseContext.UserLabs.Where(ul => labIds.Contains(ul.LabId)).GroupBy(ul => ul.LabId)
+                .Select(ul => new {Total = ul.Count(), LabId = ul.Key})
+                .ToDictionaryAsync(ul => ul.LabId);
+            foreach (var lab in module.Labs)
+            {
+                if (totals.ContainsKey(lab.Id)) {
+                    lab.HasUserLabs = totals[lab.Id].Total > 0;
+                }
+            }
             if (!GetUser().CanEditModules()) {
                 return Forbid("You are not allowed to edit modules");
             }

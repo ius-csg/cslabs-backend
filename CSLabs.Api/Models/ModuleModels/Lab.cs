@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CSLabs.Api.Models.Enums;
 using CSLabs.Api.Models.HypervisorModels;
+using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -43,7 +44,17 @@ namespace CSLabs.Api.Models.ModuleModels
         public bool HasTopology { get; set; }
         [NotMapped]
         public bool HasReadme { get; set; }
+        [NotMapped]
+        public bool HasUserLabs { get; set; }
 
+        public async Task updateHasUserLabs(DefaultContext context)
+        {
+            HasUserLabs = await context.UserLabs.Where(ul => ul.Lab == this).AnyAsync();
+        }
+        
+        [InverseProperty(nameof(UserLab.Lab))]
+        [JsonIgnore]
+        public List<UserLab> UserLabs { get; set; } = new List<UserLab>();
         public string GetTopologyPath()
         {
             return "Assets/Images/" + Id + ".jpg";
