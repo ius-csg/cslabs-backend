@@ -90,6 +90,7 @@ namespace CSLabs.Api.Services
             }
 
             userLab.Status = EUserLabStatus.Completed;
+            await _context.SaveChangesAsync();
         }
     }
 }
