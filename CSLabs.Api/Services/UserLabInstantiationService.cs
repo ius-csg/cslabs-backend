@@ -75,14 +75,16 @@ namespace CSLabs.Api.Services
         public async Task Deconstruct(UserLab userLab, ProxmoxManager proxmoxManager)
         {
             var api = proxmoxManager.GetProxmoxApi(userLab);
-            foreach (var userLabVm in userLab.UserLabVms)
+            var userLabVms = userLab.UserLabVms.ToList();
+            foreach (var userLabVm in userLabVms)
             {
                 await api.DestroyVm(userLabVm.ProxmoxVmId);
                 _context.UserLabVms.Remove(userLabVm);
                 await _context.SaveChangesAsync();
             }
-            
-            foreach (var bridge in userLab.BridgeInstances)
+
+            var bridgeInstances = userLab.BridgeInstances.ToList();
+            foreach (var bridge in bridgeInstances)
             {
                 await api.DestroyBridge(bridge.HypervisorInterfaceId);
                 _context.BridgeInstances.Remove(bridge);
