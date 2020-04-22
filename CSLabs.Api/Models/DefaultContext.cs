@@ -71,8 +71,6 @@ namespace CSLabs.Api.Models
            VmInterfaceInstance.OnModelCreating(builder);
            BridgeTemplate.OnModelCreating(builder);
            VmTemplate.OnModelCreating(builder);
-           builder.SnakeCaseDatabase();
-           
        }
        
        public override int SaveChanges(bool acceptAllChangesOnSuccess)

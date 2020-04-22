@@ -1,11 +1,9 @@
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using CSLabs.Api.Models;
 using CSLabs.Api.Models.UserModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.ResultOperators.Internal;
 
 namespace CSLabs.Api.Controllers
 {
