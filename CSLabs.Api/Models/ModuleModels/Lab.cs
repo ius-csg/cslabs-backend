@@ -14,7 +14,7 @@ using Newtonsoft.Json.Converters;
 
 namespace CSLabs.Api.Models.ModuleModels
 {
-    public class Lab : Trackable
+    public class Lab : Trackable, IPrimaryKeyModel, IValidatableObject
     {
         public int Id { get; set; }
 
@@ -115,8 +115,14 @@ namespace CSLabs.Api.Models.ModuleModels
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<Lab>();
-            builder.Unique<Lab>(u => u.Name);
+            builder.Unique<Lab>(u => new {u.Name, u.ModuleId});
             builder.Entity<Lab>().Property(p => p.Type).HasConversion<string>();
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            yield return validationContext.ValidateUnique<Lab>("name", Name, Id,
+                "A Lab with this name already exists", query => query.Where(m => m.ModuleId == ModuleId));
         }
     }
 }
