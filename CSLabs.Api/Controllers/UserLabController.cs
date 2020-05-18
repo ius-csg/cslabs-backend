@@ -84,6 +84,25 @@ namespace CSLabs.Api.Controllers
             await DatabaseContext.SaveChangesAsync();
             return Ok(userLab.GetResponse(Mapper));
         }
+
+        [HttpPost("{id}/turn-on")]
+        public async Task<IActionResult> TurnOn(int id)
+        {
+            var userLab = await DatabaseContext.UserLabs
+                .IncludeRelations()
+                .IncludeLabHypervisor()
+                .Include(ul => ul.Lab)
+                .FirstAsync(ul => ul.Id == id);
+            var api = ProxmoxManager.GetProxmoxApi(userLab);
+            foreach (var userLabVm in userLab.UserLabVms)
+            {
+                if ((await api.GetVmStatus(userLabVm.ProxmoxVmId)).IsStopped()) {
+                    await api.StartVM(userLabVm.ProxmoxVmId);
+                }
+            }
+
+            return Ok();
+        }
         
         [HttpPost("{id}/complete")]
         public async Task<IActionResult> Complete(int id)
