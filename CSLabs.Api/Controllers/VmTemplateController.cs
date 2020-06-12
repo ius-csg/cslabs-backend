@@ -69,7 +69,7 @@ namespace CSLabs.Api.Controllers
 
         [HttpPost("test-upload")]
         [AllowAnonymous]
-        public async Task<IActionResult> TestUpload([FromForm] FileUploadRequest request)
+        public async Task<IActionResult> TestUpload()
         {
             var hypervisor = await DatabaseContext.Hypervisors.FirstOrDefaultAsync();
             await _vmTemplateService.TestConnect(hypervisor);
