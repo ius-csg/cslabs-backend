@@ -66,6 +66,16 @@ namespace CSLabs.Api.Services
             return vmId;
         }
 
+        public async Task TestConnect(Hypervisor hypervisor)
+        {
+            using (var ssh = new SshClient(GetConnectionInfoFromHypervisor(hypervisor)))
+            {
+                ssh.Connect();
+                ssh.Disconnect();
+            }
+
+        }
+
         private void Cleanup(SftpClient sftp, string path)
         {
             var files = sftp.ListDirectory(path);

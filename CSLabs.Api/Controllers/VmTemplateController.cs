@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CSLabs.Api.Models.HypervisorModels;
@@ -8,15 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Renci.SshNet;
-using ConnectionInfo = Renci.SshNet.ConnectionInfo;
-using System.IO.Compression;
-using System.Xml;
-using System.Xml.Serialization;
 using CSLabs.Api.RequestModels;
 using CSLabs.Api.Services;
-using CSLabs.Api.Util;
-using Renci.SshNet.Sftp;
 
 namespace CSLabs.Api.Controllers
 {
@@ -74,6 +66,14 @@ namespace CSLabs.Api.Controllers
             DatabaseContext.Database.CommitTransaction();
             return Ok(vmTemplate);
         }
-        
+
+        [HttpPost("test-upload")]
+        [AllowAnonymous]
+        public async Task<IActionResult> TestUpload([FromForm] FileUploadRequest request)
+        {
+            var hypervisor = await DatabaseContext.Hypervisors.FirstOrDefaultAsync();
+            await _vmTemplateService.TestConnect(hypervisor);
+            return Ok();
+        }
     }
 }
