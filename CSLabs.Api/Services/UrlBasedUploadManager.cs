@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading;
 using CSLabs.Api.Models;
 using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.RequestModels;
 using CSLabs.Api.ResponseModels;
+using CSLabs.Api.Util;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CSLabs.Api.Services
@@ -53,7 +55,7 @@ namespace CSLabs.Api.Services
                 var service = scope.ServiceProvider.GetService<ProxmoxVmTemplateService>();
                 try
                 {
-                    using var response = DownloadFile(request.Url);
+                    using var response = DownloadFile(ShareLinkConverter.ConvertUrl(request.Url));
                     long contentLength = long.Parse(response.Headers["Content-Length"]);
                     using var stream = response.GetResponseStream();
                     await service.UploadTemplate(context, request.Name, user, stream, contentLength, progress => SetProgress(requestId, progress));
