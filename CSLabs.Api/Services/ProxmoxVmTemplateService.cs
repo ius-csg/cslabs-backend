@@ -80,26 +80,35 @@ namespace CSLabs.Api.Services
             using (var sftp = new SftpClient(GetConnectionInfoFromHypervisor(hypervisor)))
             {
                 sftp.Connect();
-                sftp.CreateDirectory(dirPath);
-                sftp.ChangeDirectory(dirPath);
-                sftp.UploadFile(fileStream, filePath, true, progress =>
+                try
                 {
-                    if (callback != null) {
-                        callback((double)progress / length * 100);
+                    sftp.CreateDirectory(dirPath);
+                    sftp.ChangeDirectory(dirPath);
+                    sftp.UploadFile(fileStream, filePath, true, progress =>
+                    {
+                        if (callback != null)
+                        {
+                            callback((double) progress / length * 100);
+                        }
+                    });
+                    using (var ssh = new SshClient(GetConnectionInfoFromHypervisor(hypervisor)))
+                    {
+                        ssh.Connect();
+                        await ExtractOva(ssh, filePath, dirPath);
+                        vmId = await CreateVmAndImportDisk(name, ssh, sftp, api, dirPath);
+                        var unusedDisk = await api.GetVmUnusedDisk(vmId);
+                        await api.SetVmScsi0(vmId, unusedDisk);
+                        await api.UpdateBootDisk(vmId, "scsi0");
+                        await api.ConvertVmToTemplate(vmId);
+                        ssh.Disconnect();
                     }
-                });
-                using (var ssh = new SshClient(GetConnectionInfoFromHypervisor(hypervisor)))
-                {
-                    ssh.Connect();
-                    await ExtractOva(ssh, filePath, dirPath);
-                    vmId = await CreateVmAndImportDisk(name, ssh, sftp, api, dirPath);
-                    var unusedDisk = await api.GetVmUnusedDisk(vmId);
-                    await api.AddDiskToVm(vmId, unusedDisk);
-                    await api.ConvertVmToTemplate(vmId);
-                    ssh.Disconnect();
+                    Cleanup(sftp, dirPath);
                 }
-
-                Cleanup(sftp, dirPath);
+                catch (Exception)
+                {
+                    Cleanup(sftp, dirPath);
+                    throw;
+                }
                 sftp.Disconnect();
             }
 

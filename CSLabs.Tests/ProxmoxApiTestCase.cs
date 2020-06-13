@@ -13,6 +13,7 @@ namespace CSLabs.Tests
     {
         private ProxmoxApi client;
         private HypervisorNode _hypervisorNode;
+        private int _vmId;
         [SetUp]
         public void Setup()
         {
@@ -32,13 +33,14 @@ namespace CSLabs.Tests
                     Password = apiSection["Password"]
                 }
             };
+            _vmId = int.Parse(apiSection["VmId"]);
             client = new ProxmoxApi(_hypervisorNode, apiSection["Password"]);
         }
 
         [Test]
         public async Task TestGetTicket()
         {
-            var ticketResponse = await client.GetTicket(104);
+            var ticketResponse = await client.GetTicket(_vmId);
             Assert.NotNull(ticketResponse.Ticket);
             Assert.Greater(ticketResponse.Ticket.Length, 1);
         }
@@ -46,16 +48,10 @@ namespace CSLabs.Tests
         [Test]
         public async Task TestGetVMStatus()
         {
-            var ticketResponse = await client.GetVmStatus(104);
+            var ticketResponse = await client.GetVmStatus(_vmId);
             Assert.NotNull(ticketResponse);
         }
         
-        [Test]
-        public async Task TestCloneTemplate()
-        {
-            var newVmId = await client.CloneTemplate(_hypervisorNode, 103);
-            Assert.NotNull(newVmId);
-        }
         
         [Test]
         public async Task GetNodeStatus()
@@ -71,11 +67,15 @@ namespace CSLabs.Tests
         }
 
         [Test]
-        public async Task AddBridgeToVm()
+        public async Task GetConfig()
         {
-            var bridgeId = await client.CreateBridge();
-            await client.AddBridgeToVm(111, bridgeId);
-            await client.ApplyNetworkConfiguration();
+            await client.GetConfig(_vmId);
+        }
+        
+        [Test]
+        public async Task UpdateBootDisk()
+        {
+            await client.UpdateBootDisk(_vmId, "scsi0");
         }
         
     }
