@@ -14,11 +14,7 @@ namespace CSLabs.Api.Util
         
         public static string ToSafeId(this string str)
         {
-            return Regex.Replace(
-                Regex.Replace(str, @"[^a-zA-Z0-9 -]|\s+", "_").Trim('_'),
-                "_+",
-                "_"
-            );
+            return Regex.Replace(str, @"[^a-zA-Z0-9 -]|\s+", "");
         }
     }
 }
