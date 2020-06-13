@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -150,6 +151,8 @@ namespace CSLabs.Api.Services
             var files = sftp.ListDirectory(dirPath).ToList();
             SftpFile vmdk = files.First(f => f.GetExtension() == "vmdk");
             SftpFile ovfFile = files.First(f => f.GetExtension() == "ovf");
+            Debug.Assert(vmdk != null, "vmdk != null");
+            Debug.Assert(ovfFile != null, "ovfFile != null");
             await using var stream = new MemoryStream();
             sftp.DownloadFile(ovfFile.FullName, stream);
             stream.Position = 0;
