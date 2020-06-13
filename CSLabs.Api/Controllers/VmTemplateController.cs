@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CSLabs.Api.Models.HypervisorModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CSLabs.Api.RequestModels;
@@ -18,10 +15,14 @@ namespace CSLabs.Api.Controllers
     public class VmTemplateController : BaseController
     {
         private ProxmoxVmTemplateService _vmTemplateService;
-        
-        public VmTemplateController(BaseControllerDependencies dependencies, ProxmoxVmTemplateService vmTemplateService) : base(dependencies)
+        private UrlBasedUploadManager _uploadManager;
+        public VmTemplateController(
+            BaseControllerDependencies dependencies, 
+            ProxmoxVmTemplateService vmTemplateService, 
+            UrlBasedUploadManager uploadManager) : base(dependencies)
         {
             _vmTemplateService = vmTemplateService;
+            _uploadManager = uploadManager;
         }
 
         [HttpGet]
@@ -40,31 +41,24 @@ namespace CSLabs.Api.Controllers
         [RequestSizeLimit(TEN_GB)]
         public async Task<IActionResult> UploadTemplate([FromForm] FileUploadRequest request)
         {
-            Console.WriteLine("Got upload file");
-           IFormFile ovaFile = request.File;
-           var hypervisor = await DatabaseContext.Hypervisors.FirstOrDefaultAsync();
-            var vmTemplate = new VmTemplate
-            {
-                Name = ovaFile.FileName,
-                Owner = GetUser(),
-                IsCoreRouter = false,
-            };
-            await DatabaseContext.Database.BeginTransactionAsync();
-            DatabaseContext.Add(vmTemplate);
-            await DatabaseContext.SaveChangesAsync();
-            var templateId = await _vmTemplateService.UploadVmTemplate(ovaFile, hypervisor, vmTemplate);
-            var primaryHypervisorNode = await ProxmoxManager.GetPrimaryHypervisorNode(hypervisor);
-            vmTemplate.HypervisorVmTemplates = new List<HypervisorVmTemplate>
-            {
-                new HypervisorVmTemplate
-                {
-                    HypervisorNode = primaryHypervisorNode,
-                    TemplateVmId = templateId
-                }
-            };
-            await DatabaseContext.SaveChangesAsync();
-            DatabaseContext.Database.CommitTransaction();
-            return Ok(vmTemplate);
+            await using var stream = request.File.OpenReadStream();
+            
+            await _vmTemplateService.UploadTemplate(DatabaseContext, request.Name, GetUser(), stream, request.File.Length);
+            return Ok();
+        }
+        [HttpPost("from-url")]
+        public async Task<IActionResult> UploadTemplateFromUrl([FromBody] FromUrlRequest request)
+        {
+            string requestId = Guid.NewGuid().ToString();
+            _uploadManager.SetProgress(requestId, 0);
+            _uploadManager.QueueUpload(request, requestId, GetUser());
+            return Ok(requestId);
+        }
+
+        [HttpGet("upload-status/{requestId}")]
+        public async Task<IActionResult> GetUploadStatus(string requestId)
+        {
+            return Ok(_uploadManager.GetProgress(requestId));
         }
 
         [HttpPost("test-upload")]

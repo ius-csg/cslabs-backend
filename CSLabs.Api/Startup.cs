@@ -52,6 +52,9 @@ namespace CSLabs.Api
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    // Allow enums to be converted to strings and vice versa in requests
+                    options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 });
 
             ConfigureEmail(services, appSettings.Email);

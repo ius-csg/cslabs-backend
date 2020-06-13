@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
 
 namespace CSLabs.Api.RequestModels
 {
-    public class FileUploadRequest
+    public class FromUrlRequest
     {
-        public IFormFile File { get; set; }
+        [Url]
+        public string Url { get; set; }
         [Required]
         [MinLength(3)]
         public string Name { get; set; }

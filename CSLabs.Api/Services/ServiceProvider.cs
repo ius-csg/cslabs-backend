@@ -28,6 +28,7 @@ namespace CSLabs.Api.Services
             services.AddScoped<BaseControllerDependencies>();
             services.AddTransient<UserLabInstantiationService>();
             services.AddTransient<ProxmoxVmTemplateService>();
+            services.AddSingleton<UrlBasedUploadManager>();
         }
     }
 }

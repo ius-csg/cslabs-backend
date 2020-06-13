@@ -1,12 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using CSLabs.Api.Models;
 using CSLabs.Api.Models.HypervisorModels;
+using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.Proxmox;
 using CSLabs.Api.Util;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Renci.SshNet;
 using Renci.SshNet.Sftp;
 using ConnectionInfo = Renci.SshNet.ConnectionInfo;
@@ -28,13 +31,47 @@ namespace CSLabs.Api.Services
             ProxmoxManager = manager;
         }
         
-        public async Task<int> UploadVmTemplate(IFormFile ovaFile, Hypervisor hypervisor, VmTemplate vmTemplate)
+        public async Task UploadTemplate(DefaultContext context, string name, User user, Stream stream, long length,  Action<double> callback = null)
+        {
+            await context.Database.BeginTransactionAsync();
+            var hypervisor = await context.Hypervisors.FirstOrDefaultAsync();
+            context.Entry(user).State = EntityState.Unchanged;
+            var vmTemplate = new VmTemplate
+            {
+                Name = name,
+                Owner = user,
+                IsCoreRouter = false,
+            };
+            context.Add(vmTemplate);
+            await context.SaveChangesAsync();
+            var templateId = await UploadVmTemplate(
+                name, stream, length, hypervisor, vmTemplate, callback);
+            var primaryHypervisorNode = await ProxmoxManager.GetPrimaryHypervisorNode(hypervisor);
+            vmTemplate.HypervisorVmTemplates = new List<HypervisorVmTemplate>
+            {
+                new HypervisorVmTemplate
+                {
+                    HypervisorNode = primaryHypervisorNode,
+                    TemplateVmId = templateId
+                }
+            };
+            await context.SaveChangesAsync();
+            context.Database.CommitTransaction();
+        }
+        
+        public async Task<int> UploadVmTemplate(
+            string name, 
+            Stream fileStream, 
+            long length,
+            Hypervisor hypervisor, 
+            VmTemplate vmTemplate, 
+            Action<double> callback = null)
         {
             var safeFileName = vmTemplate.Id + ".ova";
-            var baseDir = "/root/uploads";
-            var dirName = "VmTemplate_" + vmTemplate.Id;
-            var dirPath = string.Join("/", baseDir, dirName);
-            var filePath =string.Join("/", dirPath, safeFileName);
+            const string baseDir = "/root/uploads";
+            var dirName  = "VmTemplate_" + vmTemplate.Id;
+            var dirPath  = string.Join("/", baseDir, dirName);
+            var filePath = string.Join("/", dirPath, safeFileName);
             var node = await ProxmoxManager.GetPrimaryHypervisorNode(hypervisor);
             var api = ProxmoxManager.GetProxmoxApi(node);
             int vmId;
@@ -44,15 +81,17 @@ namespace CSLabs.Api.Services
                 sftp.Connect();
                 sftp.CreateDirectory(dirPath);
                 sftp.ChangeDirectory(dirPath);
-                using (var uploadFileStream =  ovaFile.OpenReadStream()){
-                    sftp.UploadFile(uploadFileStream, filePath, true);
-                }
-                
+                sftp.UploadFile(fileStream, filePath, true, progress =>
+                {
+                    if (callback != null) {
+                        callback((double)progress / length * 100);
+                    }
+                });
                 using (var ssh = new SshClient(GetConnectionInfoFromHypervisor(hypervisor)))
                 {
                     ssh.Connect();
                     await ExtractOva(ssh, filePath, dirPath);
-                    vmId = await CreateVmAndImportDisk(ssh, sftp, api, dirPath);
+                    vmId = await CreateVmAndImportDisk(name, ssh, sftp, api, dirPath);
                     var unusedDisk = await api.GetVmUnusedDisk(vmId);
                     await api.AddDiskToVm(vmId, unusedDisk);
                     await api.ConvertVmToTemplate(vmId);
@@ -106,27 +145,18 @@ namespace CSLabs.Api.Services
                 throw new Exception("Extraction process failed! Error: " + result.Error);
             }
         }
-        public async Task<int> CreateVmAndImportDisk(SshClient ssh, SftpClient sftp, ProxmoxApi api, string dirPath)
+        public async Task<int> CreateVmAndImportDisk(string name, SshClient ssh, SftpClient sftp, ProxmoxApi api, string dirPath)
         {
-            var files = sftp.ListDirectory(dirPath);
-            SftpFile vmdk = null;
-            SftpFile ovfFile = null;
-            foreach (var sftpFile in files)
-            {
-                var extension = sftpFile.GetExtension();
-                switch (extension)
-                {
-                    case "vmdk": vmdk = sftpFile; break;
-                    case "ovf": ovfFile = sftpFile; break;
-                }
-            }
-            Stream stream = new MemoryStream();
+            var files = sftp.ListDirectory(dirPath).ToList();
+            SftpFile vmdk = files.First(f => f.GetExtension() == "vmdk");
+            SftpFile ovfFile = files.First(f => f.GetExtension() == "ovf");
+            await using var stream = new MemoryStream();
             sftp.DownloadFile(ovfFile.FullName, stream);
             stream.Position = 0;
-            StreamReader reader = new StreamReader(stream);
+            using var reader = new StreamReader(stream);
             var ovf = ParseOvf(await reader.ReadToEndAsync());
             
-            var vmId = await api.CreateVm(ovf.Name, ovf.MemorySizeMb);
+            var vmId = await api.CreateVm(name, ovf.MemorySizeMb);
             var result = ssh.RunCommand($"qm importdisk {vmId} {vmdk.FullName} nasapp -format qcow2");
             if (result.Error != "")
             {
