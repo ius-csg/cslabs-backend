@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -257,13 +258,28 @@ namespace CSLabs.Api.Proxmox
             await PerformRequest(() => this.client.Nodes[node].Qemu[vmId].Config.UpdateVmAsync(netN: dic));
         }
         
-        public async Task AddDiskToVm(int vmId, string disk, string targetNode = null)
+        public async Task<ExpandoObject> GetConfig(int vmId, string targetNode = null)
+        {
+            await LoginIfNotLoggedIn();
+            string node = targetNode ?? this.HypervisorNode.Name;
+            var result = await PerformRequest(() => this.client.Nodes[node].Qemu[vmId].Config.VmConfig());
+            return result.Response.data;
+        }
+        
+        public async Task UpdateBootDisk(int vmId, string targetDisk, string targetNode = null)
+        {
+            await LoginIfNotLoggedIn();
+            string node = targetNode ?? this.HypervisorNode.Name;
+            await PerformRequest(() => this.client.Nodes[node].Qemu[vmId].Config.UpdateVmAsync(bootdisk: targetDisk));
+        }
+
+        public async Task SetVmScsi0(int vmId, string disk, string targetNode = null)
         {
             await LoginIfNotLoggedIn();
             string node = targetNode ?? this.HypervisorNode.Name;
             // var optionsStr = string.Join(",", options.ToList().Select(pair => pair.Key + "=" + pair.Value));
             var scsiOptions = new Dictionary<int, string> {{0, disk}};
-            await PerformRequest(() => this.client.Nodes[node].Qemu[vmId].Config.UpdateVmAsync(scsiN: scsiOptions));
+            await PerformRequest(() => this.client.Nodes[node].Qemu[vmId].Config.UpdateVmAsync(scsiN: scsiOptions, bootdisk: "scsi0"));
         }
         
         public async Task ConvertVmToTemplate(int vmId, string targetNode = null)
