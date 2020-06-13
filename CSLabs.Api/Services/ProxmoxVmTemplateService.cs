@@ -167,7 +167,7 @@ namespace CSLabs.Api.Services
             using var reader = new StreamReader(stream);
             var ovf = ParseOvf(await reader.ReadToEndAsync());
             
-            var vmId = await api.CreateVm(name, ovf.MemorySizeMb);
+            var vmId = await api.CreateVm(name.ToSafeId(), ovf.MemorySizeMb);
             var result = ssh.RunCommand($"qm importdisk {vmId} {vmdk.FullName} nasapp -format qcow2");
             if (result.Error != "")
             {
