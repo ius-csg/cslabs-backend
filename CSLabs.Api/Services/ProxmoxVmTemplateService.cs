@@ -98,7 +98,6 @@ namespace CSLabs.Api.Services
                         vmId = await CreateVmAndImportDisk(name, ssh, sftp, api, dirPath);
                         var unusedDisk = await api.GetVmUnusedDisk(vmId);
                         await api.SetVmScsi0(vmId, unusedDisk);
-                        await api.UpdateBootDisk(vmId, "scsi0");
                         await api.ConvertVmToTemplate(vmId);
                         ssh.Disconnect();
                     }

@@ -279,7 +279,7 @@ namespace CSLabs.Api.Proxmox
             string node = targetNode ?? this.HypervisorNode.Name;
             // var optionsStr = string.Join(",", options.ToList().Select(pair => pair.Key + "=" + pair.Value));
             var scsiOptions = new Dictionary<int, string> {{0, disk}};
-            await PerformRequest(() => this.client.Nodes[node].Qemu[vmId].Config.UpdateVmAsync(scsiN: scsiOptions));
+            await PerformRequest(() => this.client.Nodes[node].Qemu[vmId].Config.UpdateVmAsync(scsiN: scsiOptions, bootdisk: "scsi0"));
         }
         
         public async Task ConvertVmToTemplate(int vmId, string targetNode = null)
