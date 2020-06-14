@@ -73,7 +73,7 @@ namespace CSLabs.Api.Models.ModuleModels
                 HasReadme = true;
         }
 
-        public void LinkBrideTemplates()
+        public void LinkBridgeTemplates()
         {
             var bridgeTemplates = BridgeTemplates.ToDictionary(t => t.Uuid);
             foreach (var vm in LabVms)
@@ -89,17 +89,17 @@ namespace CSLabs.Api.Models.ModuleModels
         {
             var labVmIds = LabVms.Select(t => t.Id).ToList();
             var vmsToRemove = await context.LabVms
-                .Where(t => t.LabId == Id && !labVmIds.Contains(Id)).ToListAsync();
+                .Where(t => t.LabId == Id && !labVmIds.Contains(t.Id)).ToListAsync();
             context.LabVms.RemoveRange(vmsToRemove);
             
             var interfaceIds = LabVms.SelectMany(t => t.TemplateInterfaces).Select(i => i.Id).ToList();
             var interfacesToRemove = await context.VmInterfaceTemplates
-                .Where(t => labVmIds.Contains(t.LabVmId) && !interfaceIds.Contains(Id)).ToListAsync();
+                .Where(t => labVmIds.Contains(t.LabVmId) && !interfaceIds.Contains(t.Id)).ToListAsync();
             context.VmInterfaceTemplates.RemoveRange(interfacesToRemove);
             
             var bridgeTemplateIds = BridgeTemplates.Select(t => t.Id).ToList();
             var bridgeTemplatesToRemove = await context.BridgeTemplates
-                .Where(t => t.LabId == Id && !bridgeTemplateIds.Contains(Id)).ToListAsync();
+                .Where(t => t.LabId == Id && !bridgeTemplateIds.Contains(t.Id)).ToListAsync();
             context.BridgeTemplates.RemoveRange(bridgeTemplatesToRemove);
             
         }

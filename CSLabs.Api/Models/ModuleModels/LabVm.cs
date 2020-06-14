@@ -5,6 +5,7 @@ using System.Linq;
 using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace CSLabs.Api.Models.ModuleModels
 {
@@ -17,6 +18,7 @@ namespace CSLabs.Api.Models.ModuleModels
         [Required]
         public int LabId { get; set; }
         [ForeignKey(nameof(LabId))]
+        [JsonIgnore]
         public Lab Lab { get; set; }
         
         public bool IsCoreRouter { get; set; }

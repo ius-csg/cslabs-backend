@@ -12,7 +12,7 @@ namespace CSLabs.Api.Util
         {
             CreateMap<RegistrationRequest, User>();
             CreateMap<UserLab, UserLab>();
-            CreateMap<Lab, LabRequest>();
+            CreateMap<LabRequest, Lab>();
         }
     }
 }

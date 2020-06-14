@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace CSLabs.Api.Models.ModuleModels
 {
@@ -19,6 +20,7 @@ namespace CSLabs.Api.Models.ModuleModels
         public string Uuid { get; set; }
         public int LabId  { get; set; }
         [ForeignKey(nameof(LabId))]
+        [JsonIgnore]
         public Lab Lab { get; set; }
 
         public static void OnModelCreating(ModelBuilder modelBuilder)

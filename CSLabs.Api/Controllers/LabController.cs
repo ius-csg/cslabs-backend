@@ -56,7 +56,7 @@ namespace CSLabs.Api.Controllers
                 return Forbid("You are not allowed to edit this module");
             }
 
-            lab.LinkBrideTemplates();
+            lab.LinkBridgeTemplates();
             
             if (lab.Id == 0)
                 await DatabaseContext.Labs.AddAsync(lab);
