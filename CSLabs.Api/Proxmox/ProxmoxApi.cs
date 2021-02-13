@@ -170,11 +170,10 @@ namespace CSLabs.Api.Proxmox
 
         private async Task<int> GetNextAvailableVmId()
         {
-            var ids = await GetAllUsedVmIds();
-            int newVmId = 100;
-            if(ids.Count != 0)
-                newVmId = ids.Max() + 1;
-            return newVmId;
+            await LoginIfNotLoggedIn();
+            var response = await PerformRequest(() => this.client.Cluster.Nextid.Nextid());
+            var nextId = int.Parse(response.Response.data);
+            return nextId;
         }
         
         public async Task<int> CloneTemplate(HypervisorNode node, int vmId, string srcNode = null)
