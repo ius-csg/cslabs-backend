@@ -8,9 +8,9 @@ namespace CSLabs.Api.Proxmox
     // class methods pulled from https://mikaelkoskinen.net/post/encrypt-decrypt-string-asp-net-core
     public class Cryptography
     {
-         public static string EncryptString(string text, string keyString)
-        {
-            var key = Encoding.UTF8.GetBytes(keyString);
+        public static string EncryptString(string text, string keyString)
+         {
+             var key = Encoding.UTF8.GetBytes(keyString);
 
             using (var aesAlg = Aes.Create())
             {
@@ -26,12 +26,12 @@ namespace CSLabs.Api.Proxmox
 
                         var iv = aesAlg.IV;
 
-                        var decryptedContent = msEncrypt.ToArray();
+                        var encryptedContent = msEncrypt.ToArray();
 
-                        var result = new byte[iv.Length + decryptedContent.Length];
+                        var result = new byte[iv.Length + encryptedContent.Length];
 
                         Buffer.BlockCopy(iv, 0, result, 0, iv.Length);
-                        Buffer.BlockCopy(decryptedContent, 0, result, iv.Length, decryptedContent.Length);
+                        Buffer.BlockCopy(encryptedContent, 0, result, iv.Length, encryptedContent.Length);
 
                         return Convert.ToBase64String(result);
                     }
