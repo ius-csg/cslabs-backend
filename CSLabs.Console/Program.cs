@@ -27,8 +27,14 @@ namespace CSLabs.Console
         
         static async Task Main(string[] args)
         {
+            var dir = Directory.GetCurrentDirectory();
+            var mainProjectDir = $"../{typeof(CSLabs.Api.Program).Namespace}";
+            if (Directory.Exists(mainProjectDir))
+            {
+                dir = Path.GetFullPath(mainProjectDir);
+            }
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
+                .SetBasePath(dir)
                 .AddJsonFile("appsettings.json", false, true);
             IConfiguration configuration = builder.Build();
             var appSettings = new AppSettings();
