@@ -18,10 +18,9 @@ step again: cd into `CSLabs.Api` and run `dotnet ef database update`
 
 These steps are only required if you plan on starting a lab.
 
-* Change directory to the solution folder `cd cslabs-backend` and run `dotnet build`
-* Change directory into Console project `cd CSLabs.Console` 
-* `dotnet run --no-build change-hypervisor-password --id 1 --password <proxmox root password>` You can get the password from 
-[this Trello card](https://trello.com/c/WFFm6iwa)
+* Open terminal to the solution folder
+* `cslabs change-hypervisor-password --id 1 --password <proxmox root password>` You can get the password from
+[this Trello card](https://trello.com/c/WFFm6iwa). Note: If on linux you have to write `./cslabs` instead.
 * Connect to the VPN whenever you need to test with the proxmox server.
 
 
@@ -30,9 +29,8 @@ These steps are only required if you plan on starting a lab.
 To connect to a proxmox host, you will need to add them to the DB. The passwords used to
 access the proxmox host is encrypted so a command is developed to ease the process of adding them.
 
-1. Build the solution
-2. `cd CSLabs.Console`
-3. `dotnet run --no-build` 
+1. Open the terminal to the solution folder.
+2. Run `cslabs help` 
 
 This will show you all the commands available:
 
@@ -53,7 +51,7 @@ This will show you all the commands available:
 You will need to change the password of the default hypervisor. The password is found in trello in the notes column
 
 ```
-dotnet run --no-build change-hypervisor-password --id 1 --password <password given>
+cslabs change-hypervisor-password --id 1 --password <password given>
 ```
 
 Documentation in trello 
