@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.RequestModels;
 using CSLabs.Api.Services;
 using CSLabs.Api.Email;
-using CSLabs.Api.Email.ViewModels;
 using CSLabs.Api.ResponseModels;
 using CSLabs.Api.Util;
-using FluentEmail.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace CSLabs.Api.Controllers

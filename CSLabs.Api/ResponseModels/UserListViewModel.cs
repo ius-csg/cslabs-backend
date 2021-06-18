@@ -1,9 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using CSLabs.Api.Models.UserModels;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace CSLabs.Api.ResponseModels
 {
