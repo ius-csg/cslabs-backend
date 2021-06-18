@@ -112,3 +112,14 @@ dotnet ef database update LastGoodMigration
 Download MYSQL Workbench from [here](https://dev.mysql.com/get/Downloads/MySQLGUITools/mysql-workbench-community-8.0.17-winx64.msi)
 
 Open [cslabs-db-diagram.mwb](./cslabs-db-diagram.mwb) in the root of this project using mysql workbench.
+
+
+### Development
+
+#### Git Workflow
+
+The main branch is master, which will hold the version currently running in production.
+When some work needs to be done, you will branch off from dev using the
+naming convention `<initials>-<feature-name>` for your branch.
+After the work has completed, the developer should create a PR in Github to merge the branch back into dev and notify the project lead
+to review. Please make sure to submit a PR to merge into **dev** branch and not master.
