@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using CSLabs.Api.Models.UserModels;
+﻿using CSLabs.Api.Models.UserModels;
 
 namespace CSLabs.Api.ResponseModels
 {
