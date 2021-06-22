@@ -65,8 +65,11 @@ namespace CSLabs.Api.Controllers
         [HttpGet]
         public IActionResult GetUserList()
         {
-            UserListViewModel userList = new UserListViewModel(DatabaseContext.Users.ToList());
-            return Ok(userList.UserList);
+            return Ok(
+                DatabaseContext.Users
+                    .Select(u => new UserViewModel(u))
+                    .ToList()
+                );
         }
 
         [AllowAnonymous]
