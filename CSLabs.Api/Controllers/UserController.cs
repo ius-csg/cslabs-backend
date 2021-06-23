@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.RequestModels;
 using CSLabs.Api.Services;
 using CSLabs.Api.Email;
-using CSLabs.Api.Email.ViewModels;
+using CSLabs.Api.ResponseModels;
 using CSLabs.Api.Util;
-using FluentEmail.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace CSLabs.Api.Controllers
@@ -69,21 +65,11 @@ namespace CSLabs.Api.Controllers
         [HttpGet]
         public IActionResult GetUserList()
         {
-            List<UserInfo> userList = new List<UserInfo>();
-            
-            foreach (User user in DatabaseContext.Users)
-            {
-                UserInfo userInfo = new UserInfo();
-                userInfo.Id = user.Id;
-                userInfo.FirstName = user.FirstName;
-                userInfo.MiddleName = user.MiddleName;
-                userInfo.LastName = user.LastName;
-                userInfo.Email = user.Email;
-                userInfo.Role = user.Role;
-                
-                userList.Add(userInfo);
-            }
-            return Ok(userList);
+            return Ok(
+                DatabaseContext.Users
+                    .Select(u => new UserViewModel(u))
+                    .ToList()
+                );
         }
 
         [AllowAnonymous]
