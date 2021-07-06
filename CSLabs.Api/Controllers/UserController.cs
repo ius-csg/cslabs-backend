@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.RequestModels;
 using CSLabs.Api.Services;
 using CSLabs.Api.Email;
-using CSLabs.Api.Email.ViewModels;
 using CSLabs.Api.Util;
-using FluentEmail.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace CSLabs.Api.Controllers
@@ -149,6 +145,22 @@ namespace CSLabs.Api.Controllers
             user.Password = newHashedPassword;
             await DatabaseContext.SaveChangesAsync();
 
+            return Ok();
+        }
+
+        [HttpPut("change-role")]
+        public async Task<IActionResult> ChangeRole(ChangeRoleRequest[] request)
+        {
+            foreach (var requestItem in request)
+            {
+                var user = await DatabaseContext
+                    .Users
+                    .Where(u => u.Id == requestItem.UserId)
+                    .FirstOrDefaultAsync();
+                user.Role = requestItem.NewRole;
+            }
+            await DatabaseContext.SaveChangesAsync();
+            
             return Ok();
         }
     }
