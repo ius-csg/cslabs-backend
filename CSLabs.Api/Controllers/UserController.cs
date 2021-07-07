@@ -151,6 +151,11 @@ namespace CSLabs.Api.Controllers
         [HttpPut("change-role")]
         public async Task<IActionResult> ChangeRole(ChangeRoleRequest[] request)
         {
+            if (GetUser().Role != EUserRole.Admin)
+            {
+                return Unauthorized();
+            }
+            
             foreach (var requestItem in request)
             {
                 var user = await DatabaseContext
