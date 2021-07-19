@@ -137,5 +137,26 @@ namespace CSLabs.Api.Controllers
 
             return Ok();
         }
+
+        [HttpPut("change-role")]
+        public async Task<IActionResult> ChangeRole(ChangeRoleRequest[] request)
+        {
+            if (GetUser().Role != EUserRole.Admin)
+            {
+                return Unauthorized();
+            }
+            
+            foreach (var requestItem in request)
+            {
+                var user = await DatabaseContext
+                    .Users
+                    .Where(u => u.Id == requestItem.UserId)
+                    .FirstOrDefaultAsync();
+                user.Role = requestItem.NewRole;
+            }
+            await DatabaseContext.SaveChangesAsync();
+            
+            return NoContent();
+        }
     }
 }
