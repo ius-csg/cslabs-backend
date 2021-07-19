@@ -563,6 +563,12 @@ namespace CSLabs.Api.Migrations
                         .HasColumnName("password_recovery_code")
                         .HasColumnType("VARCHAR(100)");
 
+                    b.Property<int>("PermanentLabLimit")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("permanent_lab_limit")
+                        .HasColumnType("int")
+                        .HasDefaultValueSql("1");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnName("role")

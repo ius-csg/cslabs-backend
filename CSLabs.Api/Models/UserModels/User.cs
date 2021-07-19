@@ -51,6 +51,8 @@ namespace CSLabs.Api.Models.UserModels
         [Column(TypeName = "VARCHAR(100)")]
         public string PasswordRecoveryCode { get; set; }
         
+        [Required] private int PermanentLabLimit { get; set; }
+        
         // many to many link
         public List<UserUserModule> UserUserModules { get; set; }
         
@@ -74,6 +76,7 @@ namespace CSLabs.Api.Models.UserModels
                 .Property(b => b.Password)
                 .HasDefaultValue(null);
             builder.Entity<User>().Property(p => p.Role).HasConversion<string>();
+            builder.Entity<User>().Property(p => p.PermanentLabLimit).HasDefaultValueSql("1");
         }
     }
 }
