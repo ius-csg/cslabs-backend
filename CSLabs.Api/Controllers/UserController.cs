@@ -166,7 +166,7 @@ namespace CSLabs.Api.Controllers
             }
             await DatabaseContext.SaveChangesAsync();
             
-            return Ok();
+            return NoContent();
         }
     }
 }
