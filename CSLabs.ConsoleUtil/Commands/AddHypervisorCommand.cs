@@ -8,7 +8,7 @@ using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Proxmox;
 using Newtonsoft.Json;
 
-namespace CSLabs.Console.Commands
+namespace CSLabs.ConsoleUtil.Commands
 {
     [Verb("add-hypervisor", HelpText = "Adds a hypervisor to the database")]
     public class AddHypervisorOptions

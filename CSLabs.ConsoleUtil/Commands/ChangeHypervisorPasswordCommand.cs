@@ -7,7 +7,7 @@ using CSLabs.Api.Models;
 using CSLabs.Api.Proxmox;
 using Newtonsoft.Json;
 
-namespace CSLabs.Console.Commands
+namespace CSLabs.ConsoleUtil.Commands
 {
     [Verb("change-hypervisor-password", HelpText = "Changes the password for a hypervisor")]
     public class ChangeHypervisorPasswordOptions

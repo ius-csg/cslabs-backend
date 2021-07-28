@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using CommandLine;
 using CSLabs.Api.Config;
 using CSLabs.Api.Services;
-using CSLabs.Console.Commands;
+using CSLabs.ConsoleUtil.Commands;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CSLabs.Console
+namespace CSLabs.ConsoleUtil
 {
     class Program
     {

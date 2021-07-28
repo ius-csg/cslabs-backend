@@ -4,7 +4,7 @@ using CSLabs.Api.Models;
 using CSLabs.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
-namespace CSLabs.Console.Commands
+namespace CSLabs.ConsoleUtil.Commands
 {
     [Verb("user:change-password", HelpText = "Changes the password for a user")]
     public class ChangeUserPasswordOptions

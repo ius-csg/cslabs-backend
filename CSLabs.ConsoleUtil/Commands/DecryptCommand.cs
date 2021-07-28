@@ -3,7 +3,7 @@ using CommandLine;
 using CSLabs.Api.Config;
 using CSLabs.Api.Proxmox;
 
-namespace CSLabs.Console.Commands
+namespace CSLabs.ConsoleUtil.Commands
 {
     [Verb("decrypt", HelpText = "Decrypts a string")]
     public class DecryptOptions

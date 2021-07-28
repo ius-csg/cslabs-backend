@@ -1,5 +1,5 @@
 @echo off
 setlocal
-cd CSLabs.Console
+cd CSLabs.ConsoleUtil
 dotnet build > nul && dotnet run --no-build %*
 endlocal

@@ -1,2 +1,2 @@
 #!/bin/bash
-(cd CSLabs.Console && dotnet build > /dev/null && dotnet run --no-build "$@")
+(cd CSLabs.ConsoleUtil && dotnet build > /dev/null && dotnet run --no-build "$@")

@@ -9,7 +9,7 @@ using CSLabs.Api.Proxmox;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace CSLabs.Console.Commands
+namespace CSLabs.ConsoleUtil.Commands
 {
     [Verb("list-hypervisors", HelpText = "Lists hypervisors in the database")]
     public class ListHypervisorsOptions

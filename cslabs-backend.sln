@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSLabs.Tests", "CSLabs.Tests\CSLabs.Tests.csproj", "{1C691A76-7B92-413D-8B13-11D2165FAFA9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSLabs.Console", "CSLabs.Console\CSLabs.Console.csproj", "{E6399054-7CA6-4CC6-8326-AA9A04706994}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSLabs.ConsoleUtil", "CSLabs.ConsoleUtil\CSLabs.ConsoleUtil.csproj", "{E6399054-7CA6-4CC6-8326-AA9A04706994}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
