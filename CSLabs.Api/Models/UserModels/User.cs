@@ -53,6 +53,8 @@ namespace CSLabs.Api.Models.UserModels
         
         [Required] private int PermanentLabLimit { get; set; }
         
+        [Required] private int AmountOfPermanentLabs {get; set;}
+        
         // many to many link
         public List<UserUserModule> UserUserModules { get; set; }
         
@@ -77,6 +79,7 @@ namespace CSLabs.Api.Models.UserModels
                 .HasDefaultValue(null);
             builder.Entity<User>().Property(p => p.Role).HasConversion<string>();
             builder.Entity<User>().Property(p => p.PermanentLabLimit).HasDefaultValueSql("1");
+            builder.Entity<User>().Property(p => p.AmountOfPermanentLabs).HasDefaultValueSql("0");
         }
     }
 }
