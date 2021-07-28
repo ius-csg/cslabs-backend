@@ -20,6 +20,8 @@ namespace CSLabs.Api.Models
         
         public DbSet<Module> Modules { get; set; }
         
+        public DbSet<Tag> Tags { get; set; }
+        
         public DbSet<Lab> Labs { get; set; }
         
         public DbSet<LabVm> LabVms { get; set; }
