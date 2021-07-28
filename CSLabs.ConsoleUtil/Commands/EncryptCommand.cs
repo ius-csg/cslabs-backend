@@ -21,7 +21,7 @@ namespace CSLabs.ConsoleUtil.Commands
         }
         public override void Run(EncryptOptions options)
         {
-            System.Console.WriteLine(Cryptography.EncryptString(options.StringToEncrypt, _encryptionKey));
+            Console.WriteLine(Cryptography.EncryptString(options.StringToEncrypt, _encryptionKey));
         }
     }
 }

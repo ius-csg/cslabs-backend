@@ -37,7 +37,7 @@ namespace CSLabs.ConsoleUtil
         static async Task Main(string[] args)
         {
             var dir = Directory.GetCurrentDirectory();
-            var mainProjectDir = $"../{typeof(CSLabs.Api.Program).Namespace}";
+            var mainProjectDir = $"../{typeof(Api.Program).Namespace}";
             if (Directory.Exists(mainProjectDir))
             {
                 dir = Path.GetFullPath(mainProjectDir);

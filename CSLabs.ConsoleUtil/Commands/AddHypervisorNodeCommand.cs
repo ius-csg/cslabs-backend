@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommandLine;
-using CSLabs.Api.Config;
 using CSLabs.Api.Models;
 using CSLabs.Api.Models.HypervisorModels;
-using CSLabs.Api.Proxmox;
 using Newtonsoft.Json;
 
 namespace CSLabs.ConsoleUtil.Commands
@@ -37,8 +34,8 @@ namespace CSLabs.ConsoleUtil.Commands
             };
             _context.HypervisorNodes.Add(hypervisorNode);
             await _context.SaveChangesAsync();
-            System.Console.WriteLine("Added Hypervisor Node:");
-            System.Console.WriteLine(JsonConvert.SerializeObject(hypervisorNode));
+            Console.WriteLine("Added Hypervisor Node:");
+            Console.WriteLine(JsonConvert.SerializeObject(hypervisorNode));
         }
     }
 }

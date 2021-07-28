@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommandLine;
 using CSLabs.Api.Config;
@@ -45,8 +44,8 @@ namespace CSLabs.ConsoleUtil.Commands
             };
             _context.Hypervisors.Add(hypervisor);
             await _context.SaveChangesAsync();
-            System.Console.WriteLine("Added Hypervisor:");
-            System.Console.WriteLine(JsonConvert.SerializeObject(hypervisor));
+            Console.WriteLine("Added Hypervisor:");
+            Console.WriteLine(JsonConvert.SerializeObject(hypervisor));
         }
     }
 }

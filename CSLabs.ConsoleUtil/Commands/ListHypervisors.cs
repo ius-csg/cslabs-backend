@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using CommandLine;
 using CSLabs.Api.Config;
 using CSLabs.Api.Models;
-using CSLabs.Api.Proxmox;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -29,8 +26,8 @@ namespace CSLabs.ConsoleUtil.Commands
         public override async Task Run(ListHypervisorsOptions options)
         {
             var hypervisors = await _context.Hypervisors.ToListAsync();
-            System.Console.WriteLine("Hypervisor:");
-            System.Console.WriteLine(JsonConvert.SerializeObject(hypervisors));
+            Console.WriteLine("Hypervisor:");
+            Console.WriteLine(JsonConvert.SerializeObject(hypervisors));
         }
     }
 }

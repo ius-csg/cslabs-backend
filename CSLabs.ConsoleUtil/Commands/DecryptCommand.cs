@@ -21,7 +21,7 @@ namespace CSLabs.ConsoleUtil.Commands
         }
         public override void Run(DecryptOptions options)
         {
-            System.Console.WriteLine(Cryptography.DecryptString(options.StringToDecrypt, _encryptionKey));
+            Console.WriteLine(Cryptography.DecryptString(options.StringToDecrypt, _encryptionKey));
         }
     }
 }

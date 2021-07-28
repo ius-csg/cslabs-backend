@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using CommandLine;
 using CSLabs.Api.Models;
@@ -31,12 +32,12 @@ namespace CSLabs.ConsoleUtil.Commands
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
             {
-                System.Console.WriteLine($"User not found with email: {email}");
+                Console.WriteLine($"User not found with email: {email}");
                 return;
             }
             user.Password = _authenticationService.HashPassword(options.Password);
             await _context.SaveChangesAsync();
-            System.Console.WriteLine("Password successfully changed!");
+            Console.WriteLine("Password successfully changed!");
         }
     }
 }
