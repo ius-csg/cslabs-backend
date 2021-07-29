@@ -157,8 +157,7 @@ namespace CSLabs.Api.Controllers
                 return Forbid("You are not allowed to edit this module");
             }
             // add tag if it does not exist
-            var tempTag = DatabaseContext.Tags.Single(t => t.Id == tag.Id);
-            if (tempTag == null)
+            if (DatabaseContext.Tags.Any(t => t.Id == tag.Id))
             {
                 DatabaseContext.Tags.Add(tag);
                 await DatabaseContext.SaveChangesAsync();
