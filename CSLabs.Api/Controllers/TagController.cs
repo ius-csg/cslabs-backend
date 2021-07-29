@@ -37,7 +37,7 @@ namespace CSLabs.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            if (DatabaseContext.Tags.Any(t => t.Id == id)) return BadRequest();
+            if (!DatabaseContext.Tags.Any(t => t.Id == id)) return BadRequest();
             var tag = await this.DatabaseContext.Tags.FirstAsync(t => t.Id == id);
             return Ok(tag);
         }
