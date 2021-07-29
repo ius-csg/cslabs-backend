@@ -147,7 +147,7 @@ namespace CSLabs.Api.Controllers
         }
         
         [HttpPost("{id}/tags")]
-        public async Task<IActionResult> AddTag(int id, [FromBody] Tag tag)
+        public async Task<IActionResult> AddTagToModule(int id, [FromBody] Tag tag)
         {
             var module = DatabaseContext.Modules.Single(m => m.Id == id);
             if (!GetUser().CanEditModules()) {
