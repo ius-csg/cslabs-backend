@@ -17,6 +17,7 @@ using CSLabs.Api.RequestModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace CSLabs.Api.Controllers
 {
@@ -27,11 +28,27 @@ namespace CSLabs.Api.Controllers
         public ModuleController(BaseControllerDependencies deps) : base(deps)
         {
         }
-        // GET api/values
+        // GET api/values?tagNames
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get(string tagNames = "")
         {
-            return Ok(DatabaseContext.Modules.Where(m => m.Published).ToList());
+            if (String.IsNullOrEmpty(tagNames))
+            {
+                return Ok(DatabaseContext.Modules.Where(m => m.Published).ToList());
+            }
+            
+            string[] tags = tagNames.Split(",");
+            var moduleTags = new List<ModuleTag>();
+            foreach (string tagName in tags)
+            {
+                moduleTags = new List<ModuleTag>(DatabaseContext.Tags
+                    .Where(t => t.Name.Equals(tagName))
+                    .SelectMany(t => t.ModuleTags).ToList()); 
+                            
+            }
+            var modules = moduleTags.Select(mt => this.DatabaseContext.Modules.Single(m => m.Id == mt.ModuleId)).ToList();
+
+            return Ok(modules);
         }
 
         // GET api/values/5
@@ -49,13 +66,24 @@ namespace CSLabs.Api.Controllers
         
         [HttpGet("code/{code}")]
         [AllowAnonymous]
-        public async Task<IActionResult> Get(string code)
+        public async Task<IActionResult> GetCode(string code)
         {
             var module = await this.DatabaseContext.Modules.FirstAsync(m => m.SpecialCode == code);
             await module.SetUserModuleIdIfExists(DatabaseContext, GetUser());
             return Ok(module);
         }
-        
+
+        [HttpGet("{id}/tags")]
+        public IActionResult GetTags(int id)
+        {
+            var moduleTags = this.DatabaseContext.Modules
+                .Where(m => m.Id == id)
+                .SelectMany(m => m.ModuleTags).ToList();
+
+            var tags = moduleTags.Select(mt => this.DatabaseContext.Tags.Single(t => t.Id == mt.TagId)).ToList();
+
+            return Ok(tags);
+        }
         
         [HttpGet("module-editor/{id}")]
         public async Task<IActionResult> GetForModuleEditor(int id)
