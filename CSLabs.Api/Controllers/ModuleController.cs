@@ -42,10 +42,12 @@ namespace CSLabs.Api.Controllers
             {
                 moduleTags = new List<ModuleTag>(DatabaseContext.Tags
                     .Where(t => t.Name.Equals(tagName))
-                    .SelectMany(t => t.ModuleTags).ToList()); 
-                            
+                    .SelectMany(t => t.ModuleTags).ToList());
             }
-            var modules = moduleTags.Select(mt => this.DatabaseContext.Modules.Single(m => m.Id == mt.ModuleId)).ToList();
+            var modules = moduleTags
+                .Select(mt => this.DatabaseContext.Modules.Single(m => m.Id == mt.ModuleId))
+                    .ToList()
+                    .Distinct();
             return Ok(modules);
         }
 
