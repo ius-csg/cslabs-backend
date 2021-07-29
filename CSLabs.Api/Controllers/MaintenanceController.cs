@@ -16,7 +16,7 @@ namespace CSLabs.Api.Controllers
         [HttpGet]
         public IActionResult GetMaintenances()
         {
-            return Ok(DatabaseContext.Maintenances);
+            return Ok(DatabaseContext.Maintenances.First());
         }
     }
 }
