@@ -30,7 +30,7 @@ namespace CSLabs.Api.Models.ModuleModels
         public string SpecialCode { get; set; }
         public List<Lab> Labs { get; set; }
         
-        public List<Tag> Tags { get; set; }
+        public List<ModuleTag> ModuleTags { get; set; }
         
         public int? OwnerId  { get; set; }
         [ForeignKey(nameof(OwnerId))]

@@ -33,5 +33,11 @@ namespace CSLabs.Api.Controllers
         {
             return Ok(DatabaseContext.Tags.ToList());
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int Id)
+        {
+            
+        }
     }
 }

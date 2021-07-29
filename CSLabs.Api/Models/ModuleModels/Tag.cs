@@ -21,7 +21,7 @@ namespace CSLabs.Api.Models.ModuleModels
         [Required]
         public string Name { get; set; }
 
-        public List<Module> Modules { get; set; }
+        public List<ModuleTag> ModuleTags { get; set; }
         
         public static void OnModelCreating(ModelBuilder builder)
         {
