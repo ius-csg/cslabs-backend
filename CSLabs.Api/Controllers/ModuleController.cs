@@ -149,5 +149,26 @@ namespace CSLabs.Api.Controllers
             await DatabaseContext.Entry(module).Collection(m => m.Labs).LoadAsync();
             return Ok(module);
         }
+        
+        [HttpPost("{id}/tags")]
+        public async Task<IActionResult> AddTag(int id, [FromBody] Tag tag)
+        {
+            var module = DatabaseContext.Modules.Single(m => m.Id == id);
+            if (!GetUser().CanEditModules()) {
+                return Forbid("You are not allowed to edit modules");
+            }
+            if (module.Id != 0 && module.OwnerId != GetUser().Id && !GetUser().IsAdmin()) {
+                return Forbid("You are not allowed to edit this module");
+            }
+            // add tag if it does not exist
+            var tempTag = DatabaseContext.Tags.Single(t => t.Id == tag.Id);
+            if (tempTag == null)
+            {
+                DatabaseContext.Tags.Add(tag);
+                await DatabaseContext.SaveChangesAsync();
+            }
+            module.ModuleTags.Add(new ModuleTag { TagId = tag.Id, ModuleId = module.Id });
+            return Ok(module);
+        }
     }
 }
