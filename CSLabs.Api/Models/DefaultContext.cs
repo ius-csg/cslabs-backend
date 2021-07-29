@@ -55,6 +55,8 @@ namespace CSLabs.Api.Models
            
            // module section
            Module.OnModelCreating(builder);
+           Tag.OnModelCreating(builder);
+           ModuleTag.OnModelCreating(builder);
            Lab.OnModelCreating(builder);
            LabVm.OnModelCreating(builder);
            UserModule.OnModelCreating(builder);
