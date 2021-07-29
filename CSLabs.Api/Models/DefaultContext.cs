@@ -43,6 +43,8 @@ namespace CSLabs.Api.Models
         public DbSet<HypervisorVmTemplate> HypervisorVmTemplates { get; set; }
         
         public DbSet<VmTemplate> VmTemplates { get; set; }
+        
+        public DbSet<Maintenance> Maintenances { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
        {
