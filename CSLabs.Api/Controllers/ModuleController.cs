@@ -160,9 +160,9 @@ namespace CSLabs.Api.Controllers
             if (DatabaseContext.Tags.Any(t => t.Id == tag.Id))
             {
                 DatabaseContext.Tags.Add(tag);
-                await DatabaseContext.SaveChangesAsync();
             }
             module.ModuleTags.Add(new ModuleTag { TagId = tag.Id, ModuleId = module.Id });
+            await DatabaseContext.SaveChangesAsync();
             return Ok(module);
         }
     }
