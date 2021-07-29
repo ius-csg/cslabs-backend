@@ -32,11 +32,10 @@ namespace CSLabs.Api.Controllers
         [HttpGet]
         public IActionResult Get(string tagNames = "")
         {
-            if (String.IsNullOrEmpty(tagNames))
+            if (string.IsNullOrEmpty(tagNames))
             {
                 return Ok(DatabaseContext.Modules.Where(m => m.Published).ToList());
             }
-            
             string[] tags = tagNames.Split(",");
             var moduleTags = new List<ModuleTag>();
             foreach (string tagName in tags)
@@ -47,7 +46,6 @@ namespace CSLabs.Api.Controllers
                             
             }
             var modules = moduleTags.Select(mt => this.DatabaseContext.Modules.Single(m => m.Id == mt.ModuleId)).ToList();
-
             return Ok(modules);
         }
 
@@ -79,9 +77,7 @@ namespace CSLabs.Api.Controllers
             var moduleTags = this.DatabaseContext.Modules
                 .Where(m => m.Id == id)
                 .SelectMany(m => m.ModuleTags).ToList();
-
             var tags = moduleTags.Select(mt => this.DatabaseContext.Tags.Single(t => t.Id == mt.TagId)).ToList();
-
             return Ok(tags);
         }
         
