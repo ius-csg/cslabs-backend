@@ -14,9 +14,9 @@ namespace CSLabs.Api.Controllers
         public MaintenanceController(BaseControllerDependencies deps) : base(deps) { }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Maintenance>>> GetMaintenances()
+        public IActionResult GetMaintenances()
         {
-            return Ok(DatabaseContext.Maintenances.ToList());
+            return Ok(DatabaseContext.Maintenances);
         }
     }
 }
