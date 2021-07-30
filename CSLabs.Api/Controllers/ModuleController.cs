@@ -37,6 +37,7 @@ namespace CSLabs.Api.Controllers
             var tagNamesList = tagNames.Split(",").Select(s => s.Trim()).ToList();
             return Ok(
                 await DatabaseContext.Modules
+                    .Where(m => m.Published)
                     .Where(m => m.ModuleTags.Any(mt => tagNamesList.Contains(mt.Tag.Name)))
                     .IncludeTags()
                     .ToListAsync()
@@ -134,7 +135,16 @@ namespace CSLabs.Api.Controllers
             else
                 DatabaseContext.Add(module);
             // add tag relationships
-            await DatabaseContext.AddRangeAsync(module.ModuleTags);
+            var query = DatabaseContext.Modules.Where(m => m.Id == module.Id).SelectMany(m => m.ModuleTags);
+            foreach (var moduleTag in module.ModuleTags)
+            {
+                if (moduleTag.TagId == 0)
+                    DatabaseContext.Add(moduleTag);
+                else if (!query.Any(mt => mt == moduleTag))
+                    DatabaseContext.Add(moduleTag);
+                else
+                    DatabaseContext.Update(moduleTag);
+            }
             await DatabaseContext.SaveChangesAsync();
             await DatabaseContext.Entry(module).Collection(m => m.Labs).LoadAsync();
             return Ok( 
