@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CSLabs.Api.Models.UserModels;
@@ -136,6 +137,24 @@ namespace CSLabs.Api.Controllers
             await DatabaseContext.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpPut("change-role")]
+        public async Task<IActionResult> ChangeRole(List<ChangeRoleRequest> request)
+        {
+            if (GetUser().Role != EUserRole.Admin)
+            {
+                return Unauthorized();
+            }
+            
+            foreach (var requestItem in request)
+            {
+                var user = await DatabaseContext.Users.FirstOrDefaultAsync(u => u.Id == requestItem.UserId);
+                user.Role = requestItem.NewRole;
+            }
+            await DatabaseContext.SaveChangesAsync();
+            
+            return NoContent();
         }
     }
 }
