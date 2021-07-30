@@ -463,10 +463,14 @@ namespace CSLabs.Api.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.HasKey("Id")
                         .HasName("pk_tags");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasName("ix_tags_name");
 
                     b.ToTable("tags");
                 });

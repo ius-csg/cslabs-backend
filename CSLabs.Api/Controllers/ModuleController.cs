@@ -134,21 +134,14 @@ namespace CSLabs.Api.Controllers
             else
                 DatabaseContext.Add(module);
             // add tag relationships
-            var tags = module.ModuleTags.Select(mt => mt.Tag).ToList();
-            foreach (var tag in tags)
-            {
-                if (!DatabaseContext.Tags.Any(t => t.Id == tag.Id))
-                {
-                    DatabaseContext.Tags.Add(tag);
-                }
-                module.ModuleTags.Add(new ModuleTag { TagId = tag.Id, ModuleId = module.Id });
-            }
+            await DatabaseContext.AddRangeAsync(module.ModuleTags);
             await DatabaseContext.SaveChangesAsync();
             await DatabaseContext.Entry(module).Collection(m => m.Labs).LoadAsync();
-            return Ok(
-                await this.DatabaseContext.Modules
+            return Ok( 
+                await DatabaseContext.Modules
+                    .Where(m => m.Id == module.Id)
                     .IncludeTags()
-                    .FirstAsync(m => m.Id == module.Id)
+                    .ToListAsync()
             );
         }
     }
