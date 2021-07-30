@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.EntityFrameworkCore.Scaffolding;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace CSLabs.Api.Controllers
 {
@@ -28,29 +30,22 @@ namespace CSLabs.Api.Controllers
         public ModuleController(BaseControllerDependencies deps) : base(deps)
         {
         }
-        // GET api/values?tagNames
+        
+        // GET api/v1/Modules/?tagNames
         [HttpGet]
-        public IActionResult Get(string tagNames = "")
+        public async Task<IActionResult> Get(string tagNames = "")
         {
             if (string.IsNullOrEmpty(tagNames))
-            {
                 return Ok(DatabaseContext.Modules.Where(m => m.Published).ToList());
-            }
-            string[] tags = tagNames.Split(",");
-            var moduleTags = new List<ModuleTag>();
-            foreach (string tagName in tags)
-            {
-                moduleTags = new List<ModuleTag>(DatabaseContext.Tags
-                    .Where(t => t.Name.Equals(tagName))
-                    .SelectMany(t => t.ModuleTags).ToList());
-            }
-            var modules = moduleTags
-                .Select(mt => this.DatabaseContext.Modules.Single(m => m.Id == mt.ModuleId))
-                    .ToList()
-                    .Distinct();
-            return Ok(modules);
+            var tagNamesList = tagNames.Split(",").Select(s => s.Trim()).ToList();
+            return Ok(
+                await DatabaseContext.Modules
+                    .Where(m => m.ModuleTags.Any(mt => tagNamesList.Contains(mt.Tag.Name)))
+                    .IncludeTags()
+                    .ToListAsync()
+            );
         }
-
+        
         // GET api/values/5
         [HttpGet("{id}")]
         [AllowAnonymous]
@@ -58,6 +53,7 @@ namespace CSLabs.Api.Controllers
         {
             var module = await this.DatabaseContext.Modules
                 .Where(m => m.Published)
+                .IncludeTags()
                 .FirstAsync(m => m.Id == id);
             if (!User.Identity.IsAuthenticated) return Ok(module);
             await module.SetUserModuleIdIfExists(DatabaseContext, GetUser());
@@ -68,20 +64,16 @@ namespace CSLabs.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetCode(string code)
         {
-            var module = await this.DatabaseContext.Modules.FirstAsync(m => m.SpecialCode == code);
+            var module = await this.DatabaseContext.Modules
+                .IncludeTags()
+                .FirstAsync(m => m.SpecialCode == code);
             await module.SetUserModuleIdIfExists(DatabaseContext, GetUser());
             return Ok(module);
         }
-
+        
         [HttpGet("{id}/tags")]
-        public IActionResult GetTags(int id)
-        {
-            var moduleTags = this.DatabaseContext.Modules
-                .Where(m => m.Id == id)
-                .SelectMany(m => m.ModuleTags).ToList();
-            var tags = moduleTags.Select(mt => this.DatabaseContext.Tags.Single(t => t.Id == mt.TagId)).ToList();
-            return Ok(tags);
-        }
+        public async Task<IActionResult> GetTags(int id) =>
+            Ok(await DatabaseContext.Tags.Where(t => t.ModuleTags.Any(mt => mt.ModuleId == id)).ToListAsync());
         
         [HttpGet("module-editor/{id}")]
         public async Task<IActionResult> GetForModuleEditor(int id)
@@ -89,6 +81,7 @@ namespace CSLabs.Api.Controllers
             var module = await this.DatabaseContext
                 .Modules
                 .Include(m => m.Labs)
+                .IncludeTags()
                 .FirstAsync(m => m.Id == id);
             var labIds = module.Labs.Select(l => l.Id);
             // efficiently detect if labs have user labs
@@ -120,7 +113,7 @@ namespace CSLabs.Api.Controllers
             }
             var query = this.DatabaseContext.Modules.AsQueryable();
             if (!GetUser().IsAdmin())
-                query = query.Where(m => m.OwnerId == GetUser().Id);
+                query = query.Where(m => m.OwnerId == GetUser().Id).IncludeTags();
             return Ok(await query.ToListAsync());
         }
         
@@ -143,29 +136,23 @@ namespace CSLabs.Api.Controllers
                 DatabaseContext.Update(module);
             else
                 DatabaseContext.Add(module);
+            // add tag relationships
+            var tags = module.ModuleTags.Select(mt => mt.Tag).ToList();
+            foreach (var tag in tags)
+            {
+                if (!DatabaseContext.Tags.Any(t => t.Id == tag.Id))
+                {
+                    DatabaseContext.Tags.Add(tag);
+                }
+                module.ModuleTags.Add(new ModuleTag { TagId = tag.Id, ModuleId = module.Id });
+            }
             await DatabaseContext.SaveChangesAsync();
             await DatabaseContext.Entry(module).Collection(m => m.Labs).LoadAsync();
-            return Ok(module);
-        }
-        
-        [HttpPost("{id}/tags")]
-        public async Task<IActionResult> AddTagToModule(int id, [FromBody] Tag tag)
-        {
-            var module = DatabaseContext.Modules.Single(m => m.Id == id);
-            if (!GetUser().CanEditModules()) {
-                return Forbid("You are not allowed to edit modules");
-            }
-            if (module.Id != 0 && module.OwnerId != GetUser().Id && !GetUser().IsAdmin()) {
-                return Forbid("You are not allowed to edit this module");
-            }
-            // add tag if it does not exist
-            if (DatabaseContext.Tags.Any(t => t.Id == tag.Id))
-            {
-                DatabaseContext.Tags.Add(tag);
-            }
-            module.ModuleTags.Add(new ModuleTag { TagId = tag.Id, ModuleId = module.Id });
-            await DatabaseContext.SaveChangesAsync();
-            return Ok(module);
+            return Ok(
+                await this.DatabaseContext.Modules
+                    .IncludeTags()
+                    .FirstAsync(m => m.Id == module.Id)
+            );
         }
     }
 }
