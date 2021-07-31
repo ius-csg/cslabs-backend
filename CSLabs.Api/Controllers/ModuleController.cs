@@ -138,9 +138,7 @@ namespace CSLabs.Api.Controllers
             var query = DatabaseContext.Modules.Where(m => m.Id == module.Id).SelectMany(m => m.ModuleTags);
             foreach (var moduleTag in module.ModuleTags)
             {
-                if (moduleTag.TagId == 0)
-                    DatabaseContext.Add(moduleTag);
-                else if (!query.Any(mt => mt == moduleTag))
+                if (moduleTag.TagId == 0 || !query.Any(mt => mt == moduleTag))
                     DatabaseContext.Add(moduleTag);
                 else
                     DatabaseContext.Update(moduleTag);
