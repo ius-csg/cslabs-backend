@@ -118,7 +118,7 @@ namespace CSLabs.Api.Controllers
         // POST api/values
         [HttpPost]
         public async Task<IActionResult> Upsert([FromBody] Module module)
-        {
+        {/*
             if (!GetUser().CanEditModules()) {
                 return Forbid("You are not allowed to edit modules");
             }
@@ -128,6 +128,7 @@ namespace CSLabs.Api.Controllers
             }
             // do not affect labs when saved, labs are saved in a separate request
             module.Labs = null;
+            */
             DatabaseContext.Entry(module).State = EntityState.Modified;
             module.Owner = GetUser();
             if (module.Id != 0)
@@ -135,13 +136,17 @@ namespace CSLabs.Api.Controllers
             else
                 DatabaseContext.Add(module);
             // add tag relationships
-            var query = DatabaseContext.Modules.Where(m => m.Id == module.Id).SelectMany(m => m.ModuleTags);
-            foreach (var moduleTag in module.ModuleTags)
+            foreach (var moduleTag in module.ModuleTags.ToList())
             {
-                if (moduleTag.TagId == 0 || !query.Any(mt => mt == moduleTag))
-                    DatabaseContext.Add(moduleTag);
+                if (moduleTag.TagId == 0)
+                { 
+                    DatabaseContext.Add(moduleTag.Tag);
+                }
                 else
-                    DatabaseContext.Update(moduleTag);
+                {
+                    DatabaseContext.Update(moduleTag.Tag);
+                }
+                DatabaseContext.Update(moduleTag);
             }
             await DatabaseContext.SaveChangesAsync();
             await DatabaseContext.Entry(module).Collection(m => m.Labs).LoadAsync();
