@@ -1,4 +1,4 @@
-namespace CSLabs.Console
+namespace CSLabs.ConsoleUtil
 {
     public abstract class Command<T>
     {

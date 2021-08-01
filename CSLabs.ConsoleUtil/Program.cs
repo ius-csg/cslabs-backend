@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using CommandLine;
 using CSLabs.Api.Config;
 using CSLabs.Api.Services;
-using CSLabs.Console.Commands;
+using CSLabs.ConsoleUtil.Commands;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CSLabs.Console
+namespace CSLabs.ConsoleUtil
 {
     class Program
     {
@@ -20,15 +20,24 @@ namespace CSLabs.Console
             typeof(AddHypervisorCommand),
             typeof(AddHypervisorNodeCommand),
             typeof(ChangeHypervisorPasswordCommand),
+            typeof(ChangeUserPasswordCommand),
             typeof(ListHypervisorsCommand),
             typeof(EncryptCommand),
             typeof(DecryptCommand)
         };
         
+        
+        private static void ConfigureServices(ServiceCollection services, AppSettings appSettings)
+        {
+            services.ConfigureDatabase(appSettings.ConnectionStrings.DefaultConnection);
+            services.AddSingleton(appSettings);
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+        }
+        
         static async Task Main(string[] args)
         {
             var dir = Directory.GetCurrentDirectory();
-            var mainProjectDir = $"../{typeof(CSLabs.Api.Program).Namespace}";
+            var mainProjectDir = $"../{typeof(Api.Program).Namespace}";
             if (Directory.Exists(mainProjectDir))
             {
                 dir = Path.GetFullPath(mainProjectDir);
@@ -39,15 +48,11 @@ namespace CSLabs.Console
             IConfiguration configuration = builder.Build();
             var appSettings = new AppSettings();
             configuration.Bind(appSettings);
-            var serviceCollection = new ServiceCollection();
-
-            serviceCollection.ConfigureDatabase(appSettings.ConnectionStrings.DefaultConnection);
-            serviceCollection.AddSingleton(appSettings);
-
-            await ExecuteCommands(Commands, serviceCollection, args);
+            var services = new ServiceCollection();
+            ConfigureServices(services, appSettings);
+            await ExecuteCommands(Commands, services, args);
         }
-
-
+        
         private static async Task ExecuteCommands(List<Type> commands, IServiceCollection collection, string[] args)
         {
             foreach (var command in commands)
