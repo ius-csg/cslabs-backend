@@ -1,19 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Description;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
-using AutoMapper;
 using CSLabs.Api.Models.ModuleModels;
 using CSLabs.Api.Models;
-using CSLabs.Api.Models.UserModels;
-using CSLabs.Api.RequestModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -137,11 +125,20 @@ namespace CSLabs.Api.Controllers
             // add tag relationships
             foreach (var moduleTag in module.ModuleTags)
             {
-                if (moduleTag.TagId == 0)
+                if (moduleTag.Tag.Id == 0)
+                {
                     DatabaseContext.Add(moduleTag.Tag);
-                else
+                    DatabaseContext.Add(moduleTag);
+                }
+                else if (moduleTag.TagId == 0)
+                { 
                     DatabaseContext.Update(moduleTag.Tag);
-                DatabaseContext.Update(moduleTag);
+                    DatabaseContext.Add(moduleTag);
+                } 
+                else
+                {
+                    DatabaseContext.Update(moduleTag);
+                }
             }
             await DatabaseContext.SaveChangesAsync();
             await DatabaseContext.Entry(module).Collection(m => m.Labs).LoadAsync();
@@ -151,6 +148,24 @@ namespace CSLabs.Api.Controllers
                     .IncludeTags()
                     .ToListAsync()
             );
+        }
+
+        [HttpDelete("{id}/tags/")]
+        public async Task<IActionResult> DeleteTag(int id, ModuleTag[] moduleTags)
+        {
+            var module = await this.DatabaseContext
+                .Modules
+                .FirstAsync(m => m.Id == id);
+            if (!GetUser().CanEditModules()) {
+                return Forbid("You are not allowed to edit modules");
+            }
+            // prevent someone from editing another user's module unless they are admin.
+            if (id != 0 && module.OwnerId != GetUser().Id && !GetUser().IsAdmin()) {
+                return Forbid("You are not allowed to edit this module");
+            }
+            DatabaseContext.RemoveRange(moduleTags);
+            await DatabaseContext.SaveChangesAsync();
+            return Ok();
         }
     }
 }

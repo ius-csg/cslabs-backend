@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
-using CSLabs.Api.Models.Enums;
-using CSLabs.Api.Models.UserModels;
-using CSLabs.Api.Util;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace CSLabs.Api.Models.ModuleModels
 {
@@ -27,9 +15,8 @@ namespace CSLabs.Api.Models.ModuleModels
         
         public static void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
             modelBuilder.Entity<ModuleTag>()
-                .HasKey(t => new { t.ModuleId, t.TagId });
+                .HasKey(t => new { t.ModuleId, t.TagId }); 
 
             modelBuilder.Entity<ModuleTag>()
                 .HasOne(pt => pt.Tag)
