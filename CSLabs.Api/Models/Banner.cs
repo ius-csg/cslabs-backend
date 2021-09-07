@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
+using CSLabs.Api.Models.Enums;
 
 namespace CSLabs.Api.Models
 
@@ -12,7 +13,7 @@ namespace CSLabs.Api.Models
         public int Id { get; set; }
         [Column(TypeName = "TEXT")]//need to decide on a enum
         [Required] 
-        public string Type { get; set; }
+        public string EBannerTypes { get; set; }
        
         [Column(TypeName = "VARCHAR(255)")]
         [Required]
@@ -25,7 +26,7 @@ namespace CSLabs.Api.Models
         public static void OnAlertCreation(ModelBuilder builder)
         {
             builder.TimeStamps<Banner>();
-            builder.Unique<Banner>(u => u.Type);
+            builder.Unique<Banner>(u => u.EBannerTypes);
         }
        
     }
