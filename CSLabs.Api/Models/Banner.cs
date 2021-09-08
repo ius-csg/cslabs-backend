@@ -1,8 +1,10 @@
+using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
 using CSLabs.Api.Models.Enums;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json;
+
 
 namespace CSLabs.Api.Models
 
@@ -11,22 +13,23 @@ namespace CSLabs.Api.Models
     {
 
         public int Id { get; set; }
-        [Column(TypeName = "TEXT")]//need to decide on a enum
+        
         [Required] 
-        public string EBannerTypes { get; set; }
-       
-        [Column(TypeName = "VARCHAR(255)")]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public EBannerType Type { get; set; } = EBannerType.Warning;
+        
         [Required]
         public string Description { get; set; }
         
-        [Column(TypeName = "datetime")]
         [Required]
-        public string timestamp { get; set; }
+        public DateTime StartTime { get; set; }
+        
+       [Required]
+        public DateTime EndTime { get; set; }
        
         public static void OnAlertCreation(ModelBuilder builder)
         {
-            builder.TimeStamps<Banner>();
-            builder.Unique<Banner>(u => u.EBannerTypes);
+            builder.Entity<Banner>().Property(p => p.Type).HasConversion<string>(); 
         }
        
     }
