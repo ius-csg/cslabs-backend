@@ -1,6 +1,6 @@
 ﻿namespace CSLabs.Api.Models.Enums
 {
-    public enum EBannerType
+    public enum ESystemMessageType
     {
         Warning,
         Info,

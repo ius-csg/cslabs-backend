@@ -9,14 +9,14 @@ using Newtonsoft.Json;
 namespace CSLabs.Api.Models
 
 {
-    public class Banner : Trackable
+    public class SystemMessage : Trackable
     {
 
         public int Id { get; set; }
         
         [Required] 
         [JsonConverter(typeof(StringEnumConverter))]
-        public EBannerType Type { get; set; } = EBannerType.Warning;
+        public ESystemMessageType Type { get; set; } = ESystemMessageType.Warning;
         
         [Required]
         public string Description { get; set; }
@@ -29,7 +29,7 @@ namespace CSLabs.Api.Models
        
         public static void OnAlertCreation(ModelBuilder builder)
         {
-            builder.Entity<Banner>().Property(p => p.Type).HasConversion<string>(); 
+            builder.Entity<SystemMessage>().Property(p => p.Type).HasConversion<string>(); 
         }
        
     }
