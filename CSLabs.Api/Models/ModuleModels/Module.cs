@@ -23,6 +23,8 @@ namespace CSLabs.Api.Models.ModuleModels
         public string Name { get; set; }
         [Required]
         public string Description { get; set; }
+        
+        public bool Disabled { get; set; }
 
         [Required]
         public bool Published { get; set; }
