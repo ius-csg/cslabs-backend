@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Corsinvest.ProxmoxVE.Api;
+using Corsinvest.ProxmoxVE.Api.Extension.Info;
 using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Proxmox.Responses;
 using Newtonsoft.Json;
@@ -81,20 +82,20 @@ namespace CSLabs.Api.Proxmox
 
         }
         
-        public async Task<ClusterStatus> GetClusterStatus(HypervisorNode node = null)
+        public async Task<NodeStatus> GetClusterStatus(HypervisorNode node = null)
         {
             if (node == null)
             {
                 node = HypervisorNode;
             }
             await LoginIfNotLoggedIn();
-            var response = await PerformRequest(() => this.client.Cluster.Status());
+            var response = await PerformRequest(() => this.client.Cluster.Status.GetStatus());
             var data = response.Response.data;
-            var clusterStatus = new ClusterStatus
+            var nodeStatus = new NodeStatus
             {
                 Quorate = data.Quorate
             };
-            return clusterStatus;
+            return nodeStatus;
 
         }
         

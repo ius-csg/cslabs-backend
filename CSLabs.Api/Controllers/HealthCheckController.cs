@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CSLabs.Api.Proxmox;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,14 +27,32 @@ namespace CSLabs.Api.Controllers
             var hypervisors = await DatabaseContext.Hypervisors
                 .Include(h => h.HypervisorNodes)
                 .ToListAsync();
-            foreach (var hypervisor in hypervisors)
+            try
             {
-                var api = ProxmoxManager.GetProxmoxApi(hypervisor.HypervisorNodes.First());
-                foreach (var node in hypervisor.HypervisorNodes)
+                foreach (var hypervisor in hypervisors)
                 {
-                    await api.GetNodeStatus(node);
+                    var api = ProxmoxManager.GetProxmoxApi(hypervisor.HypervisorNodes.First());
+                    var clusterStatus = api.GetClusterStatus();
+                    if (!clusterStatus.Quorate)
+                    {
+                        throw new NoQuorumException();
+                        //save value in db that says we are down
+                    }
+
+                    foreach (var node in hypervisor.HypervisorNodes)
+                    {
+                        await api.GetNodeStatus(node);
+                    }
+
                 }
-               
+            }
+            catch (ProxmoxRequestException e)
+            {
+                //save that a node is down
+            }
+            catch (NoQuorumException)
+            {
+                // save that we have no quorum
             }
 
             return Ok("All Hypervisors are up and responding");
