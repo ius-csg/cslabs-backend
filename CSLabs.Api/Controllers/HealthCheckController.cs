@@ -33,7 +33,7 @@ namespace CSLabs.Api.Controllers
                 {
                     var api = ProxmoxManager.GetProxmoxApi(hypervisor.HypervisorNodes.First());
                     var clusterStatus = api.GetClusterStatus();
-                    if (!clusterStatus.Quorate)
+                    if (!clusterStatus.Result.Quorate)
                     {
                         throw new NoQuorumException();
                         //save value in db that says we are down
