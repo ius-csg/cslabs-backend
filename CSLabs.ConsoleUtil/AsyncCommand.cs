@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace CSLabs.Console
+namespace CSLabs.ConsoleUtil
 {
     public abstract class AsyncCommand<T>
     {

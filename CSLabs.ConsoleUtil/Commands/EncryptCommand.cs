@@ -3,7 +3,7 @@ using CommandLine;
 using CSLabs.Api.Config;
 using CSLabs.Api.Proxmox;
 
-namespace CSLabs.Console.Commands
+namespace CSLabs.ConsoleUtil.Commands
 {
     [Verb("encrypt", HelpText = "Encrypts a string")]
     public class EncryptOptions
@@ -21,7 +21,7 @@ namespace CSLabs.Console.Commands
         }
         public override void Run(EncryptOptions options)
         {
-            System.Console.WriteLine(Cryptography.EncryptString(options.StringToEncrypt, _encryptionKey));
+            Console.WriteLine(Cryptography.EncryptString(options.StringToEncrypt, _encryptionKey));
         }
     }
 }
