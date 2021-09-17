@@ -41,7 +41,8 @@ namespace CSLabs.Api.Models
         public DbSet<VmInterfaceInstance> VmInterfaceInstances { get; set; }
         
         public DbSet<HypervisorVmTemplate> HypervisorVmTemplates { get; set; }
-        
+
+        public DbSet<SystemMessage> SystemMessages { get; set; }
         public DbSet<VmTemplate> VmTemplates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -71,6 +72,8 @@ namespace CSLabs.Api.Models
            VmInterfaceInstance.OnModelCreating(builder);
            BridgeTemplate.OnModelCreating(builder);
            VmTemplate.OnModelCreating(builder);
+
+           SystemMessage.OnModelCreating(builder);
        }
        
        public override int SaveChanges(bool acceptAllChangesOnSuccess)

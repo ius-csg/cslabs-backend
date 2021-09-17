@@ -9,11 +9,10 @@ using Newtonsoft.Json;
 namespace CSLabs.Api.Models
 
 {
-    public class SystemMessage : Trackable
+    public class SystemMessage :  Trackable, IPrimaryKeyModel
     {
-
         public int Id { get; set; }
-        
+
         [Required] 
         [JsonConverter(typeof(StringEnumConverter))]
         public ESystemMessageType Type { get; set; } = ESystemMessageType.Warning;
@@ -27,7 +26,7 @@ namespace CSLabs.Api.Models
        [Required]
         public DateTime EndTime { get; set; }
        
-        public static void OnAlertCreation(ModelBuilder builder)
+        public static void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<SystemMessage>().Property(p => p.Type).HasConversion<string>(); 
         }

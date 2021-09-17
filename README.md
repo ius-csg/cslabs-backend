@@ -72,7 +72,18 @@ Follow these tutorials to get started.
 
 ### Ef Core
 
-Before running any `dotnet ef` commands, cd into `<solution-dir>/CSLabs.Api`.
+Before running any `dotnet ef` commands, cd into `<solution-dir>/CSLabs.Api`. 
+Also before generating migration, go to Models/UserModels/DefaultContext.cs and
+add the line below. 
+```
+DbSet<ModuleName> ModuleName {get; set;}
+```
+You will then need to go to OnModelCreating method within that file
+and add the line below. 
+```
+ModuleName.onModelCreating(builder); 
+```
+
 To generate a migration based on your latest changes, type:
 
 ```
