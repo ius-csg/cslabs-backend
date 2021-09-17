@@ -24,6 +24,7 @@ namespace CSLabs.Api.Models.ModuleModels
         [Required]
         public string Description { get; set; }
         
+        [Required]
         public bool Disabled { get; set; }
 
         [Required]
