@@ -8,44 +8,104 @@ using CSLabs.Api.Util;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using CSLabs.Api.Models;
 
 namespace CSLabs.Api.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
-
-    public class SystemMessagesController : BaseController
+    [ApiController]
+    public class SystemMessagesController : ControllerBase
     {
-        public SystemMessagesController(BaseControllerDependencies dependencies) : base(dependencies)
+        private readonly DefaultContext _context;
+
+        public SystemMessagesController(DefaultContext context)
         {
+            _context = context;
+        }
 
+        // GET: api/SystemMessages
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<SystemMessage>>> GetSystemMessages()
+        {
+            return await _context.SystemMessages.ToListAsync();
+        }
 
-            [HttpGet("{id}")] 
-            public async Task<IActionResult> GetSystemMessageID(int id)
+        // GET: api/SystemMessages/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<SystemMessage>> GetSystemMessage(int id)
+        {
+            var systemMessage = await _context.SystemMessages.FindAsync(id);
+
+            if (systemMessage == null)
             {
-                return; 
+                return NotFound();
             }
 
-            [HttpPost] //Create
-            public async Task<IActionResult> UpsertSystemMessage()
+            return systemMessage;
+        }
+
+        // PUT: api/SystemMessages/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutSystemMessage(int id, SystemMessage systemMessage)
+        {
+            if (id != systemMessage.Id)
             {
-                return;
+                return BadRequest();
             }
 
-            [HttpDelete("{id}")]
-            public async Task<IActionResult> DeleteSystemMessage(int id)
+            _context.Entry(systemMessage).State = EntityState.Modified;
+
+            try
             {
-                return; 
+                await _context.SaveChangesAsync();
             }
-            
-            [HttpPut("{id}")] //Update
-            public async Task<IActionResult> UpdateSystemMessage(int id)
+            catch (DbUpdateConcurrencyException)
             {
-                return; 
+                if (!SystemMessageExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
-            
+
+            return NoContent();
+        }
+
+        // POST: api/SystemMessages
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
+        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [HttpPost]
+        public async Task<ActionResult<SystemMessage>> PostSystemMessage(SystemMessage systemMessage)
+        {
+            _context.SystemMessages.Add(systemMessage);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetSystemMessage", new { id = systemMessage.Id }, systemMessage);
+        }
+
+        // DELETE: api/SystemMessages/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<SystemMessage>> DeleteSystemMessage(int id)
+        {
+            var systemMessage = await _context.SystemMessages.FindAsync(id);
+            if (systemMessage == null)
+            {
+                return NotFound();
+            }
+
+            _context.SystemMessages.Remove(systemMessage);
+            await _context.SaveChangesAsync();
+
+            return systemMessage;
+        }
+        private bool SystemMessageExists(int id)
+        {
+            return _context.SystemMessages.Any(e => e.Id == id);
         }
     }
 }
