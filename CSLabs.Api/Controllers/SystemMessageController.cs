@@ -1,11 +1,7 @@
-using System.IO;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CSLabs.Api.Models;
-using CSLabs.Api.Models.ModuleModels;
-using CSLabs.Api.RequestModels;
-using CSLabs.Api.Util;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CSLabs.Api.Models;
@@ -14,27 +10,30 @@ namespace CSLabs.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SystemMessagesController : ControllerBase
+    public class SystemMessageController : BaseController
     {
-        private readonly DefaultContext _context;
 
-        public SystemMessagesController(DefaultContext context)
+        public SystemMessageController(BaseControllerDependencies deps) : base(deps)
         {
-            _context = context;
         }
 
-        // GET: api/SystemMessages
+        // GET: api/SystemMessage
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SystemMessage>>> GetSystemMessages()
         {
-            return await _context.SystemMessages.ToListAsync();
+            return await this.DatabaseContext.SystemMessages.ToListAsync();
         }
 
-        // GET: api/SystemMessages/5
+        // GET: api/SystemMessage/5
         [HttpGet("{id}")]
         public async Task<ActionResult<SystemMessage>> GetSystemMessage(int id)
         {
-            var systemMessage = await _context.SystemMessages.FindAsync(id);
+            if (!GetUser().IsAdmin())
+            {
+                return Forbid("Access denied");
+            }
+
+            var systemMessage = await this.DatabaseContext.SystemMessages.FindAsync(id);
 
             if (systemMessage == null)
             {
@@ -42,24 +41,30 @@ namespace CSLabs.Api.Controllers
             }
 
             return systemMessage;
+            
         }
 
-        // PUT: api/SystemMessages/5
+        // PUT: api/SystemMessage/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSystemMessage(int id, SystemMessage systemMessage)
         {
+            if (!GetUser().IsAdmin())
+            {
+                return Forbid("Access denied");
+            }
+
             if (id != systemMessage.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(systemMessage).State = EntityState.Modified;
+            this.DatabaseContext.Entry(systemMessage).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await this.DatabaseContext.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -76,36 +81,47 @@ namespace CSLabs.Api.Controllers
             return NoContent();
         }
 
-        // POST: api/SystemMessages
+        // POST: api/SystemMessage
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         public async Task<ActionResult<SystemMessage>> PostSystemMessage(SystemMessage systemMessage)
         {
-            _context.SystemMessages.Add(systemMessage);
-            await _context.SaveChangesAsync();
+            if (!GetUser().IsAdmin())
+            {
+                return Forbid("Access denied");
+            }
+
+            this.DatabaseContext.SystemMessages.Add(systemMessage);
+            await this.DatabaseContext.SaveChangesAsync();
 
             return CreatedAtAction("GetSystemMessage", new { id = systemMessage.Id }, systemMessage);
         }
 
-        // DELETE: api/SystemMessages/5
+        // DELETE: api/SystemMessage/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<SystemMessage>> DeleteSystemMessage(int id)
         {
-            var systemMessage = await _context.SystemMessages.FindAsync(id);
+            if (!GetUser().IsAdmin())
+            {
+                return Forbid("Access denied");
+            }
+
+            var systemMessage = await this.DatabaseContext.SystemMessages.FindAsync(id);
             if (systemMessage == null)
             {
                 return NotFound();
             }
 
-            _context.SystemMessages.Remove(systemMessage);
-            await _context.SaveChangesAsync();
+            this.DatabaseContext.SystemMessages.Remove(systemMessage);
+            await this.DatabaseContext.SaveChangesAsync();
 
             return systemMessage;
         }
+
         private bool SystemMessageExists(int id)
         {
-            return _context.SystemMessages.Any(e => e.Id == id);
+            return this.DatabaseContext.SystemMessages.Any(e => e.Id == id);
         }
     }
 }
