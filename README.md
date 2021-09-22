@@ -90,16 +90,29 @@ Open [cslabs-db-diagram.mwb](./cslabs-db-diagram.mwb) in the root of this projec
 ## Ef Core
 
 ###Steps before Creating Migration
+
 Before running any `dotnet ef` commands, cd into `<solution-dir>/CSLabs.Api`.
-Also before generating migration, go to Models/UserModels/DefaultContext.cs and
+Also before generating migration, go to  Models/DefaultContext.cs and
 add the line below.
 ```
-DbSet<ModuleName> ModuleName {get; set;}
+DbSet<YourModuleName> ModuleName {get; set;}
 ```
 You will then need to go to OnModelCreating method within that file
 and add the line below.
 ```
 ModuleName.onModelCreating(builder); 
+```
+
+Note: If your model needs extra configuration via the OnModelCreating method, 
+all it in the OnModelCreating method in the DefaultContext.cs file.
+
+```
+protected override void OnModelCreating(ModelBuilder builder)
+{
+base.OnModelCreating(builder);
+... all the other models being called..
+YourModel.onModelCreating(builder);
+}
 ```
 
 To generate a migration based on your latest changes, type:
@@ -108,6 +121,7 @@ To generate a migration based on your latest changes, type:
 dotnet ef migrations add <MigrationName>
 ``` 
 ###Steps to Update Migration
+
 Modify the migration if it doesn't suite your needs exactly.
 
 To Update the database with the migration using this command:
@@ -116,6 +130,7 @@ To Update the database with the migration using this command:
 dotnet ef database update
 ```
 ###Steps to Remove Migration
+
 Sometimes you add a migration and realize you need to make additional changes to your EF Core model before applying it. To remove the last migration, use this command.
 
 ```
@@ -128,7 +143,8 @@ To revert a migration:
 ```
 dotnet ef database update LastGoodMigration
 ```
-###Steps to complete for a Migration when a Pull Request is Merged into Branch 
+###Steps to complete for a Migration when a Pull Request is Merged
+
 If a pull request was merged into dev that contains a migration and your branch also added a migration, then you will need
 to perform the following steps:
 
