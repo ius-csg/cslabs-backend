@@ -1,6 +1,24 @@
 # cslabs-backend
 
-### Setup
+## Development
+
+### Git Workflow
+
+The main branch is master, which will hold the version currently running in production.
+When some work needs to be done, you will branch off from master using the
+naming convention `<initials>/<feature-name>` for your branch.
+After the work has completed, the developer should create a PR in Github to merge the branch back into dev and notify the project lead
+to review. Please make sure to submit a PR to merge into **dev** branch and not master.
+
+### Tutorial
+
+Follow these tutorials to get started.
+
+[.Net Core Web Api Tutorial](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-2.2&tabs=visual-studio)
+
+[EF Core Documentation](https://docs.microsoft.com/en-us/ef/core/)
+
+## Setup
 
 * [.NET Core](https://dotnet.microsoft.com/download) Download the latest .net core 3.1 SDK
 * Install entity framework tools `dotnet tool install --global dotnet-ef`
@@ -56,18 +74,17 @@ cslabs change-hypervisor-password --id 1 --password <password given>
 
 Documentation in trello
 
-
 Note: On production and staging the novnc url has to be added manually to the nginx config if a new host is added.
 
+## MariaDB Setup
 
+[Setup MariaDB 10.2.13](https://downloads.mariadb.org/interstitial/mariadb-10.2.13/winx64-packages/mariadb-10.2.13-winx64.msi/from/http%3A//ftp.hosteurope.de/mirror/archive.mariadb.org/)
 
-### Tutorial
+### Database Diagram
 
-Follow these tutorials to get started.
+Download MYSQL Workbench from [here](https://dev.mysql.com/get/Downloads/MySQLGUITools/mysql-workbench-community-8.0.17-winx64.msi)
 
-[.Net Core Web Api Tutorial](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-2.2&tabs=visual-studio)
-
-[EF Core Documentation](https://docs.microsoft.com/en-us/ef/core/)
+Open [cslabs-db-diagram.mwb](./cslabs-db-diagram.mwb) in the root of this project using mysql workbench.
 
 
 ## Ef Core
@@ -98,13 +115,6 @@ To Update the database with the migration using this command:
 ```
 dotnet ef database update
 ```
-
-###IMPORTANT NOTE
-When trying to push to a branch that had a recent merge with
-another migration you will need to remove your migration. Update your
-branch with the changes from the merge and then add your
-migration back in.
-
 ###Steps to Remove Migration
 Sometimes you add a migration and realize you need to make additional changes to your EF Core model before applying it. To remove the last migration, use this command.
 
@@ -118,24 +128,32 @@ To revert a migration:
 ```
 dotnet ef database update LastGoodMigration
 ```
+###Steps to complete for a Migration when a Pull Request is Merged into Branch 
+If a pull request was merged into dev that contains a migration and your branch also added a migration, then you will need
+to perform the following steps:
 
-## MariaDB Setup
+Revert your migration by using the update command to the migration before yours
 
-[Setup MariaDB 10.2.13](https://downloads.mariadb.org/interstitial/mariadb-10.2.13/winx64-packages/mariadb-10.2.13-winx64.msi/from/http%3A//ftp.hosteurope.de/mirror/archive.mariadb.org/)
+```
+dotnet ef database update TheMigrationNameBeforeYours
+```
 
-### Database Diagram
+Then remove your migration
 
-Download MYSQL Workbench from [here](https://dev.mysql.com/get/Downloads/MySQLGUITools/mysql-workbench-community-8.0.17-winx64.msi)
+```
+dotnet ef migrations remove
+```
+Then merge `dev` into your branch
 
-Open [cslabs-db-diagram.mwb](./cslabs-db-diagram.mwb) in the root of this project using mysql workbench.
+Then re-add your migration
 
+```
+dotnet ef migrations add YourMigrationName
+```
 
-## Development
+Then re-apply your migration
 
-### Git Workflow
+```
+dotnet ef database update
+```
 
-The main branch is master, which will hold the version currently running in production.
-When some work needs to be done, you will branch off from master using the
-naming convention `<initials>/<feature-name>` for your branch.
-After the work has completed, the developer should create a PR in Github to merge the branch back into dev and notify the project lead
-to review. Please make sure to submit a PR to merge into **dev** branch and not master.
