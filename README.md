@@ -95,15 +95,19 @@ Before running any `dotnet ef` commands, cd into `<solution-dir>/CSLabs.Api`.
 Also before generating migration, go to  Models/DefaultContext.cs and
 add the line below.
 
+####Important Note
+
+The property name dictates the table names. We standardize on plural table names.
+
 ```
-DbSet<YourModelName> YourModelName {get; set;}
+DbSet<YourModelsName> YourModelsName {get; set;}
 ```
 
 You will then need to go to OnModelCreating method within that file
 and add the line below.
 
 ```
-ModelName.onModelCreating(builder); 
+ModelsName.onModelCreating(builder); 
 ```
 
 Note: If your model needs extra configuration via the OnModelCreating method, 
