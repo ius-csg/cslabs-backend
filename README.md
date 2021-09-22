@@ -89,36 +89,31 @@ Open [cslabs-db-diagram.mwb](./cslabs-db-diagram.mwb) in the root of this projec
 
 ## Ef Core
 
-###Steps before Creating Migration
+### Steps before Creating Migration
 
 Before running any `dotnet ef` commands, cd into `<solution-dir>/CSLabs.Api`.
-Also before generating migration, go to  Models/DefaultContext.cs and
+Also before generating migration, go to `Models/DefaultContext.cs` and
 add the line below.
 
-####Important Note
+#### Important Note
 
 The property name dictates the table names. We standardize on plural table names.
 
 ```
-DbSet<YourModelsName> YourModelsName {get; set;}
+DbSet<YourModelName> YourTableName { get; set; }
 ```
 
-You will then need to go to OnModelCreating method within that file
-and add the line below.
-
-```
-ModelsName.onModelCreating(builder); 
-```
+Example: `DbSet<User> Users { get; set; }`
 
 Note: If your model needs extra configuration via the OnModelCreating method, 
-all it in the OnModelCreating method in the DefaultContext.cs file.
+all it in the `OnModelCreating` method in the `DefaultContext.cs` file.
 
 ```
 protected override void OnModelCreating(ModelBuilder builder)
 {
-base.OnModelCreating(builder);
-... all the other models being called..
-YourModel.onModelCreating(builder);
+  base.OnModelCreating(builder);
+  ... all the other models being called..
+  YourModel.onModelCreating(builder);
 }
 ```
 
@@ -128,7 +123,7 @@ To generate a migration based on your latest changes, type:
 dotnet ef migrations add <MigrationName>
 ``` 
 
-###Steps to Update Migration
+### Steps to Update Migration
 
 Modify the migration if it doesn't suite your needs exactly.
 
@@ -138,7 +133,7 @@ To Update the database with the migration using this command:
 dotnet ef database update
 ```
 
-###Steps to Remove Migration
+### Steps to Remove Migration
 
 Sometimes you add a migration and realize you need to make additional changes to your EF Core model before applying it. To remove the last migration, use this command.
 
@@ -154,7 +149,7 @@ To revert a migration:
 dotnet ef database update LastGoodMigration
 ```
 
-###Steps to complete for a Migration when a Pull Request is Merged
+### Steps to complete for a Migration when a Pull Request is Merged
 
 If a pull request was merged into dev that contains a migration and your branch also added a migration, then you will need
 to perform the following steps:
@@ -167,9 +162,14 @@ dotnet ef database update TheMigrationNameBeforeYours
 
 Then remove your migration
 
+Note: If you made any modifications to your migration after it was
+generated then you will need to copy those changes out in to a notepad
+in order to not lose them.
+
 ```
 dotnet ef migrations remove
 ```
+
 Then merge `dev` into your branch
 
 Then re-add your migration
