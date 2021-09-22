@@ -14,7 +14,7 @@
   step again: cd into `CSLabs.Api` and run `dotnet ef database update`
 
 
-#### Setup steps for connecting to a proxmox server
+### Setup steps for connecting to a proxmox server
 
 These steps are only required if you plan on starting a lab.
 
@@ -24,7 +24,7 @@ These steps are only required if you plan on starting a lab.
 * Connect to the VPN whenever you need to test with the proxmox server.
 
 
-### Managing Hypervisors
+## Managing Hypervisors
 
 To connect to a proxmox host, you will need to add them to the DB. The passwords used to
 access the proxmox host is encrypted so a command is developed to ease the process of adding them.
@@ -70,8 +70,9 @@ Follow these tutorials to get started.
 [EF Core Documentation](https://docs.microsoft.com/en-us/ef/core/)
 
 
-### Ef Core
+## Ef Core
 
+###Steps before Creating Migration
 Before running any `dotnet ef` commands, cd into `<solution-dir>/CSLabs.Api`.
 Also before generating migration, go to Models/UserModels/DefaultContext.cs and
 add the line below.
@@ -89,7 +90,7 @@ To generate a migration based on your latest changes, type:
 ```
 dotnet ef migrations add <MigrationName>
 ``` 
-
+###Steps to Update Migration
 Modify the migration if it doesn't suite your needs exactly.
 
 To Update the database with the migration using this command:
@@ -98,6 +99,13 @@ To Update the database with the migration using this command:
 dotnet ef database update
 ```
 
+###IMPORTANT NOTE
+When trying to push to a branch that had a recent merge with
+another migration you will need to remove your migration. Update your
+branch with the changes from the merge and then add your
+migration back in.
+
+###Steps to Remove Migration
 Sometimes you add a migration and realize you need to make additional changes to your EF Core model before applying it. To remove the last migration, use this command.
 
 ```
@@ -111,8 +119,7 @@ To revert a migration:
 dotnet ef database update LastGoodMigration
 ```
 
-
-### MariaDB Setup
+## MariaDB Setup
 
 [Setup MariaDB 10.2.13](https://downloads.mariadb.org/interstitial/mariadb-10.2.13/winx64-packages/mariadb-10.2.13-winx64.msi/from/http%3A//ftp.hosteurope.de/mirror/archive.mariadb.org/)
 
@@ -123,9 +130,9 @@ Download MYSQL Workbench from [here](https://dev.mysql.com/get/Downloads/MySQLGU
 Open [cslabs-db-diagram.mwb](./cslabs-db-diagram.mwb) in the root of this project using mysql workbench.
 
 
-### Development
+## Development
 
-#### Git Workflow
+### Git Workflow
 
 The main branch is master, which will hold the version currently running in production.
 When some work needs to be done, you will branch off from master using the
