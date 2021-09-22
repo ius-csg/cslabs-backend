@@ -105,8 +105,11 @@ DbSet<YourModelName> YourTableName { get; set; }
 
 Example: `DbSet<User> Users { get; set; }`
 
-Note: If your model needs extra configuration via the OnModelCreating method, 
-all it in the `OnModelCreating` method in the `DefaultContext.cs` file.
+If your model needs extra configuration, by convention in this project,
+we add an `OnModelCreating` to the model's class to configure it (please look at 
+the other models as an example). 
+In order for it to take affect, you will need to call it in the `OnModelCreating`
+method in the `DefaultContext.cs` file.
 
 ```
 protected override void OnModelCreating(ModelBuilder builder)
