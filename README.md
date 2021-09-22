@@ -11,7 +11,7 @@
 * cd into `CSLabs.Api` and run `dotnet ef database update`
 
 * Note: Every time changes are pulled from the repository, it is a good idea to perform this
-step again: cd into `CSLabs.Api` and run `dotnet ef database update`
+  step again: cd into `CSLabs.Api` and run `dotnet ef database update`
 
 
 #### Setup steps for connecting to a proxmox server
@@ -20,7 +20,7 @@ These steps are only required if you plan on starting a lab.
 
 * Open terminal to the solution folder
 * `cslabs change-hypervisor-password --id 1 --password <proxmox root password>` You can get the password from
-[this Trello card](https://trello.com/c/WFFm6iwa). Note: If on linux you have to write `./cslabs` instead.
+  [this Trello card](https://trello.com/c/WFFm6iwa). Note: If on linux you have to write `./cslabs` instead.
 * Connect to the VPN whenever you need to test with the proxmox server.
 
 
@@ -30,7 +30,7 @@ To connect to a proxmox host, you will need to add them to the DB. The passwords
 access the proxmox host is encrypted so a command is developed to ease the process of adding them.
 
 1. Open the terminal to the solution folder.
-2. Run `cslabs help` 
+2. Run `cslabs help`
 
 This will show you all the commands available:
 
@@ -54,7 +54,7 @@ You will need to change the password of the default hypervisor. The password is 
 cslabs change-hypervisor-password --id 1 --password <password given>
 ```
 
-Documentation in trello 
+Documentation in trello
 
 
 Note: On production and staging the novnc url has to be added manually to the nginx config if a new host is added.
@@ -73,6 +73,17 @@ Follow these tutorials to get started.
 ### Ef Core
 
 Before running any `dotnet ef` commands, cd into `<solution-dir>/CSLabs.Api`.
+Also before generating migration, go to Models/UserModels/DefaultContext.cs and
+add the line below.
+```
+DbSet<ModuleName> ModuleName {get; set;}
+```
+You will then need to go to OnModelCreating method within that file
+and add the line below.
+```
+ModuleName.onModelCreating(builder); 
+```
+
 To generate a migration based on your latest changes, type:
 
 ```
