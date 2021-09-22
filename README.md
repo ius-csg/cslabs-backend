@@ -96,7 +96,7 @@ Also before generating migration, go to  Models/DefaultContext.cs and
 add the line below.
 
 ```
-DbSet<YourModelName> ModuleName {get; set;}
+DbSet<YourModelName> ModelName {get; set;}
 ```
 
 You will then need to go to OnModelCreating method within that file
