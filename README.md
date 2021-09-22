@@ -94,13 +94,16 @@ Open [cslabs-db-diagram.mwb](./cslabs-db-diagram.mwb) in the root of this projec
 Before running any `dotnet ef` commands, cd into `<solution-dir>/CSLabs.Api`.
 Also before generating migration, go to  Models/DefaultContext.cs and
 add the line below.
+
 ```
-DbSet<YourModuleName> ModuleName {get; set;}
+DbSet<YourModelName> ModuleName {get; set;}
 ```
+
 You will then need to go to OnModelCreating method within that file
 and add the line below.
+
 ```
-ModuleName.onModelCreating(builder); 
+ModelName.onModelCreating(builder); 
 ```
 
 Note: If your model needs extra configuration via the OnModelCreating method, 
@@ -120,6 +123,7 @@ To generate a migration based on your latest changes, type:
 ```
 dotnet ef migrations add <MigrationName>
 ``` 
+
 ###Steps to Update Migration
 
 Modify the migration if it doesn't suite your needs exactly.
@@ -129,6 +133,7 @@ To Update the database with the migration using this command:
 ```
 dotnet ef database update
 ```
+
 ###Steps to Remove Migration
 
 Sometimes you add a migration and realize you need to make additional changes to your EF Core model before applying it. To remove the last migration, use this command.
@@ -136,6 +141,7 @@ Sometimes you add a migration and realize you need to make additional changes to
 ```
 dotnet ef migrations remove
 ```
+
 Read more about migrations [here](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations)
 
 To revert a migration:
@@ -143,6 +149,7 @@ To revert a migration:
 ```
 dotnet ef database update LastGoodMigration
 ```
+
 ###Steps to complete for a Migration when a Pull Request is Merged
 
 If a pull request was merged into dev that contains a migration and your branch also added a migration, then you will need
