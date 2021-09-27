@@ -474,6 +474,35 @@ namespace CSLabs.Api.Migrations
                     b.ToTable("vm_interface_templates");
                 });
 
+            modelBuilder.Entity("CSLabs.Api.Models.SystemStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HypervisorId")
+                        .HasColumnName("hypervisor_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HypervisorNodesUp")
+                        .HasColumnName("hypervisor_nodes_up")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Quorum")
+                        .HasColumnName("quorum")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int>("TotalNodes")
+                        .HasColumnName("total_nodes")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id")
+                        .HasName("pk_system_statuses");
+
+                    b.ToTable("system_statuses");
+                });
+
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.BridgeInstance", b =>
                 {
                     b.Property<int>("Id")
