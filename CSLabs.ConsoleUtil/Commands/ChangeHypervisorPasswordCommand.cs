@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using CommandLine;
 using CSLabs.Api.Config;
@@ -7,7 +6,7 @@ using CSLabs.Api.Models;
 using CSLabs.Api.Proxmox;
 using Newtonsoft.Json;
 
-namespace CSLabs.Console.Commands
+namespace CSLabs.ConsoleUtil.Commands
 {
     [Verb("change-hypervisor-password", HelpText = "Changes the password for a hypervisor")]
     public class ChangeHypervisorPasswordOptions
@@ -34,14 +33,14 @@ namespace CSLabs.Console.Commands
             var hypervisor = await _context.Hypervisors.FindAsync(options.Id);
             if (hypervisor == null)
             {
-                System.Console.WriteLine("Could not find a hypervisor with that Id!");
+                Console.WriteLine("Could not find a hypervisor with that Id!");
                 return;
             }
 
             hypervisor.Password = Cryptography.EncryptString(options.Password, _encryptionKey);
             await _context.SaveChangesAsync();
-            System.Console.WriteLine("Changed Password:");
-            System.Console.WriteLine(JsonConvert.SerializeObject(hypervisor));
+            Console.WriteLine("Changed Password:");
+            Console.WriteLine(JsonConvert.SerializeObject(hypervisor));
         }
     }
 }

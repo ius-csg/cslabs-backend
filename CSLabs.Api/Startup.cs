@@ -68,6 +68,10 @@ namespace CSLabs.Api
         private void ConfigureEmail(IServiceCollection services, EmailSettings emailSettings)
         {
             Console.WriteLine(Environment.CurrentDirectory);
+            if (string.IsNullOrEmpty(emailSettings.FromAddress))
+            {
+                throw new ConfigurationException("Email.FromAddress must be configured in the appsettings.json. Please follow the setup steps in the readme.");
+            }
             services
                 .AddFluentEmail(emailSettings.FromAddress)
                 .AddRazorRenderer(Path.Join(Environment.CurrentDirectory, "Views"))
