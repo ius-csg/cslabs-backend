@@ -55,6 +55,16 @@ namespace CSLabs.Api.Models.ModuleModels
                 UserModuleId = userModule.Id;
         }
 
+        public void AddModuleTags(DefaultContext context, List<ModuleTag> moduleTags)
+        {
+            foreach (var moduleTag in moduleTags.Where(moduleTag => moduleTag.TagId == 0))
+            {
+                context.Add(moduleTag);
+                if (moduleTag.Tag.Id != 0)
+                    context.Entry(moduleTag.Tag).State = EntityState.Unchanged;
+            }
+        }
+
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<Module>();
