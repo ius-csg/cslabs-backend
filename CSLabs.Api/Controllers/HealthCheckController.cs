@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CSLabs.Api.Models;
 using CSLabs.Api.Proxmox;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,6 @@ namespace CSLabs.Api.Controllers
                     if (!clusterStatus.Result.Quorate)
                     {
                         throw new NoQuorumException();
-                        //save value in db that says we are down
                     }
 
                     foreach (var node in hypervisor.HypervisorNodes)
@@ -53,6 +53,9 @@ namespace CSLabs.Api.Controllers
             catch (NoQuorumException)
             {
                 // save that we have no quorum
+                var systemStatus = DatabaseContext.SystemStatuses.First(); // Get current system status
+                systemStatus.Quorum = false; // update current system status to reflect quorum state
+                await DatabaseContext.SaveChangesAsync(); // save changes
             }
 
             return Ok("All Hypervisors are up and responding");
