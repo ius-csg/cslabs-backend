@@ -44,8 +44,6 @@ namespace CSLabs.Api.Controllers
         }
 
         // PUT: api/SystemMessage/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSystemMessage(int id, SystemMessage systemMessage)
         {
@@ -81,8 +79,6 @@ namespace CSLabs.Api.Controllers
         }
 
         // POST: api/SystemMessage
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         public async Task<ActionResult<SystemMessage>> PostSystemMessage(SystemMessage systemMessage)
         {
