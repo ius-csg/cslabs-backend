@@ -20,10 +20,15 @@ namespace CSLabs.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SystemMessage>>> GetSystemMessages()
         {
+            if (GetUser() == null)
+            {
+                return Forbid("Access denied");
+            }
+
             return await this.DatabaseContext.SystemMessages.ToListAsync();
         }
 
-        // GET: api/SystemMessage/5
+        /*// GET: api/SystemMessage/5
         [HttpGet("{id}")]
         public async Task<ActionResult<SystemMessage>> GetSystemMessage(int id)
         {
@@ -117,6 +122,6 @@ namespace CSLabs.Api.Controllers
         private bool SystemMessageExists(int id)
         {
             return this.DatabaseContext.SystemMessages.Any(e => e.Id == id);
-        }
+        }*/
     }
 }
