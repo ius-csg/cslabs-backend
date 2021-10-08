@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CSLabs.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CSLabs.Api.Controllers
 {
@@ -20,11 +21,6 @@ namespace CSLabs.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SystemMessage>>> GetSystemMessages()
         {
-            if (GetUser() == null)
-            {
-                return Forbid("Access denied");
-            }
-
             return await this.DatabaseContext.SystemMessages.ToListAsync();
         }
 
@@ -32,11 +28,6 @@ namespace CSLabs.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SystemMessage>> GetSystemMessage(int id)
         {
-            if (!GetUser().IsAdmin())
-            {
-                return Forbid("Access denied");
-            }
-
             var systemMessage = await this.DatabaseContext.SystemMessages.FindAsync(id);
 
             if (systemMessage == null)
@@ -50,7 +41,8 @@ namespace CSLabs.Api.Controllers
 
         // PUT: api/SystemMessage/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSystemMessage(int id, SystemMessage systemMessage)
+        [Authorize] 
+         public async Task<IActionResult> PutSystemMessage(int id, SystemMessage systemMessage)
         {
             if (!GetUser().IsAdmin())
             {
