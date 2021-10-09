@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using CSLabs.Api.Models.ModuleModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +28,14 @@ namespace CSLabs.Api.Controllers
             if (tag == null) 
                 return BadRequest();
             return Ok(tag);
+        }
+
+        [HttpGet("/tag")]
+        public async Task<IActionResult> Get(String tag)
+        {
+            var searchTerm = "%" + tag + "%";
+            var matchedTags = DatabaseContext.Tags.Where(t => EF.Functions.Like(t.Name, searchTerm)).ToList();
+            return Ok(matchedTags);
         }
     }
 }
