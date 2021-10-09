@@ -153,6 +153,12 @@ namespace CSLabs.Api.Controllers
             if (!GetUser().CanEditModules()) {
                 return Forbid("You are not allowed to edit modules");
             }
+            if (moduleTags.Length != 0)
+            {
+                var module = DatabaseContext.Modules.First(m => m.Id == moduleTags[0].ModuleId);
+                if (module.Id != 0 && module.OwnerId != GetUser().Id && !GetUser().IsAdmin())
+                    return Forbid("You are not allowed to edit this module");
+            }
             DatabaseContext.RemoveRange(moduleTags);
             await DatabaseContext.SaveChangesAsync();
             return Ok();
