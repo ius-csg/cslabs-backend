@@ -5,12 +5,12 @@ namespace CSLabs.Api.Models
 {
     public interface ITrackable
     {
-        DateTime CreatedAt { get; set; }
-        DateTime UpdatedAt { get; set; }
+        DateTime Created_At { get; set; }
+        DateTime Updated_At { get; set; }
     }
     public abstract class Trackable
     {
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public DateTime Created_At { get; set; }
+        public DateTime Updated_At { get; set; }
     }
 }

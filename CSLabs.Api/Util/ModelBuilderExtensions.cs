@@ -12,10 +12,10 @@ namespace CSLabs.Api.Util
         public static void TimeStamps<T> (this ModelBuilder builder) where T : Trackable
         {
             builder.Entity<T>()
-                .Property(b => b.CreatedAt)
+                .Property(b => b.Created_At)
                 .HasDefaultValueSql("UTC_TIMESTAMP()");
             builder.Entity<T>()
-                .Property(b => b.UpdatedAt)
+                .Property(b => b.Updated_At)
                 .HasDefaultValueSql("UTC_TIMESTAMP()");
         }
 

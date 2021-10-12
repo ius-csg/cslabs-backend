@@ -20,8 +20,8 @@ namespace CSLabs.Api.Models.HypervisorModels
         [JsonIgnore]
         public List<HypervisorVmTemplate> HypervisorVmTemplates { get; set; } = new List<HypervisorVmTemplate>();
         
-        public int? OwnerId  { get; set; }
-        [ForeignKey(nameof(OwnerId))]
+        public int? Owner_Id  { get; set; }
+        [ForeignKey(nameof(Owner_Id))]
         [JsonIgnore]
         public User Owner { get; set; }
 

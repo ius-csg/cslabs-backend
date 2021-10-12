@@ -27,11 +27,11 @@ namespace CSLabs.Api.Models.ModuleModels
         [Required]
         public bool Published { get; set; }
         
-        public string SpecialCode { get; set; }
+        public string Special_Code { get; set; }
         public List<Lab> Labs { get; set; }
         
-        public int? OwnerId  { get; set; }
-        [ForeignKey(nameof(OwnerId))]
+        public int? Owner_Id  { get; set; }
+        [ForeignKey(nameof(Owner_Id))]
         [JsonIgnore]
         public User Owner { get; set; }
         
@@ -57,7 +57,7 @@ namespace CSLabs.Api.Models.ModuleModels
         {
             builder.TimeStamps<Module>();
             builder.Unique<Module>(u => u.Name);
-            builder.Unique<Module>(u => u.SpecialCode);
+            builder.Unique<Module>(u => u.Special_Code);
             builder.Entity<Module>()
                 .Property(p => p.Type)
                 .HasConversion<string>()
