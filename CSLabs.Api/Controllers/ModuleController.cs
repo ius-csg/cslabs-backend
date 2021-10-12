@@ -51,7 +51,7 @@ namespace CSLabs.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Get(string code)
         {
-            var module = await this.DatabaseContext.Modules.FirstAsync(m => m.SpecialCode == code);
+            var module = await this.DatabaseContext.Modules.FirstAsync(m => m.Special_Code == code);
             await module.SetUserModuleIdIfExists(DatabaseContext, GetUser());
             return Ok(module);
         }
@@ -79,7 +79,7 @@ namespace CSLabs.Api.Controllers
                 return Forbid("You are not allowed to edit modules");
             }
             // prevent someone from editing another user's module unless they are admin.
-            if (module.OwnerId != GetUser().Id && !GetUser().IsAdmin()) {
+            if (module.Owner_Id != GetUser().Id && !GetUser().IsAdmin()) {
                 return Forbid("You are not allowed to edit this module");
             }
             return Ok(module);
@@ -94,7 +94,7 @@ namespace CSLabs.Api.Controllers
             }
             var query = this.DatabaseContext.Modules.AsQueryable();
             if (!GetUser().IsAdmin())
-                query = query.Where(m => m.OwnerId == GetUser().Id);
+                query = query.Where(m => m.Owner_Id == GetUser().Id);
             return Ok(await query.ToListAsync());
         }
         
@@ -106,7 +106,7 @@ namespace CSLabs.Api.Controllers
                 return Forbid("You are not allowed to edit modules");
             }
             // prevent someone from editing another user's module unless they are admin.
-            if (module.Id != 0 && module.OwnerId != GetUser().Id && !GetUser().IsAdmin()) {
+            if (module.Id != 0 && module.Owner_Id != GetUser().Id && !GetUser().IsAdmin()) {
                 return Forbid("You are not allowed to edit this module");
             }
             // do not affect labs when saved, labs are saved in a separate request
