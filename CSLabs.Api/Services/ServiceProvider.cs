@@ -14,11 +14,14 @@ namespace CSLabs.Api.Services
     {
         public static void ConfigureDatabase(this IServiceCollection services, string connectionString)
         {
-            services.AddDbContextPool<DefaultContext>(options => options.UseMySql(connectionString, mySqlOptions => {
-                // change the version if needed.
-                options.UseSnakeCaseNamingConvention();
-                mySqlOptions.ServerVersion(new Version(10, 2, 13), ServerType.MariaDb);
-            }));
+            services.AddDbContextPool<DefaultContext>(options => options.UseMySql(
+                connectionString,
+                ServerVersion.AutoDetect(connectionString),
+                mySqlOptions =>
+                {
+                    options.UseSnakeCaseNamingConvention();
+                }
+            ));
         }
 
         public static void ProvideAppServices(this IServiceCollection services)
