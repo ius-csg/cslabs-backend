@@ -33,7 +33,7 @@ namespace CSLabs.Api.Controllers
                 .ThenInclude(l => l.TemplateInterfaces)
                 .FirstOrDefaultAsync(l => l.Id == id);
             // prevent someone from editing another user's module unless they are admin.
-            if (lab.Module.Owner_Id != GetUser().Id && !GetUser().IsAdmin()) {
+            if (lab.Module.OwnerId != GetUser().Id && !GetUser().IsAdmin()) {
                 return Forbid("You are not allowed to edit this lab");
             }
             lab.DetectAttachments();
@@ -52,7 +52,7 @@ namespace CSLabs.Api.Controllers
             }
             var module = await DatabaseContext.Modules.Where(m => m.Id == lab.ModuleId).FirstOrDefaultAsync();
             // prevent someone from editing another user's module unless they are admin.
-            if (lab.Id != 0 && module.Owner_Id != GetUser().Id && !GetUser().IsAdmin()) {
+            if (lab.Id != 0 && module.OwnerId != GetUser().Id && !GetUser().IsAdmin()) {
                 return Forbid("You are not allowed to edit this module");
             }
 
@@ -94,7 +94,7 @@ namespace CSLabs.Api.Controllers
             var lab = await DatabaseContext.Labs.FirstAsync(l => l.Id == id);
             var module = await DatabaseContext.Modules.Where(m => m.Id == lab.ModuleId).FirstOrDefaultAsync();
             // prevent someone from editing another user's module unless they are admin.
-            if (module.Owner_Id != GetUser().Id && !GetUser().IsAdmin()) {
+            if (module.OwnerId != GetUser().Id && !GetUser().IsAdmin()) {
                 return Forbid("You are not allowed to edit this module");
             }
 

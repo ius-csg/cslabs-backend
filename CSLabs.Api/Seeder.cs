@@ -22,7 +22,7 @@ namespace CSLabs.Api
                     Description = "Test Pilot",
                     Name = "Sexton's Test Pilot",
                     Published = false,
-                    Special_Code = settings.ModuleSpecialCode,
+                    SpecialCode = settings.ModuleSpecialCode,
                     Labs = new List<Lab>
                     {
                         new Lab

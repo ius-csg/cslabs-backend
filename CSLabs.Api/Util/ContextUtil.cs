@@ -20,12 +20,12 @@ namespace CSLabs.Api.Util
                     switch (entry.State)
                     {
                         case EntityState.Modified:
-                            trackable.Updated_At = now;
+                            trackable.UpdatedAt = now;
                             break;
 
                         case EntityState.Added:
-                            trackable.Created_At = now;
-                            trackable.Updated_At = now;
+                            trackable.CreatedAt = now;
+                            trackable.UpdatedAt = now;
                             break;
                     }
                 }

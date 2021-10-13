@@ -28,7 +28,7 @@ namespace CSLabs.Api.Controllers
         {
             var module = await DatabaseContext.Modules
                 .IncludeRelations()
-                .FirstAsync(m => m.Special_Code == specialCode);
+                .FirstAsync(m => m.SpecialCode == specialCode);
             
             if (module == null)
                 return BadRequest(new ErrorResponse {Message = "Module not found"});
