@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CSLabs.Api.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Server.IISIntegration;
 
 namespace CSLabs.Api.Controllers
 {
@@ -21,9 +23,17 @@ namespace CSLabs.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SystemMessage>>> GetSystemMessages()
         {
-            return await this.DatabaseContext.SystemMessages.ToListAsync();
+            //variable for current UTC date/time 
+            DateTime currentDateTimeUTC = DateTime.UtcNow;
+            
+            //variable for current local date/time 
+            //DateTime currentDateTime = DateTime.Now;
+            
+            //lambda expression inside where for comparision 
+           return await this.DatabaseContext.SystemMessages.Where(message => (message.EndTime.CompareTo(currentDateTimeUTC.Date) > 1)
+           || (message.EndTime.CompareTo(currentDateTimeUTC.Date) == 1)).ToListAsync();
         }
-
+        
         /*// GET: api/SystemMessage/5
         [HttpGet("{id}")]
         public async Task<ActionResult<SystemMessage>> GetSystemMessage(int id)
