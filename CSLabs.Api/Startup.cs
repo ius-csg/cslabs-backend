@@ -154,6 +154,10 @@ namespace CSLabs.Api
             app.UseRouting();
 //            app.UseHttpsRedirection();
             app.UseAuthentication();
+            
+            app.UseHangfireDashboard();
+            //BackgroundJob.Enqueue(() => Console.WriteLine("Hello world from Hangfire!")); // this line is for testing
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
