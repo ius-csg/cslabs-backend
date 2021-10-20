@@ -1,10 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using CSLabs.Api.Models;
 using CSLabs.Api.Util;
-using Microsoft.EntityFrameworkCore;
+using Zxcvbn;
 
 namespace CSLabs.Api.RequestModels
 {
@@ -35,9 +34,19 @@ namespace CSLabs.Api.RequestModels
                 return new GenericErrorResponse { Message = "The specified email is already in use"};
             }
 
+            if (!ValidatePasswordStrength())
+            {
+                return new GenericErrorResponse { Message = "The provided password is not strong enough" };
+            }
+
             return null;
         }
 
+        public bool ValidatePasswordStrength()
+        {
+            return Zxcvbn.Core.EvaluatePassword(Password).Score >= 4;
+        }
+        
         public bool IsValid(DefaultContext dbContext)
         {
             return Validate(dbContext) == null;
