@@ -72,17 +72,31 @@ namespace CSLabs.Api.Controllers
         [HttpPost("{id}/start")]
         public async Task<IActionResult> Start(int id)
         {
-            var userLab = await DatabaseContext.UserLabs
-                .IncludeRelations()
-                .IncludeLabHypervisor()
-                .Include(ul => ul.Lab)
-                .FirstAsync(ul => ul.Id == id);
-            if (userLab.UserLabVms.Count > 0)
-                // update the UI.
-                return Ok(userLab);
-            await _instantiationService.Instantiate(userLab, ProxmoxManager);
-            await DatabaseContext.SaveChangesAsync();
-            return Ok(userLab.GetResponse(Mapper));
+            var query = from lab in DatabaseContext.UserLabs
+                    join usrModule in DatabaseContext.UserModules on
+                        lab.UserModuleId equals usrModule.Id
+                    join module in DatabaseContext.Modules on 
+                        usrModule.ModuleId equals module.Id
+                    where usrModule.Id == id
+                    select module.Disabled;
+                
+                var isDisabled = query.FirstOrDefault();
+
+                if (!isDisabled)
+                {
+                    var userLab = await DatabaseContext.UserLabs
+                        .IncludeRelations()
+                        .IncludeLabHypervisor()
+                        .Include(ul => ul.Lab)
+                        .FirstAsync(ul => ul.Id == id);
+                    if (userLab.UserLabVms.Count > 0)
+                        // update the UI.
+                        return Ok(userLab);
+                    await _instantiationService.Instantiate(userLab, ProxmoxManager);
+                    await DatabaseContext.SaveChangesAsync();
+                    return Ok(userLab.GetResponse(Mapper));
+                }
+                return BadRequest(new {Message = "Lab is currently disabled"});
         }
 
         [HttpPost("{id}/turn-on")]
