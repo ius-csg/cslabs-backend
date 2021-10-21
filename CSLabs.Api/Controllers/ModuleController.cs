@@ -33,7 +33,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> Get(string tagNames = "")
         {
             if (string.IsNullOrEmpty(tagNames))
-                return Ok(DatabaseContext.Modules.Where(m => m.Published).ToList());
+                return Ok(await DatabaseContext.Modules.Where(m => m.Published).IncludeTags().ToListAsync());
             var tagNamesList = tagNames.Split(",").Select(s => s.Trim()).ToList();
             return Ok(
                 await DatabaseContext.Modules
