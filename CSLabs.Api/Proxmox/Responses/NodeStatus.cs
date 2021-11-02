@@ -5,6 +5,5 @@ namespace CSLabs.Api.Proxmox.Responses
         // 0- 100
         public double CpuUsage { get; set; }
         public MemoryUsage MemoryUsage { get; set; }
-        public bool Quorate { get; set; }
     }
 }

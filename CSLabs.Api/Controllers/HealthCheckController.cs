@@ -38,8 +38,8 @@ namespace CSLabs.Api.Controllers
 
                     try 
                     {
-                        var clusterStatus = api.GetClusterStatus();
-                        if (!clusterStatus.Result.Quorate)
+                        var clusterStatus = await api.GetClusterStatus();
+                        if (!clusterStatus.Quorate)
                         {
                             throw new NoQuorumException();
                         }
@@ -57,13 +57,12 @@ namespace CSLabs.Api.Controllers
                         try
                         {
                             await api.GetNodeStatus(node);
+                            nodesUp++;
                         }
                         catch (ProxmoxRequestException e)
                         {
                     
                         }
-
-                        nodesUp++;
                     }
                     
                     systemStatus.HypervisorNodesUp = nodesUp;
