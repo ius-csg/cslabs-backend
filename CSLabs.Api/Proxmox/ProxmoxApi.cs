@@ -82,12 +82,8 @@ namespace CSLabs.Api.Proxmox
 
         }
         
-        public async Task<ClusterStatus> GetClusterStatus(HypervisorNode node = null)
+        public async Task<ClusterStatus> GetClusterStatus()
         {
-            if (node == null)
-            {
-                node = HypervisorNode;
-            }
             await LoginIfNotLoggedIn();
             var response = await PerformRequest(() => this.client.Cluster.Status.GetStatus());
             var data = response.Response.data;
