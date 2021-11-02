@@ -44,7 +44,7 @@ namespace CSLabs.Api.Controllers
                             throw new NoQuorumException();
                         }
                     }
-                    catch (ProxmoxRequestException e)
+                    catch (ProxmoxRequestException)
                     {
                         // GetClusterStatus failed, so no nodes are up 
                         systemStatus.HypervisorNodesUp = 0;
@@ -59,9 +59,9 @@ namespace CSLabs.Api.Controllers
                             await api.GetNodeStatus(node);
                             nodesUp++;
                         }
-                        catch (ProxmoxRequestException e)
+                        catch (ProxmoxRequestException)
                         {
-                    
+                            // do not increment nodes up if the request fails.
                         }
                     }
                     
