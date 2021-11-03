@@ -72,13 +72,10 @@ namespace CSLabs.Api.Controllers
         [HttpPost("{id}/start")]
         public async Task<IActionResult> Start(int id)
         {
-            var query = from lab in DatabaseContext.UserLabs
-                    join usrModule in DatabaseContext.UserModules on
-                        lab.UserModuleId equals usrModule.Id
-                    join module in DatabaseContext.Modules on 
-                        usrModule.ModuleId equals module.Id
-                    where usrModule.Id == id
-                    select module.Disabled;
+            var isDisabled = await DatabaseContext.Modules
+                .Where(m => m.Labs.Any(l => l.UserLabs.Any(ul => ul.Id == id)))
+                .Select(m => m.Disabled)
+                .FirstAsync();
                 
                 var isDisabled = query.FirstOrDefault();
 
