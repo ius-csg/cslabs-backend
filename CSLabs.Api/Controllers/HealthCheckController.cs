@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using CSLabs.Api.Models;
+using CSLabs.Api.Proxmox;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,14 +28,52 @@ namespace CSLabs.Api.Controllers
             var hypervisors = await DatabaseContext.Hypervisors
                 .Include(h => h.HypervisorNodes)
                 .ToListAsync();
-            foreach (var hypervisor in hypervisors)
+            var systemStatus = DatabaseContext.SystemStatuses.First(); // Get current system status
+            try
             {
-                var api = ProxmoxManager.GetProxmoxApi(hypervisor.HypervisorNodes.First());
-                foreach (var node in hypervisor.HypervisorNodes)
+                foreach (var hypervisor in hypervisors)
                 {
-                    await api.GetNodeStatus(node);
+                    var nodesUp = 0;
+                    var api = ProxmoxManager.GetProxmoxApi(hypervisor.HypervisorNodes.First());
+
+                    try 
+                    {
+                        var clusterStatus = await api.GetClusterStatus();
+                        if (!clusterStatus.Quorate)
+                        {
+                            throw new NoQuorumException();
+                        }
+                    }
+                    catch (ProxmoxRequestException)
+                    {
+                        // GetClusterStatus failed, so no nodes are up 
+                        systemStatus.HypervisorNodesUp = 0;
+                        await DatabaseContext.SaveChangesAsync();
+                    }
+                    
+                    // check the status of all the nodes and count how many are up
+                    foreach (var node in hypervisor.HypervisorNodes)
+                    {
+                        try
+                        {
+                            await api.GetNodeStatus(node);
+                            nodesUp++;
+                        }
+                        catch (ProxmoxRequestException)
+                        {
+                            // do not increment nodes up if the request fails.
+                        }
+                    }
+                    
+                    systemStatus.HypervisorNodesUp = nodesUp;
+                    await DatabaseContext.SaveChangesAsync();
                 }
-               
+            }
+            catch (NoQuorumException)
+            {
+                // save that we have no quorum
+                systemStatus.Quorum = false;
+                await DatabaseContext.SaveChangesAsync();
             }
 
             return Ok("All Hypervisors are up and responding");
