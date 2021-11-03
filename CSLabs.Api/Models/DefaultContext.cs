@@ -45,6 +45,8 @@ namespace CSLabs.Api.Models
         public DbSet<VmTemplate> VmTemplates { get; set; }
         
         public DbSet<Maintenance> Maintenances { get; set; }
+        
+        public DbSet<SystemStatus> SystemStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
        {
