@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CSLabs.Api.Models;
+using CSLabs.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Server.IISIntegration;
 
@@ -14,24 +15,17 @@ namespace CSLabs.Api.Controllers
     [ApiController]
     public class SystemMessageController : BaseController
     {
-
+        private SystemMessageService Service { get; }
         public SystemMessageController(BaseControllerDependencies deps) : base(deps)
         {
+            Service = new SystemMessageService(deps.DatabaseContext, new TimeService());
         }
 
         // GET: api/SystemMessage
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SystemMessage>>> GetSystemMessages()
         {
-            //variable for current UTC date/time 
-            DateTime currentDateTimeUTC = DateTime.UtcNow;
-            
-            //variable for current local date/time 
-            //DateTime currentDateTime = DateTime.Now;
-            
-            //lambda expression inside where for comparision 
-           return await this.DatabaseContext.SystemMessages.Where(message => (message.EndTime.CompareTo(currentDateTimeUTC.Date) > 1)
-           || (message.EndTime.CompareTo(currentDateTimeUTC.Date) == 1)).ToListAsync();
+            return await Service.GetActiveMessages();
         }
         
         /*// GET: api/SystemMessage/5

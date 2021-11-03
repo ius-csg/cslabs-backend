@@ -1,10 +1,12 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Models.ModuleModels;
 using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CSLabs.Api.Models
 {
@@ -86,6 +88,24 @@ namespace CSLabs.Api.Models
        {
            ContextUtil.UpdateTimeStamps(ChangeTracker);
            return base.SaveChangesAsync(cancellationToken);
+       }
+       
+       /**
+         * Removed all entities from the change tracker so that any additional
+         * data pulled from the database is not "auto fix-up" by values in the change tracker.
+         * @see https://docs.microsoft.com/en-us/ef/core/querying/related-data and search "fix-up"
+         */
+       public void DetachAllEntities()
+       {
+           var changedEntriesCopy = this.ChangeTracker.Entries().ToList();
+           // The two lines below are needed to prevent an InvalidOperationException from being thrown.
+           // @see https://github.com/dotnet/efcore/issues/18406
+           ChangeTracker.CascadeDeleteTiming = CascadeTiming.OnSaveChanges;
+           ChangeTracker.DeleteOrphansTiming = CascadeTiming.OnSaveChanges;
+           foreach (var entry in changedEntriesCopy)
+           {
+               entry.State = EntityState.Detached;
+           }
        }
     }
 }
