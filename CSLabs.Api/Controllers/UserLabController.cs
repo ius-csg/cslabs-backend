@@ -76,8 +76,6 @@ namespace CSLabs.Api.Controllers
                 .Where(m => m.Labs.Any(l => l.UserLabs.Any(ul => ul.Id == id)))
                 .Select(m => m.Disabled)
                 .FirstAsync();
-                
-                var isDisabled = query.FirstOrDefault();
 
             if (isDisabled)
             {
