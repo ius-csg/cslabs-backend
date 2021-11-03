@@ -82,21 +82,20 @@ namespace CSLabs.Api.Controllers
                 
                 var isDisabled = query.FirstOrDefault();
 
-                if (!isDisabled)
-                {
-                    var userLab = await DatabaseContext.UserLabs
-                        .IncludeRelations()
-                        .IncludeLabHypervisor()
-                        .Include(ul => ul.Lab)
-                        .FirstAsync(ul => ul.Id == id);
-                    if (userLab.UserLabVms.Count > 0)
-                        // update the UI.
-                        return Ok(userLab);
-                    await _instantiationService.Instantiate(userLab, ProxmoxManager);
-                    await DatabaseContext.SaveChangesAsync();
-                    return Ok(userLab.GetResponse(Mapper));
-                }
+            if (isDisabled)
+            {
                 return BadRequest(new {Message = "Lab is currently disabled"});
+            }
+            var userLab = await DatabaseContext.UserLabs
+                .IncludeRelations()
+                .IncludeLabHypervisor()
+                .Include(ul => ul.Lab)
+                .FirstAsync(ul => ul.Id == id);
+            if (userLab.UserLabVms.Count > 0) // update the UI.
+                return Ok(userLab);
+            await _instantiationService.Instantiate(userLab, ProxmoxManager);
+            await DatabaseContext.SaveChangesAsync();
+            return Ok(userLab.GetResponse(Mapper));
         }
 
         [HttpPost("{id}/turn-on")]
