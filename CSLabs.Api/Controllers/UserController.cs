@@ -124,6 +124,13 @@ namespace CSLabs.Api.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword(ChangePasswordRequest request)
         {
+            if (!request.ValidatePasswordStrength())
+            {
+                return BadRequest(new GenericErrorResponse
+                {
+                    Message = "The provided password is not strong enough"
+                });
+            }
             var user = GetUser();
             var newHashedPassword = this._authenticationService.HashPassword(request.NewPassword);
             var hasher = new PasswordHasher<User>();
