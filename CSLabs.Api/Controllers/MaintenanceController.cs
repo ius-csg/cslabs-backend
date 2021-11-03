@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,13 @@ namespace CSLabs.Api.Controllers
         public MaintenanceController(BaseControllerDependencies deps) : base(deps) { }
 
         [HttpGet]
-        public IActionResult GetMaintenances()
+        public async Task<List<Maintenance>> GetMaintenances()
         {
-            return Ok(DatabaseContext.Maintenances.First());
+            var currentDateTimeUTC = DateTime.UtcNow;
+            return await DatabaseContext.Maintenances
+                .Where(maintenance =>
+                    maintenance.EndTime > currentDateTimeUTC && maintenance.StartTime < currentDateTimeUTC)
+                .ToListAsync();
         }
     }
 }
