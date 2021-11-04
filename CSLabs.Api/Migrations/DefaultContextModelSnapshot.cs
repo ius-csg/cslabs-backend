@@ -387,10 +387,6 @@ namespace CSLabs.Api.Migrations
                         .HasColumnName("description")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<bool>("Disabled")
-                        .HasColumnName("disabled")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
