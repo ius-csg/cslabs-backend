@@ -72,13 +72,21 @@ namespace CSLabs.Api.Controllers
         [HttpPost("{id}/start")]
         public async Task<IActionResult> Start(int id)
         {
+            var isDisabled = await DatabaseContext.Modules
+                .Where(m => m.Labs.Any(l => l.UserLabs.Any(ul => ul.Id == id)))
+                .Select(m => m.Disabled)
+                .FirstAsync();
+
+            if (isDisabled)
+            {
+                return BadRequest(new {Message = "Lab is currently disabled"});
+            }
             var userLab = await DatabaseContext.UserLabs
                 .IncludeRelations()
                 .IncludeLabHypervisor()
                 .Include(ul => ul.Lab)
                 .FirstAsync(ul => ul.Id == id);
-            if (userLab.UserLabVms.Count > 0)
-                // update the UI.
+            if (userLab.UserLabVms.Count > 0) // update the UI.
                 return Ok(userLab);
             await _instantiationService.Instantiate(userLab, ProxmoxManager);
             await DatabaseContext.SaveChangesAsync();
