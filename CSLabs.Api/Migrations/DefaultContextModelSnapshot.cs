@@ -218,27 +218,6 @@ namespace CSLabs.Api.Migrations
                     b.ToTable("vm_template");
                 });
 
-            modelBuilder.Entity("CSLabs.Api.Models.Maintenance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("EndTime")
-                        .HasColumnName("end_time")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime?>("StartTime")
-                        .HasColumnName("start_time")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("Id")
-                        .HasName("pk_maintenances");
-
-                    b.ToTable("maintenances");
-                });
-
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.BridgeTemplate", b =>
                 {
                     b.Property<int>("Id")
