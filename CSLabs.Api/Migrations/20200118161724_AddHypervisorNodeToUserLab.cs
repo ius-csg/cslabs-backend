@@ -7,7 +7,7 @@ namespace CSLabs.Api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql(@"
-                INSERT INTO `cslabs_backend`.`hypervisors`
+                INSERT INTO `hypervisors`
                 (
                 `host`,
                 `user_name`,
@@ -23,7 +23,7 @@ namespace CSLabs.Api.Migrations
             ");
             
             migrationBuilder.Sql(@"
-                INSERT INTO `cslabs_backend`.`hypervisor_nodes`
+                INSERT INTO `hypervisor_nodes`
                 (
                 `name`,
                 `hypervisor_id`)

@@ -128,6 +128,24 @@ namespace CSLabs.Api.Controllers
             return Ok(userLab.GetResponse(Mapper));
         }
 
+        [HttpPost("{id}/update-end-date-time")]
+        public async Task<IActionResult> UpdateEndDateTime(int id)
+        {
+            var userLab = await DatabaseContext.UserLabs
+                .IncludeRelations()
+                .WhereIncludesUser(GetUser())
+                .FirstAsync(ul =>  ul.Id == id);
+
+            if (userLab == null)
+                return NotFound();
+
+            if (userLab.EndDateTime != null)
+                userLab.EndDateTime = userLab.EndDateTime.Value.AddMinutes(15);
+            await DatabaseContext.SaveChangesAsync();
+            
+            return Ok(userLab); // returns the updated user lab
+        }
+        
         [HttpGet("{id}/status")]
         public async Task<IActionResult> GetStatus(int id)
         {
