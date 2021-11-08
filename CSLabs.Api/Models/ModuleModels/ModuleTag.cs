@@ -12,7 +12,13 @@ namespace CSLabs.Api.Models.ModuleModels
         public int TagId { get; set; }
         [ForeignKey(nameof(TagId))]
         public Tag Tag { get; set; }
-        
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null) return false;
+            return obj is ModuleTag && ((ModuleTag) obj).ModuleId.Equals(ModuleId) && ((ModuleTag) obj).TagId.Equals(TagId);
+        }
+
         public static void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ModuleTag>()

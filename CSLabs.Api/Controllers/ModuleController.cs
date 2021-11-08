@@ -134,8 +134,10 @@ namespace CSLabs.Api.Controllers
                 DatabaseContext.Update(module);
             else
                 DatabaseContext.Add(module);
+            // delete module tags
+            module.DeleteModuleTags(DatabaseContext);
             // add tag relationships
-            module.AddModuleTags(DatabaseContext, module.ModuleTags);
+            module.AddModuleTags(DatabaseContext);
             await DatabaseContext.SaveChangesAsync();
             await DatabaseContext.Entry(module).Collection(m => m.Labs).LoadAsync();
             return Ok( 
@@ -145,23 +147,6 @@ namespace CSLabs.Api.Controllers
                     .IncludeTags()
                     .ToListAsync()
             );
-        }
-
-        [HttpDelete("tags")]
-        public async Task<IActionResult> DeleteTag(ModuleTag[] moduleTags)
-        {
-            if (!GetUser().CanEditModules()) {
-                return Forbid("You are not allowed to edit modules");
-            }
-            if (moduleTags.Length != 0)
-            {
-                var module = DatabaseContext.Modules.First(m => m.Id == moduleTags[0].ModuleId);
-                if (module.Id != 0 && module.OwnerId != GetUser().Id && !GetUser().IsAdmin())
-                    return Forbid("You are not allowed to edit this module");
-            }
-            DatabaseContext.RemoveRange(moduleTags);
-            await DatabaseContext.SaveChangesAsync();
-            return Ok();
         }
     }
 }
