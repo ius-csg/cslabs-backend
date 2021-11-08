@@ -60,7 +60,7 @@ namespace CSLabs.Api.Controllers
         
         [HttpGet("code/{code}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetCode(string code)
+        public async Task<IActionResult> GetByCode(string code)
         {
             var module = await this.DatabaseContext.Modules
                 .IncludeTags()
