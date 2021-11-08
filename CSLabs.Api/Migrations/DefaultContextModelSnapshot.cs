@@ -434,47 +434,6 @@ namespace CSLabs.Api.Migrations
                     b.ToTable("modules");
                 });
 
-            modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.ModuleTag", b =>
-                {
-                    b.Property<int>("ModuleId")
-                        .HasColumnName("module_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagId")
-                        .HasColumnName("tag_id")
-                        .HasColumnType("int");
-
-                    b.HasKey("ModuleId", "TagId")
-                        .HasName("pk_module_tag");
-
-                    b.HasIndex("TagId")
-                        .HasName("ix_module_tag_tag_id");
-
-                    b.ToTable("module_tag");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Tag", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnName("name")
-                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
-
-                    b.HasKey("Id")
-                        .HasName("pk_tags");
-
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasName("ix_tags_name");
-
-                    b.ToTable("tags");
-                });
-
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.VmInterfaceTemplate", b =>
                 {
                     b.Property<int>("Id")
@@ -929,23 +888,6 @@ namespace CSLabs.Api.Migrations
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .HasConstraintName("fk_modules_users_owner_id");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.ModuleTag", b =>
-                {
-                    b.HasOne("CSLabs.Api.Models.ModuleModels.Module", "Module")
-                        .WithMany("ModuleTags")
-                        .HasForeignKey("ModuleId")
-                        .HasConstraintName("fk_module_tag_modules_module_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CSLabs.Api.Models.ModuleModels.Tag", "Tag")
-                        .WithMany("ModuleTags")
-                        .HasForeignKey("TagId")
-                        .HasConstraintName("fk_module_tag_tags_tag_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.VmInterfaceTemplate", b =>
