@@ -14,13 +14,19 @@ namespace CSLabs.Api.Services
     {
         public static void ConfigureDatabase(this IServiceCollection services, string connectionString)
         {
-            services.AddDbContextPool<DefaultContext>(options => options.UseMySql(connectionString, mySqlOptions => {
+            services.AddDbContextPool<DefaultContext>(options => ConfigureMysql(options, connectionString));
+        }
+
+        public static void ConfigureMysql(DbContextOptionsBuilder options, string connectionString)
+        {
+            options.UseMySql(connectionString, mySqlOptions =>
+            {
                 // change the version if needed.
                 options.UseSnakeCaseNamingConvention();
                 mySqlOptions.ServerVersion(new Version(10, 2, 13), ServerType.MariaDb);
-            }));
+            });
         }
-
+        
         public static void ProvideAppServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthenticationService, AuthenticationService>();

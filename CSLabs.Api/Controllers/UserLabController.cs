@@ -72,13 +72,21 @@ namespace CSLabs.Api.Controllers
         [HttpPost("{id}/start")]
         public async Task<IActionResult> Start(int id)
         {
+            var isDisabled = await DatabaseContext.Modules
+                .Where(m => m.Labs.Any(l => l.UserLabs.Any(ul => ul.Id == id)))
+                .Select(m => m.Disabled)
+                .FirstAsync();
+
+            if (isDisabled)
+            {
+                return BadRequest(new {Message = "Lab is currently disabled"});
+            }
             var userLab = await DatabaseContext.UserLabs
                 .IncludeRelations()
                 .IncludeLabHypervisor()
                 .Include(ul => ul.Lab)
                 .FirstAsync(ul => ul.Id == id);
-            if (userLab.UserLabVms.Count > 0)
-                // update the UI.
+            if (userLab.UserLabVms.Count > 0) // update the UI.
                 return Ok(userLab);
             await _instantiationService.Instantiate(userLab, ProxmoxManager);
             await DatabaseContext.SaveChangesAsync();
@@ -120,6 +128,24 @@ namespace CSLabs.Api.Controllers
             return Ok(userLab.GetResponse(Mapper));
         }
 
+        [HttpPost("{id}/update-end-date-time")]
+        public async Task<IActionResult> UpdateEndDateTime(int id)
+        {
+            var userLab = await DatabaseContext.UserLabs
+                .IncludeRelations()
+                .WhereIncludesUser(GetUser())
+                .FirstAsync(ul =>  ul.Id == id);
+
+            if (userLab == null)
+                return NotFound();
+
+            if (userLab.EndDateTime != null)
+                userLab.EndDateTime = userLab.EndDateTime.Value.AddMinutes(15);
+            await DatabaseContext.SaveChangesAsync();
+            
+            return Ok(userLab); // returns the updated user lab
+        }
+        
         [HttpGet("{id}/status")]
         public async Task<IActionResult> GetStatus(int id)
         {

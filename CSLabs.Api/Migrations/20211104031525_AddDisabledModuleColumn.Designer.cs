@@ -3,14 +3,16 @@ using System;
 using CSLabs.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20211104031525_AddDisabledModuleColumn")]
+    partial class AddDisabledModuleColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -216,27 +218,6 @@ namespace CSLabs.Api.Migrations
                         .HasName("ix_vm_template_owner_id");
 
                     b.ToTable("vm_template");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.Maintenance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnName("end_time")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnName("start_time")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("Id")
-                        .HasName("pk_maintenances");
-
-                    b.ToTable("maintenances");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.BridgeTemplate", b =>
