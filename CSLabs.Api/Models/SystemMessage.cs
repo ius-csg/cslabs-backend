@@ -21,10 +21,10 @@ namespace CSLabs.Api.Models
         public string Description { get; set; }
         
         [Required]
-        public DateTime StartTime { get; set; }
+        public DateTime StartTime { get; set; } //format ex. 2020-11-10 08:18:17.000000
         
        [Required]
-        public DateTime EndTime { get; set; }
+        public DateTime EndTime { get; set; } //format ex. 2020-11-10 08:18:17.000000
        
         public static void OnModelCreating(ModelBuilder builder)
         {
