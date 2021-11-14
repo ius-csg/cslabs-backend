@@ -18,7 +18,7 @@ namespace CSLabs.ConsoleUtil.Commands
     
     public class AddHypervisorNodeCommand : AsyncCommand<AddHypervisorNodeOptions>
     {
-        private DefaultContext _context;
+        private readonly DefaultContext _context;
 
         public AddHypervisorNodeCommand(DefaultContext context)
         {

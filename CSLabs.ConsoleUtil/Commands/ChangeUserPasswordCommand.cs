@@ -17,8 +17,8 @@ namespace CSLabs.ConsoleUtil.Commands
     }
     public class ChangeUserPasswordCommand : AsyncCommand<ChangeUserPasswordOptions>
     {
-        private DefaultContext _context;
-        private IAuthenticationService _authenticationService;
+        private readonly DefaultContext _context;
+        private readonly IAuthenticationService _authenticationService;
         
         public ChangeUserPasswordCommand(DefaultContext context, IAuthenticationService authenticationService)
         {

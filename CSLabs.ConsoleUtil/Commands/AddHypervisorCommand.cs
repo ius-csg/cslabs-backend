@@ -24,8 +24,8 @@ namespace CSLabs.ConsoleUtil.Commands
     
     public class AddHypervisorCommand : AsyncCommand<AddHypervisorOptions>
     {
-        private DefaultContext _context;
-        private string _encryptionKey;
+        private readonly DefaultContext _context;
+        private readonly string _encryptionKey;
         
         public AddHypervisorCommand(DefaultContext context, AppSettings appSettings)
         {

@@ -14,8 +14,10 @@ namespace CSLabs.ConsoleUtil.Commands
     
     public class ListHypervisorsCommand : AsyncCommand<ListHypervisorsOptions>
     {
-        private DefaultContext _context;
-        private string _encryptionKey;
+        private readonly DefaultContext _context;
+        
+        // Do we need this field? It's totally unread, only ever set in the constructor but never used
+        private readonly string _encryptionKey;
         
         public ListHypervisorsCommand(DefaultContext context, AppSettings appSettings)
         {

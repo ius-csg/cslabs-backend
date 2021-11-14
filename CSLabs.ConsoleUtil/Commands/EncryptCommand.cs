@@ -13,7 +13,7 @@ namespace CSLabs.ConsoleUtil.Commands
     }
     public class EncryptCommand : Command<EncryptOptions>
     {
-        private string _encryptionKey;
+        private readonly string _encryptionKey;
         
         public EncryptCommand(AppSettings appSettings)
         {
