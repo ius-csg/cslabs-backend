@@ -7,7 +7,7 @@ namespace CSLabs.Tests
     public class UserControllerTest
     {
         [Test]
-        public async Task TestPasswordEnforcement()
+        public void TestPasswordEnforcement()
         {
             var registrationRequest = new RegistrationRequest
             {
