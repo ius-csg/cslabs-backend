@@ -14,7 +14,7 @@ namespace CSLabs.Api
     {
         public static void Seed(DefaultContext context, AppSettings settings)
         {
-            var anyModulesExist = context.Modules.FirstOrDefault() != null;
+            var anyModulesExist = context.Modules.Any();
             if (!anyModulesExist)
             {
                 context.Modules.Add(new Module
