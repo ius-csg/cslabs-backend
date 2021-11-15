@@ -9,6 +9,7 @@ using CSLabs.Api.Models.Enums;
 using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Query;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -33,6 +34,8 @@ namespace CSLabs.Api.Models.ModuleModels
         public string SpecialCode { get; set; }
         public List<Lab> Labs { get; set; }
         
+        public List<ModuleTag> ModuleTags { get; set; }
+        
         public int? OwnerId  { get; set; }
         [ForeignKey(nameof(OwnerId))]
         [JsonIgnore]
@@ -54,6 +57,26 @@ namespace CSLabs.Api.Models.ModuleModels
                 .FirstOrDefaultAsync();
             if (userModule != null)
                 UserModuleId = userModule.Id;
+        }
+
+        public void AddModuleTags(DefaultContext context)
+        {
+            foreach (var moduleTag in ModuleTags.Where(moduleTag => moduleTag.TagId == 0))
+            {
+                context.Add(moduleTag);
+                if (moduleTag.Tag.Id != 0)
+                    context.Entry(moduleTag.Tag).State = EntityState.Unchanged;
+            }
+        }
+
+        public void DeleteModuleTags(DefaultContext context)
+        {
+            var currentModuleTags = context.Modules.AsNoTracking().IncludeTags().First(m => m.Id == Id).ModuleTags;
+            var tagsToBeDeleted = currentModuleTags.Where(mt => !ModuleTags.Contains(mt)).ToList();
+            foreach (var moduleTag in tagsToBeDeleted)
+            {
+                context.Entry(moduleTag).State = EntityState.Deleted;
+            }
         }
 
         public static void OnModelCreating(ModelBuilder builder)

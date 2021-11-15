@@ -27,13 +27,23 @@ namespace CSLabs.Api.Controllers
         public ModuleController(BaseControllerDependencies deps) : base(deps)
         {
         }
-        // GET api/values
+        
+        // GET api/v1/Modules/?tagNames
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get(string tagNames = "")
         {
-            return Ok(DatabaseContext.Modules.Where(m => m.Published).ToList());
+            if (string.IsNullOrEmpty(tagNames))
+                return Ok(await DatabaseContext.Modules.Where(m => m.Published).IncludeTags().ToListAsync());
+            var tagNamesList = tagNames.Split(",").Select(s => s.Trim()).ToList();
+            return Ok(
+                await DatabaseContext.Modules
+                    .Where(m => m.Published)
+                    .Where(m => m.ModuleTags.Any(mt => tagNamesList.Contains(mt.Tag.Name)))
+                    .IncludeTags()
+                    .ToListAsync()
+            );
         }
-
+        
         // GET api/values/5
         [HttpGet("{id}")]
         [AllowAnonymous]
@@ -41,6 +51,7 @@ namespace CSLabs.Api.Controllers
         {
             var module = await this.DatabaseContext.Modules
                 .Where(m => m.Published)
+                .IncludeTags()
                 .FirstAsync(m => m.Id == id);
             if (!User.Identity.IsAuthenticated) return Ok(module);
             await module.SetUserModuleIdIfExists(DatabaseContext, GetUser());
@@ -49,13 +60,18 @@ namespace CSLabs.Api.Controllers
         
         [HttpGet("code/{code}")]
         [AllowAnonymous]
-        public async Task<IActionResult> Get(string code)
+        public async Task<IActionResult> GetByCode(string code)
         {
-            var module = await this.DatabaseContext.Modules.FirstAsync(m => m.SpecialCode == code);
+            var module = await this.DatabaseContext.Modules
+                .IncludeTags()
+                .FirstAsync(m => m.SpecialCode == code);
             await module.SetUserModuleIdIfExists(DatabaseContext, GetUser());
             return Ok(module);
         }
         
+        [HttpGet("{id}/tags")]
+        public async Task<IActionResult> GetTags(int id) =>
+            Ok(await DatabaseContext.Tags.Where(t => t.ModuleTags.Any(mt => mt.ModuleId == id)).ToListAsync());
         
         [HttpGet("module-editor/{id}")]
         public async Task<IActionResult> GetForModuleEditor(int id)
@@ -63,6 +79,7 @@ namespace CSLabs.Api.Controllers
             var module = await this.DatabaseContext
                 .Modules
                 .Include(m => m.Labs)
+                .IncludeTags()
                 .FirstAsync(m => m.Id == id);
             var labIds = module.Labs.Select(l => l.Id);
             // efficiently detect if labs have user labs
@@ -94,7 +111,7 @@ namespace CSLabs.Api.Controllers
             }
             var query = this.DatabaseContext.Modules.AsQueryable();
             if (!GetUser().IsAdmin())
-                query = query.Where(m => m.OwnerId == GetUser().Id);
+                query = query.Where(m => m.OwnerId == GetUser().Id).IncludeTags();
             return Ok(await query.ToListAsync());
         }
         
@@ -117,9 +134,19 @@ namespace CSLabs.Api.Controllers
                 DatabaseContext.Update(module);
             else
                 DatabaseContext.Add(module);
+            // delete module tags
+            module.DeleteModuleTags(DatabaseContext);
+            // add tag relationships
+            module.AddModuleTags(DatabaseContext);
             await DatabaseContext.SaveChangesAsync();
             await DatabaseContext.Entry(module).Collection(m => m.Labs).LoadAsync();
-            return Ok(module);
+            return Ok( 
+                await DatabaseContext.Modules
+                    .AsNoTracking()
+                    .Where(m => m.Id == module.Id)
+                    .IncludeTags()
+                    .ToListAsync()
+            );
         }
     }
 }
