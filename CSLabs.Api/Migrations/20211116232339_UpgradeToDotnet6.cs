@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace CSLabs.Api.Migrations
 {
-    public partial class DotnetUpgradeTo5 : Migration
+    public partial class UpgradeToDotnet6 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

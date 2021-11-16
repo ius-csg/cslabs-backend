@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
@@ -14,8 +16,8 @@ namespace CSLabs.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 64)
-                .HasAnnotation("ProductVersion", "5.0.10");
+                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("CSLabs.Api.Models.Badge", b =>
                 {
@@ -62,7 +64,7 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_badges_name");
 
-                    b.ToTable("badges");
+                    b.ToTable("badges", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ContactEmail", b =>
@@ -83,7 +85,7 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_contact_emails_email");
 
-                    b.ToTable("contact_emails");
+                    b.ToTable("contact_emails", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.Hypervisor", b =>
@@ -123,7 +125,7 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_hypervisors_no_vnc_url");
 
-                    b.ToTable("hypervisors");
+                    b.ToTable("hypervisors", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorNode", b =>
@@ -156,7 +158,7 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_hypervisor_nodes_name_hypervisor_id");
 
-                    b.ToTable("hypervisor_nodes");
+                    b.ToTable("hypervisor_nodes", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorVmTemplate", b =>
@@ -187,7 +189,7 @@ namespace CSLabs.Api.Migrations
                     b.HasIndex("VmTemplateId")
                         .HasDatabaseName("ix_hypervisor_vm_templates_vm_template_id");
 
-                    b.ToTable("hypervisor_vm_templates");
+                    b.ToTable("hypervisor_vm_templates", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.VmTemplate", b =>
@@ -215,28 +217,28 @@ namespace CSLabs.Api.Migrations
                     b.HasIndex("OwnerId")
                         .HasDatabaseName("ix_vm_template_owner_id");
 
-                    b.ToTable("vm_template");
+                    b.ToTable("vm_template", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.Maintenance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("EndTime")
-                        .HasColumnName("end_time")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("end_time");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnName("start_time")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("start_time");
 
                     b.HasKey("Id")
                         .HasName("pk_maintenances");
 
-                    b.ToTable("maintenances");
+                    b.ToTable("maintenances", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.BridgeTemplate", b =>
@@ -278,7 +280,7 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_bridge_templates_lab_id_uuid");
 
-                    b.ToTable("bridge_templates");
+                    b.ToTable("bridge_templates", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Lab", b =>
@@ -335,7 +337,7 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_labs_name_module_id");
 
-                    b.ToTable("labs");
+                    b.ToTable("labs", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.LabVm", b =>
@@ -387,7 +389,7 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_lab_vms_name_lab_id");
 
-                    b.ToTable("lab_vms");
+                    b.ToTable("lab_vms", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Module", b =>
@@ -409,8 +411,8 @@ namespace CSLabs.Api.Migrations
                         .HasColumnName("description");
 
                     b.Property<bool>("Disabled")
-                        .HasColumnName("disabled")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("disabled");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -456,7 +458,7 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_modules_special_code");
 
-                    b.ToTable("modules");
+                    b.ToTable("modules", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.VmInterfaceTemplate", b =>
@@ -496,75 +498,75 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_vm_interface_templates_interface_number_lab_vm_id");
 
-                    b.ToTable("vm_interface_templates");
+                    b.ToTable("vm_interface_templates", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.SystemMessage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnName("created_at")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnName("description")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext")
+                        .HasColumnName("description");
 
                     b.Property<DateTime>("EndTime")
-                        .HasColumnName("end_time")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("end_time");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnName("start_time")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("start_time");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnName("type")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext")
+                        .HasColumnName("type");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnName("updated_at")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("Id")
                         .HasName("pk_system_messages");
 
-                    b.ToTable("system_messages");
+                    b.ToTable("system_messages", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.SystemStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("id");
 
                     b.Property<int>("HypervisorId")
-                        .HasColumnName("hypervisor_id")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("hypervisor_id");
 
                     b.Property<int>("HypervisorNodesUp")
-                        .HasColumnName("hypervisor_nodes_up")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("hypervisor_nodes_up");
 
                     b.Property<bool>("Quorum")
-                        .HasColumnName("quorum")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("quorum");
 
                     b.Property<int>("TotalNodes")
-                        .HasColumnName("total_nodes")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("total_nodes");
 
                     b.HasKey("Id")
                         .HasName("pk_system_statuses");
 
-                    b.ToTable("system_statuses");
+                    b.ToTable("system_statuses", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.BridgeInstance", b =>
@@ -599,7 +601,7 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_bridge_instances_user_lab_id_hypervisor_interface_id");
 
-                    b.ToTable("bridge_instances");
+                    b.ToTable("bridge_instances", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.User", b =>
@@ -684,7 +686,7 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_users_password_recovery_code");
 
-                    b.ToTable("users");
+                    b.ToTable("users", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserLab", b =>
@@ -750,7 +752,7 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_user_labs_user_module_id_lab_id");
 
-                    b.ToTable("user_labs");
+                    b.ToTable("user_labs", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserLabVm", b =>
@@ -808,7 +810,7 @@ namespace CSLabs.Api.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_user_lab_vms_user_lab_id_lab_vm_id");
 
-                    b.ToTable("user_lab_vms");
+                    b.ToTable("user_lab_vms", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserModule", b =>
@@ -844,7 +846,7 @@ namespace CSLabs.Api.Migrations
                     b.HasIndex("ModuleId")
                         .HasDatabaseName("ix_user_modules_module_id");
 
-                    b.ToTable("user_modules");
+                    b.ToTable("user_modules", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserUserModule", b =>
@@ -863,7 +865,7 @@ namespace CSLabs.Api.Migrations
                     b.HasIndex("UserModuleId")
                         .HasDatabaseName("ix_user_user_module_user_module_id");
 
-                    b.ToTable("user_user_module");
+                    b.ToTable("user_user_module", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.VmInterfaceInstance", b =>
@@ -897,7 +899,7 @@ namespace CSLabs.Api.Migrations
                     b.HasIndex("VmInterfaceTemplateId")
                         .HasDatabaseName("ix_vm_interface_instances_vm_interface_template_id");
 
-                    b.ToTable("vm_interface_instances");
+                    b.ToTable("vm_interface_instances", (string)null);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorNode", b =>
@@ -905,9 +907,9 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.Hypervisor", "Hypervisor")
                         .WithMany("HypervisorNodes")
                         .HasForeignKey("HypervisorId")
-                        .HasConstraintName("fk_hypervisor_nodes_hypervisors_hypervisor_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_hypervisor_nodes_hypervisors_hypervisor_id");
 
                     b.Navigation("Hypervisor");
                 });
@@ -917,16 +919,16 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.HypervisorNode", "HypervisorNode")
                         .WithMany()
                         .HasForeignKey("HypervisorNodeId")
-                        .HasConstraintName("fk_hypervisor_vm_templates_hypervisor_nodes_hypervisor_node_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_hypervisor_vm_templates_hypervisor_nodes_hypervisor_node_id");
 
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.VmTemplate", "VmTemplate")
                         .WithMany("HypervisorVmTemplates")
                         .HasForeignKey("VmTemplateId")
-                        .HasConstraintName("fk_hypervisor_vm_templates_vm_template_vm_template_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_hypervisor_vm_templates_vm_template_vm_template_id");
 
                     b.Navigation("HypervisorNode");
 
@@ -938,8 +940,8 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.UserModels.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
-                        .HasConstraintName("fk_vm_template_users_owner_id")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_vm_template_users_owner_id");
 
                     b.Navigation("Owner");
                 });
@@ -949,9 +951,9 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Lab", "Lab")
                         .WithMany("BridgeTemplates")
                         .HasForeignKey("LabId")
-                        .HasConstraintName("fk_bridge_templates_labs_lab_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_bridge_templates_labs_lab_id");
 
                     b.Navigation("Lab");
                 });
@@ -961,9 +963,9 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Module", "Module")
                         .WithMany("Labs")
                         .HasForeignKey("ModuleId")
-                        .HasConstraintName("fk_labs_modules_module_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_labs_modules_module_id");
 
                     b.Navigation("Module");
                 });
@@ -973,16 +975,16 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Lab", "Lab")
                         .WithMany("LabVms")
                         .HasForeignKey("LabId")
-                        .HasConstraintName("fk_lab_vms_labs_lab_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_lab_vms_labs_lab_id");
 
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.VmTemplate", "VmTemplate")
                         .WithMany()
                         .HasForeignKey("VmTemplateId")
-                        .HasConstraintName("fk_lab_vms_vm_template_vm_template_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_lab_vms_vm_template_vm_template_id");
 
                     b.Navigation("Lab");
 
@@ -1004,16 +1006,16 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.BridgeTemplate", "BridgeTemplate")
                         .WithMany()
                         .HasForeignKey("BridgeTemplateId")
-                        .HasConstraintName("fk_vm_interface_templates_bridge_templates_bridge_template_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_vm_interface_templates_bridge_templates_bridge_template_id");
 
                     b.HasOne("CSLabs.Api.Models.ModuleModels.LabVm", "LabVm")
                         .WithMany("TemplateInterfaces")
                         .HasForeignKey("LabVmId")
-                        .HasConstraintName("fk_vm_interface_templates_lab_vms_lab_vm_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_vm_interface_templates_lab_vms_lab_vm_id");
 
                     b.Navigation("BridgeTemplate");
 
@@ -1025,16 +1027,16 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.BridgeTemplate", "BridgeTemplate")
                         .WithMany()
                         .HasForeignKey("BridgeTemplateId")
-                        .HasConstraintName("fk_bridge_instances_bridge_templates_bridge_template_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_bridge_instances_bridge_templates_bridge_template_id");
 
                     b.HasOne("CSLabs.Api.Models.UserModels.UserLab", "UserLab")
                         .WithMany("BridgeInstances")
                         .HasForeignKey("UserLabId")
-                        .HasConstraintName("fk_bridge_instances_user_labs_user_lab_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_bridge_instances_user_labs_user_lab_id");
 
                     b.Navigation("BridgeTemplate");
 
@@ -1046,22 +1048,22 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.HypervisorNode", "HypervisorNode")
                         .WithMany("UserLabs")
                         .HasForeignKey("HypervisorNodeId")
-                        .HasConstraintName("fk_user_labs_hypervisor_nodes_hypervisor_node_id")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_user_labs_hypervisor_nodes_hypervisor_node_id");
 
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Lab", "Lab")
                         .WithMany("UserLabs")
                         .HasForeignKey("LabId")
-                        .HasConstraintName("fk_user_labs_labs_lab_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_labs_labs_lab_id");
 
                     b.HasOne("CSLabs.Api.Models.UserModels.UserModule", "UserModule")
                         .WithMany("UserLabs")
                         .HasForeignKey("UserModuleId")
-                        .HasConstraintName("fk_user_labs_user_modules_user_module_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_labs_user_modules_user_module_id");
 
                     b.Navigation("HypervisorNode");
 
@@ -1075,23 +1077,23 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.HypervisorVmTemplate", "HypervisorVmTemplate")
                         .WithMany()
                         .HasForeignKey("HypervisorVmTemplateId")
-                        .HasConstraintName("fk_user_lab_vms_hypervisor_vm_templates_hypervisor_vm_template_")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_lab_vms_hypervisor_vm_templates_hypervisor_vm_template_");
 
                     b.HasOne("CSLabs.Api.Models.ModuleModels.LabVm", "LabVm")
                         .WithMany()
                         .HasForeignKey("LabVmId")
-                        .HasConstraintName("fk_user_lab_vms_lab_vms_lab_vm_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_lab_vms_lab_vms_lab_vm_id");
 
                     b.HasOne("CSLabs.Api.Models.UserModels.UserLab", "UserLab")
                         .WithMany("UserLabVms")
                         .HasForeignKey("UserLabId")
-                        .HasConstraintName("fk_user_lab_vms_user_labs_user_lab_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_lab_vms_user_labs_user_lab_id");
 
                     b.Navigation("HypervisorVmTemplate");
 
@@ -1105,9 +1107,9 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Module", "Module")
                         .WithMany()
                         .HasForeignKey("ModuleId")
-                        .HasConstraintName("fk_user_modules_modules_module_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_modules_modules_module_id");
 
                     b.Navigation("Module");
                 });
@@ -1117,16 +1119,16 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.UserModels.User", "User")
                         .WithMany("UserUserModules")
                         .HasForeignKey("UserId")
-                        .HasConstraintName("fk_user_user_module_users_user_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_user_module_users_user_id");
 
                     b.HasOne("CSLabs.Api.Models.UserModels.UserModule", "UserModule")
                         .WithMany("UserUserModules")
                         .HasForeignKey("UserModuleId")
-                        .HasConstraintName("fk_user_user_module_user_modules_user_module_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_user_user_module_user_modules_user_module_id");
 
                     b.Navigation("User");
 
@@ -1138,23 +1140,23 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.UserModels.BridgeInstance", "BridgeInstance")
                         .WithMany("InterfaceInstances")
                         .HasForeignKey("BridgeInstanceId")
-                        .HasConstraintName("fk_vm_interface_instances_bridge_instances_bridge_instance_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_vm_interface_instances_bridge_instances_bridge_instance_id");
 
                     b.HasOne("CSLabs.Api.Models.UserModels.UserLabVm", "UserLabVm")
                         .WithMany("InterfaceInstances")
                         .HasForeignKey("UserLabVmId")
-                        .HasConstraintName("fk_vm_interface_instances_user_lab_vms_user_lab_vm_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_vm_interface_instances_user_lab_vms_user_lab_vm_id");
 
                     b.HasOne("CSLabs.Api.Models.ModuleModels.VmInterfaceTemplate", "Template")
                         .WithMany()
                         .HasForeignKey("VmInterfaceTemplateId")
-                        .HasConstraintName("fk_vm_interface_instances_vm_interface_templates_vm_interface_t")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("fk_vm_interface_instances_vm_interface_templates_vm_interface_t");
 
                     b.Navigation("BridgeInstance");
 
