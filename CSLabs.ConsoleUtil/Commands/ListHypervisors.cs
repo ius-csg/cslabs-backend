@@ -15,14 +15,10 @@ namespace CSLabs.ConsoleUtil.Commands
     public class ListHypervisorsCommand : AsyncCommand<ListHypervisorsOptions>
     {
         private readonly DefaultContext _context;
-        
-        // Do we need this field? It's totally unread, only ever set in the constructor but never used
-        private readonly string _encryptionKey;
-        
+
         public ListHypervisorsCommand(DefaultContext context, AppSettings appSettings)
         {
             _context = context;
-            _encryptionKey = appSettings.ProxmoxEncryptionKey;
         }
         
         public override async Task Run(ListHypervisorsOptions options)
