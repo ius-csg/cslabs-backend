@@ -16,7 +16,7 @@ namespace CSLabs.ConsoleUtil.Commands
     {
         private readonly DefaultContext _context;
 
-        public ListHypervisorsCommand(DefaultContext context, AppSettings appSettings)
+        public ListHypervisorsCommand(DefaultContext context)
         {
             _context = context;
         }
