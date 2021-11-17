@@ -72,7 +72,7 @@ namespace CSLabs.Api.Models.ModuleModels
         public void DeleteModuleTags(DefaultContext context)
         {
             var currentModuleTags = context.Modules.AsNoTracking().IncludeTags().First(m => m.Id == Id).ModuleTags;
-            var tagsToBeDeleted = currentModuleTags.Where(mt => !ModuleTags.Contains(mt)).ToList();
+            var tagsToBeDeleted = currentModuleTags.Where(mt => !ModuleTags.Any(m => m.TagId == mt.TagId)).ToList();
             foreach (var moduleTag in tagsToBeDeleted)
             {
                 context.Entry(moduleTag).State = EntityState.Deleted;

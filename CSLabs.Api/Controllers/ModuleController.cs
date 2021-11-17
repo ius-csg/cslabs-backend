@@ -140,13 +140,7 @@ namespace CSLabs.Api.Controllers
             module.AddModuleTags(DatabaseContext);
             await DatabaseContext.SaveChangesAsync();
             await DatabaseContext.Entry(module).Collection(m => m.Labs).LoadAsync();
-            return Ok( 
-                await DatabaseContext.Modules
-                    .AsNoTracking()
-                    .Where(m => m.Id == module.Id)
-                    .IncludeTags()
-                    .ToListAsync()
-            );
+            return Ok(module);
         }
     }
 }
