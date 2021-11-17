@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Transactions;
 using AutoMapper;
 using CSLabs.Api.Config;
 using CSLabs.Api.Services;
@@ -16,7 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Hangfire;
-using Hangfire.SqlServer;
+using Hangfire.MySql;
 
 namespace CSLabs.Api
 {
@@ -67,21 +68,30 @@ namespace CSLabs.Api
             services.ProvideAppServices();
             
             // Add Hangfire services.
+            var hangfireConnectionString = Configuration.GetConnectionString("HangfireConnection");
             services.AddHangfire(configuration => configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
-                .UseSqlServerStorage(Configuration.GetConnectionString("HangfireConnection"), new SqlServerStorageOptions
-                {
-                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                    QueuePollInterval = TimeSpan.Zero,
-                    UseRecommendedIsolationLevel = true,
-                    DisableGlobalLocks = true
-                }));
+                .UseStorage(
+                    new MySqlStorage(
+                        hangfireConnectionString, 
+                        new MySqlStorageOptions
+                        {
+                            TransactionIsolationLevel = IsolationLevel.ReadCommitted,
+                            QueuePollInterval = TimeSpan.FromSeconds(15),
+                            JobExpirationCheckInterval = TimeSpan.FromHours(1),
+                            CountersAggregateInterval = TimeSpan.FromMinutes(5),
+                            PrepareSchemaIfNecessary = true,
+                            DashboardJobListLimit = 50000,
+                            TransactionTimeout = TimeSpan.FromMinutes(1),
+                            TablesPrefix = "Hangfire"
+                        }
+                    )));
+
 
             // Add the processing server as IHostedService
-            services.AddHangfireServer();
+            services.AddHangfireServer(options => options.WorkerCount = 1);
         }
 
         private void ConfigureEmail(IServiceCollection services, EmailSettings emailSettings)
@@ -155,7 +165,7 @@ namespace CSLabs.Api
 //            app.UseHttpsRedirection();
             app.UseAuthentication();
             
-            app.UseHangfireDashboard();
+            //app.UseHangfireDashboard();
             //BackgroundJob.Enqueue(() => Console.WriteLine("Hello world from Hangfire!")); // this line is for testing
             
             app.UseMvc(routes =>
