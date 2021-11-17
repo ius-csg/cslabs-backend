@@ -12,10 +12,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CSLabs.ConsoleUtil
 {
-    class Program
+    static class Program
     {
 
-        public static List<Type> Commands = new List<Type>
+        public static readonly List<Type> Commands = new List<Type>
         {
             typeof(AddHypervisorCommand),
             typeof(AddHypervisorNodeCommand),
