@@ -4,8 +4,10 @@ using System.Reflection;
 using System.Text;
 using AutoMapper;
 using CSLabs.Api.Config;
+using CSLabs.Api.Jobs;
 using CSLabs.Api.Services;
 using CSLabs.Api.Util;
+using FluentScheduler;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -119,6 +121,8 @@ namespace CSLabs.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            JobManager.Initialize(new JobRegistry(app.ApplicationServices));
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -129,6 +133,7 @@ namespace CSLabs.Api
             }
             app.UseCors(CorsPolicyName);
             app.UseRouting();
+            
 //            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc(routes =>
