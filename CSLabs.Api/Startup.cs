@@ -69,10 +69,10 @@ namespace CSLabs.Api
             services.ProvideAppServices();
             
             // Add Hangfire services.
-            //var hangfireConnectionString = Configuration.GetConnectionString("HangfireConnection");
+            var hangfireConnectionString = Configuration.GetConnectionString("HangfireConnection");
             services.AddHangfire(configuration => configuration.UseStorage(
                     new MySqlStorage(
-                        "Server=localhost;Database=cslabs_backend;User=root;Password=;Allow User Variables=True", 
+                        hangfireConnectionString, 
                         new MySqlStorageOptions
                         {
                             TransactionIsolationLevel = IsolationLevel.ReadCommitted,
