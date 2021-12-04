@@ -19,6 +19,7 @@ using Newtonsoft.Json.Serialization;
 using Hangfire;
 using Hangfire.MySql;
 
+
 namespace CSLabs.Api
 {
     public class Startup
@@ -161,8 +162,7 @@ namespace CSLabs.Api
 //            app.UseHttpsRedirection();
             app.UseAuthentication();
             
-            //app.UseHangfireDashboard();
-            //BackgroundJob.Enqueue(() => Console.WriteLine("Hello world from Hangfire!")); // this line is for testing
+            app.UseHangfireDashboard("/hangfire");
             
             app.UseMvc(routes =>
             {
