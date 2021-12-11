@@ -144,6 +144,7 @@ namespace CSLabs.Api
                     template: "{controller:slugify}/{action:slugify}/{id?}");
             });
             
+            // Initialize Fluent Scheduler. Jobs are scheduled in the JobRegistry class
             JobManager.Initialize(new JobRegistry(app.ApplicationServices));
             
             

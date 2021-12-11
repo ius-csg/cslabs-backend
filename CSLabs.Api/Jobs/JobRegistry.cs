@@ -8,7 +8,9 @@ namespace CSLabs.Api.Jobs
     {
         public JobRegistry(IServiceProvider provider)
         {
-            Schedule(() => new ExampleJob(provider)).ToRunNow().AndEvery(2).Seconds();
+            // Schedule new jobs here
+            // Schedule(() => new ExampleJob(provider)).ToRunNow().AndEvery(2).Seconds();
+            
         }
     }
 }

@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Linq;
+using CSLabs.Api.Controllers;
 using CSLabs.Api.Models;
+using CSLabs.Api.Proxmox;
 using FluentScheduler;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CSLabs.Api.Jobs
 {
-    public class ExampleJob : IJob
+    public class NodeStatusJob : IJob
     {
         private IServiceProvider _provider;
-        public ExampleJob(IServiceProvider provider)
+        public NodeStatusJob(IServiceProvider provider)
         {
             _provider = provider;
         }
@@ -19,7 +23,7 @@ namespace CSLabs.Api.Jobs
             using var context = scope.ServiceProvider.GetService<DefaultContext>();
             
             // Do job
-            Console.WriteLine("Job Ran!");
+            
         }
     }
 }
