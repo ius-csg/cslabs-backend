@@ -7,7 +7,7 @@ namespace CSLabs.Api.Jobs
 {
     public class ExampleJob : IJob
     {
-        private IServiceProvider _provider;
+        private readonly IServiceProvider _provider;
         public ExampleJob(IServiceProvider provider)
         {
             _provider = provider;
