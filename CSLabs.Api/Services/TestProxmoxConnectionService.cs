@@ -71,7 +71,6 @@ namespace CSLabs.Api.Services
                 await Context.SaveChangesAsync();
             }
 
-            //return Ok("All Hypervisors are up and responding");
             return new OkObjectResult("All Hypervisors are up and responding");
         }
     }
