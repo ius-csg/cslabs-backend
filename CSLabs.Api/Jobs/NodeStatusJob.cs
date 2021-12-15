@@ -26,14 +26,8 @@ namespace CSLabs.Api.Jobs
             
             // Do job
             var connectionService = new TestProxmoxConnectionService(context);
-            try
-            {
-                await connectionService.TestProxmoxConnection();
-            }
-            catch (NoQuorumException)
-            {
-                
-            }
+            await connectionService.TestProxmoxConnection();
+
         }
     }
 }

@@ -42,6 +42,7 @@ namespace CSLabs.Api.Services
                     catch (ProxmoxRequestException)
                     {
                         // GetClusterStatus failed, so no nodes are up 
+                        // Zac said change this, no quorum is when 50% or less of the nodes are up
                         systemStatus.HypervisorNodesUp = 0;
                         await Context.SaveChangesAsync();
                     }
