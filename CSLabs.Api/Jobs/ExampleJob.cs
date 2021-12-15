@@ -19,7 +19,6 @@ namespace CSLabs.Api.Jobs
             using var context = scope.ServiceProvider.GetService<DefaultContext>();
             
             // Do job
-            Console.WriteLine("Job Ran!");
         }
     }
 }
