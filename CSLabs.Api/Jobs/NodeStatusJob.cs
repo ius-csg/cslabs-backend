@@ -19,11 +19,6 @@ namespace CSLabs.Api.Jobs
             _provider = provider;
         }
 
-        // public void Execute()
-        // {
-        //     ExecuteAsync().Wait();
-        // }
-
         protected override async Task ExecuteAsync()
         {
             using var scope = _provider.CreateScope();
@@ -31,7 +26,14 @@ namespace CSLabs.Api.Jobs
             
             // Do job
             var connectionService = new TestProxmoxConnectionService(context);
-            await connectionService.TestProxmoxConnection();
+            try
+            {
+                await connectionService.TestProxmoxConnection();
+            }
+            catch (NoQuorumException)
+            {
+                
+            }
         }
     }
 }
