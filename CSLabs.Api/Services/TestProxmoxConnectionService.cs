@@ -74,5 +74,51 @@ namespace CSLabs.Api.Services
 
             return new OkObjectResult("All Hypervisors are up and responding");
         }
+
+        public async Task<IActionResult> TestLabVmConnection()
+        {
+            var hypervisors = await Context.Hypervisors
+                .Include(h => h.HypervisorNodes)
+                .ToListAsync();
+        
+            var labVms = await Context.LabVms
+                .Include(v => v.Id)
+                .ToListAsync();
+            
+            var systemStatus = Context.SystemStatuses.First(); // Get current system status
+
+            try
+            {
+                foreach (var hypervisor in hypervisors)
+                {
+
+                    var api = ProxmoxManager.GetProxmoxApi(hypervisor.HypervisorNodes.First());
+
+                    foreach (var labVm in labVms)
+                    {
+                        try
+                        {
+                            var vmStatus = await api.GetVmStatus(labVm.Id);
+                            if (vmStatus.IsStopped())
+                            {
+                                //resolve if the vm is down
+                            }
+                        }
+                        catch (ProxmoxRequestException)
+                        {
+
+                        }
+
+                    }
+                }
+            }
+            catch ()
+            {
+                
+            }
+            
+            return new OkObjectResult("All LabVMs are up and responding");
+        }
+        
     }
 }
