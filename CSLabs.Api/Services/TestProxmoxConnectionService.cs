@@ -86,35 +86,27 @@ namespace CSLabs.Api.Services
                 .ToListAsync();
             
             var systemStatus = Context.SystemStatuses.First(); // Get current system status
-
-            try
+            
+            foreach (var hypervisor in hypervisors) 
             {
-                foreach (var hypervisor in hypervisors)
-                {
-
-                    var api = ProxmoxManager.GetProxmoxApi(hypervisor.HypervisorNodes.First());
-
-                    foreach (var labVm in labVms)
-                    {
-                        try
-                        {
-                            var vmStatus = await api.GetVmStatus(labVm.Id);
-                            if (vmStatus.IsStopped())
-                            {
-                                //resolve if the vm is down
-                            }
-                        }
-                        catch (ProxmoxRequestException)
-                        {
-
-                        }
-
-                    }
-                }
-            }
-            catch ()
-            {
+                var api = ProxmoxManager.GetProxmoxApi(hypervisor.HypervisorNodes.First());
                 
+                foreach (var labVm in labVms) 
+                { 
+                    try 
+                    { 
+                        var vmStatus = await api.GetVmStatus(labVm.Id); 
+                        if (vmStatus.IsStopped()) 
+                        { 
+                            //resolve if the vm is down
+                        }
+                    }
+                    catch (ProxmoxRequestException) 
+                    {
+                        
+                    }
+
+                }
             }
             
             return new OkObjectResult("All LabVMs are up and responding");
