@@ -4,8 +4,10 @@ using System.Reflection;
 using System.Text;
 using AutoMapper;
 using CSLabs.Api.Config;
+using CSLabs.Api.Jobs;
 using CSLabs.Api.Services;
 using CSLabs.Api.Util;
+using FluentScheduler;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -141,6 +143,11 @@ namespace CSLabs.Api
                     name: "default",
                     template: "{controller:slugify}/{action:slugify}/{id?}");
             });
+            
+            // Initialize Fluent Scheduler. Jobs are scheduled in the JobRegistry class
+            JobManager.Initialize(new JobRegistry(app.ApplicationServices));
+            
+            
         }
     }
 }

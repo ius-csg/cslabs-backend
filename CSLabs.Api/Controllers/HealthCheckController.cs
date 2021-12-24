@@ -21,7 +21,7 @@ namespace CSLabs.Api.Controllers
             var count = await DatabaseContext.Users.CountAsync();
             return Ok("Everything seems to be operational, user count: " + count);
         }
-
+        
         [HttpGet("proxmox")]
         public async Task<IActionResult> TestProxmoxConnection()
         {
@@ -50,7 +50,7 @@ namespace CSLabs.Api.Controllers
                         systemStatus.HypervisorNodesUp = 0;
                         await DatabaseContext.SaveChangesAsync();
                     }
-                    
+
                     // check the status of all the nodes and count how many are up
                     foreach (var node in hypervisor.HypervisorNodes)
                     {
@@ -64,7 +64,7 @@ namespace CSLabs.Api.Controllers
                             // do not increment nodes up if the request fails.
                         }
                     }
-                    
+
                     systemStatus.HypervisorNodesUp = nodesUp;
                     await DatabaseContext.SaveChangesAsync();
                 }
@@ -78,7 +78,5 @@ namespace CSLabs.Api.Controllers
 
             return Ok("All Hypervisors are up and responding");
         }
-
-       
     }
 }
