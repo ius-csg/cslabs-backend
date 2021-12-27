@@ -96,9 +96,35 @@ namespace CSLabs.Api.Services
                     try 
                     { 
                         var vmStatus = await api.GetVmStatus(labVm.Id); 
-                        if (vmStatus.IsStopped()) 
+                        if (vmStatus.IsStopped())  // vm is down
                         { 
-                            //resolve if the vm is down
+                            // attempt to restart the vm
+                            try
+                            {
+                                await api.ResetVM(labVm.Id); // 1st attempt
+                            }
+                            catch (ProxmoxRequestException)
+                            {
+                                try
+                                {
+                                    await api.ResetVM(labVm.Id); // 2nd attempt
+                                }
+                                catch (ProxmoxRequestException)
+                                {
+                                    try
+                                    {
+                                        //third attempt
+                                        await api.StopVM(labVm.Id);
+                                        //await api.ShutdownVm(labVm.Id);
+                                        await api.StartVM(labVm.Id);
+                                    }
+                                    catch (ProxmoxRequestException)
+                                    {
+                                        // third attempt at restarting has failed. Something really bad has happened
+                                        // and the maintainers need to be emailed
+                                    }
+                                }
+                            }
                         }
                     }
                     catch (ProxmoxRequestException) 
