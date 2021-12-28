@@ -20,7 +20,7 @@ Follow these tutorials to get started.
 
 ## Setup
 
-* [.NET Core](https://dotnet.microsoft.com/download) Download the latest .net core 3.1 SDK
+* [.NET Core](https://dotnet.microsoft.com/download) Download the latest .net core 6 SDK
 * Install entity framework tools `dotnet tool install --global dotnet-ef`
 * The Official IDE is Rider. Visual Studio 2019 Can be used as a fallback (Rider is preferred) but you have to set the launch profile to CSLabsBackend
 * Copy `appsetting.Example.json` to `appsettings.json`
