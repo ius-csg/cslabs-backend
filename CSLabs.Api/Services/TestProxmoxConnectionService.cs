@@ -84,9 +84,7 @@ namespace CSLabs.Api.Services
             var labVms = await Context.LabVms
                 .Include(v => v.Id)
                 .ToListAsync();
-            
-            var systemStatus = Context.SystemStatuses.First(); // Get current system status
-            
+
             foreach (var hypervisor in hypervisors) 
             {
                 var api = ProxmoxManager.GetProxmoxApi(hypervisor.HypervisorNodes.First());
