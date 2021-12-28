@@ -13,6 +13,7 @@ namespace CSLabs.Api.Jobs
             
             // Schedule new jobs here
             Schedule(() => new VmStatusJob(provider)).ToRunEvery(1).Minutes();
+            Schedule(() => new NodeStatusJob(provider)).ToRunEvery(3).Minutes();
 
         }
     }
