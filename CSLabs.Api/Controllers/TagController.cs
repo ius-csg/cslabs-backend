@@ -30,8 +30,8 @@ namespace CSLabs.Api.Controllers
             return Ok(tag);
         }
 
-        [HttpGet("/tag/{tag}")]
-        public async Task<IActionResult> Get(String tag)
+        [HttpGet("search/{tag}")]
+        public async Task<IActionResult> Search(string tag)
         {
             var searchTerm = "%" + tag + "%";
             return Ok(
