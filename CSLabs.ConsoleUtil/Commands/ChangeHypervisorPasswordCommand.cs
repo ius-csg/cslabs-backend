@@ -19,8 +19,8 @@ namespace CSLabs.ConsoleUtil.Commands
     
     public class ChangeHypervisorPasswordCommand : AsyncCommand<ChangeHypervisorPasswordOptions>
     {
-        private DefaultContext _context;
-        private string _encryptionKey;
+        private readonly DefaultContext _context;
+        private readonly string _encryptionKey;
         
         public ChangeHypervisorPasswordCommand(DefaultContext context, AppSettings appSettings)
         {

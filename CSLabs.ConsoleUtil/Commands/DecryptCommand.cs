@@ -13,7 +13,7 @@ namespace CSLabs.ConsoleUtil.Commands
     }
     public class DecryptCommand : Command<DecryptOptions>
     {
-        private string _encryptionKey;
+        private readonly string _encryptionKey;
         
         public DecryptCommand(AppSettings appSettings)
         {

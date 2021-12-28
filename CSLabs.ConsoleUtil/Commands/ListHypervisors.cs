@@ -14,13 +14,11 @@ namespace CSLabs.ConsoleUtil.Commands
     
     public class ListHypervisorsCommand : AsyncCommand<ListHypervisorsOptions>
     {
-        private DefaultContext _context;
-        private string _encryptionKey;
-        
-        public ListHypervisorsCommand(DefaultContext context, AppSettings appSettings)
+        private readonly DefaultContext _context;
+
+        public ListHypervisorsCommand(DefaultContext context)
         {
             _context = context;
-            _encryptionKey = appSettings.ProxmoxEncryptionKey;
         }
         
         public override async Task Run(ListHypervisorsOptions options)

@@ -23,6 +23,7 @@
     <PackageReference Include="FluentEmail.Mailgun" Version="3.0.0" />
     <PackageReference Include="FluentEmail.Razor" Version="3.0.0" />
     <PackageReference Include="FluentEmail.Smtp" Version="3.0.0" />
+    <PackageReference Include="FluentScheduler" Version="5.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.App">
       <PrivateAssets Condition="'%(PackageReference.Version)' == ''">all</PrivateAssets>
       <Publish Condition="'%(PackageReference.Version)' == ''">true</Publish>
