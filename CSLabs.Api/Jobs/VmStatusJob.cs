@@ -20,7 +20,7 @@ namespace CSLabs.Api.Jobs
             using var context = scope.ServiceProvider.GetService<DefaultContext>();
             
             // Do job
-            var connectionService = new TestProxmoxConnectionService(context);
+            var connectionService = new TestVmConnectionService(context);
             await connectionService.TestLabVmConnection();
 
         }

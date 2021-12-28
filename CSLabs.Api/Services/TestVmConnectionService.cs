@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CSLabs.Api.Services
 {
-    public class TestProxmoxConnectionService
+    public class TestVmConnectionService
     {
         private DefaultContext Context { get; }
 
         private ProxmoxManager ProxmoxManager;
         
-        public TestProxmoxConnectionService(DefaultContext context)
+        public TestVmConnectionService(DefaultContext context)
         {
             Context = context;
         }
