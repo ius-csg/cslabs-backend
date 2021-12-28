@@ -101,21 +101,20 @@ namespace CSLabs.Api.Services
                             // attempt to restart the vm
                             try
                             {
-                                await api.ResetVM(labVm.Id); // 1st attempt
+                                await api.StartVM(labVm.Id); // 1st attempt
                             }
                             catch (ProxmoxRequestException)
                             {
                                 try
                                 {
-                                    await api.ResetVM(labVm.Id); // 2nd attempt
+                                    await api.StartVM(labVm.Id); // 2nd attempt
                                 }
                                 catch (ProxmoxRequestException)
                                 {
                                     try
                                     {
                                         //third attempt
-                                        await api.StopVM(labVm.Id);
-                                        //await api.ShutdownVm(labVm.Id);
+                                        await api.ShutdownVm(labVm.Id);
                                         await api.StartVM(labVm.Id);
                                     }
                                     catch (ProxmoxRequestException)
