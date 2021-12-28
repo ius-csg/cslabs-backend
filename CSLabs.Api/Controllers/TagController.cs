@@ -33,10 +33,9 @@ namespace CSLabs.Api.Controllers
         [HttpGet("search/{tag}")]
         public async Task<IActionResult> Search(string tag)
         {
-            var searchTerm = "%" + tag + "%";
             return Ok(
                 await DatabaseContext.Tags
-                    .Where(t => EF.Functions.Like(t.Name, searchTerm))
+                    .Where(t => EF.Functions.Like(t.Name, $"%{tag}%"))
                     .ToListAsync());
         }
     }
