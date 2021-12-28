@@ -17,6 +17,13 @@ namespace CSLabs.Api.Models
                 .ThenInclude(t => t.HypervisorNode)
                 .ThenInclude(n => n.Hypervisor);
         }
+
+        public static IQueryable<Module> IncludeTags(this IQueryable<Module> query)
+        {
+            return query
+                .Include(m => m.ModuleTags)
+                .ThenInclude(mt => mt.Tag);
+        }
         
         public static IQueryable<UserLab> IncludeRelations(this IQueryable<UserLab> query)
         {

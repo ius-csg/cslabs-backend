@@ -77,6 +77,8 @@ namespace CSLabs.Api.Controllers
             return Ok(DatabaseContext.UserModules
                 .WhereIncludesUser(GetUser())
                 .Include(u => u.Module)
+                .ThenInclude(m => m.ModuleTags)
+                .ThenInclude(mt => mt.Tag)
                 .ToList());
         }
 
@@ -86,6 +88,8 @@ namespace CSLabs.Api.Controllers
         {
             var module = await DatabaseContext.UserModules
                 .Include(um => um.Module)
+                .ThenInclude(m => m.ModuleTags)
+                .ThenInclude(mt => mt.Tag)
                 .Include(um => um.UserLabs)
                 .ThenInclude(ul => ul.UserLabVms)
                 .ThenInclude(vm => vm.LabVm)
