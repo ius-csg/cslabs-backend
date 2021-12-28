@@ -16,7 +16,7 @@ namespace CSLabs.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("CSLabs.Api.Models.Badge", b =>
@@ -106,12 +106,12 @@ namespace CSLabs.Api.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("password");
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("user_name");
 
                     b.HasKey("Id")
@@ -204,7 +204,7 @@ namespace CSLabs.Api.Migrations
                         .HasColumnName("is_core_router");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("name");
 
                     b.Property<int?>("OwnerId")
@@ -318,7 +318,7 @@ namespace CSLabs.Api.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("type");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -407,7 +407,7 @@ namespace CSLabs.Api.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("description");
 
                     b.Property<bool>("Disabled")
@@ -434,7 +434,7 @@ namespace CSLabs.Api.Migrations
                     b.Property<string>("Type")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("longtext")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasDefaultValue("SingleUser")
                         .HasColumnName("type");
 
@@ -474,7 +474,7 @@ namespace CSLabs.Api.Migrations
 
                     b.Property<string>("BridgeTemplateUuid")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("bridge_template_uuid");
 
                     b.Property<int>("InterfaceNumber")
@@ -514,7 +514,7 @@ namespace CSLabs.Api.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("description");
 
                     b.Property<DateTime>("EndTime")
@@ -527,7 +527,7 @@ namespace CSLabs.Api.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("type");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -649,7 +649,8 @@ namespace CSLabs.Api.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("password");
 
                     b.Property<string>("PasswordRecoveryCode")
@@ -658,7 +659,7 @@ namespace CSLabs.Api.Migrations
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("role");
 
                     b.Property<DateTime?>("TerminationDate")
@@ -720,7 +721,7 @@ namespace CSLabs.Api.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("status");
 
                     b.Property<DateTime>("UpdatedAt")
