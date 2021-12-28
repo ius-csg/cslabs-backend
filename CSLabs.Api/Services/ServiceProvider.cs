@@ -14,16 +14,19 @@ namespace CSLabs.Api.Services
     {
         public static void ConfigureDatabase(this IServiceCollection services, string connectionString)
         {
-            services.AddDbContextPool<DefaultContext>(options => options.UseMySql(
+            services.AddDbContextPool<DefaultContext>(options => ConfigureMysql(options, connectionString));
+        }
+        public static void ConfigureMysql(DbContextOptionsBuilder options, string connectionString)
+        {
+            options.UseMySql(
                 connectionString,
                 ServerVersion.AutoDetect(connectionString),
                 mySqlOptions =>
                 {
                     options.UseSnakeCaseNamingConvention();
                 }
-            ));
+            );
         }
-        
         public static void ProvideAppServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthenticationService, AuthenticationService>();
