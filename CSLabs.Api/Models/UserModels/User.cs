@@ -31,9 +31,7 @@ namespace CSLabs.Api.Models.UserModels
         public string Email { get; set; }
         [Column(TypeName = "VARCHAR(100)")]
         public string EmailVerificationCode { get; set; }
-        
-        public bool Verified { get; set; }
-        
+          
         public int? GraduationYear { get; set; }
 
         [Required]
@@ -72,9 +70,6 @@ namespace CSLabs.Api.Models.UserModels
             builder.Unique<User>(u => u.Email);
             builder.Unique<User>(u => u.CardCodeHash);
             builder.Unique<User>(u => u.PasswordRecoveryCode);
-            builder.Entity<User>()
-                .Property(v=> v.Verified)
-                .HasDefaultValue(false); 
             builder.Entity<User>()
                 .Property(b => b.Password)
                 .HasDefaultValue(null);

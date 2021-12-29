@@ -106,7 +106,7 @@ namespace CSLabs.Api.Controllers
             await _authenticationService.ChangePassword(user, request.NewPassword);
             return Ok();
         }
-
+        
         [HttpPost("verify-email")]
         public async Task<IActionResult> VerifyEmail([FromBody] EmailVerificationRequest request)
         {
@@ -118,6 +118,30 @@ namespace CSLabs.Api.Controllers
                 return BadRequest(400);
             user.EmailVerificationCode = null;
             await DatabaseContext.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpGet("verify-user")]
+        public async Task<IActionResult> CheckUserVerification()
+        {
+            var user = GetUser();
+            if (user != null && user.EmailVerificationCode == null)
+            {
+                return Ok(true); 
+            }
+            else
+            {
+                return Ok(false); 
+            }
+        }
+        [HttpPost("resend-email")]
+        public async Task<IActionResult> ResendEmail()
+        {
+            var user =  GetUser();
+            user.EmailVerificationCode = Guid.NewGuid().ToString();
+            await CreateEmail().SendEmailVerification(user.Email, 
+                WebAppUrl + "/verify-email/" + user.EmailVerificationCode);
+
             return Ok();
         }
 
