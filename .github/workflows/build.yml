@@ -21,3 +21,4 @@ jobs:
           sonarProjectKey: ius-csg_cslabs-backend
           sonarProjectName: cslabs-backend
           sonarOrganization: ius-csg
+          dotnetBuildArguments: cslabs-backend.sln
