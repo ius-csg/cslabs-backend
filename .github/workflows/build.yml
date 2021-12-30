@@ -4,7 +4,6 @@ on:
     branches:
       - master
       - dev
-      - jc/sonarcloud-dotnet-6
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
