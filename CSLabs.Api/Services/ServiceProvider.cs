@@ -16,17 +16,17 @@ namespace CSLabs.Api.Services
         {
             services.AddDbContextPool<DefaultContext>(options => ConfigureMysql(options, connectionString));
         }
-
         public static void ConfigureMysql(DbContextOptionsBuilder options, string connectionString)
         {
-            options.UseMySql(connectionString, mySqlOptions =>
-            {
-                // change the version if needed.
-                options.UseSnakeCaseNamingConvention();
-                mySqlOptions.ServerVersion(new Version(10, 2, 13), ServerType.MariaDb);
-            });
+            options.UseMySql(
+                connectionString,
+                ServerVersion.AutoDetect(connectionString),
+                mySqlOptions =>
+                {
+                    options.UseSnakeCaseNamingConvention();
+                }
+            );
         }
-        
         public static void ProvideAppServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthenticationService, AuthenticationService>();

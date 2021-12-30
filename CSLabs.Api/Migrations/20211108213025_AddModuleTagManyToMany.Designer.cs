@@ -3,58 +3,58 @@ using System;
 using CSLabs.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-
-#nullable disable
 
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20211108213025_AddModuleTagManyToMany")]
+    partial class AddModuleTagManyToMany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "3.1.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("CSLabs.Api.Models.Badge", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("created_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("description");
+                        .HasColumnName("description")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("IconPath")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(255)")
-                        .HasColumnName("icon_path");
+                        .HasColumnName("icon_path")
+                        .HasColumnType("VARCHAR(255)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<int>("RequiredNumOfModules")
-                        .HasColumnType("int")
-                        .HasColumnName("required_num_of_modules");
+                        .HasColumnName("required_num_of_modules")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.HasKey("Id")
@@ -62,386 +62,386 @@ namespace CSLabs.Api.Migrations
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("ix_badges_name");
+                        .HasName("ix_badges_name");
 
-                    b.ToTable("badges", (string)null);
+                    b.ToTable("badges");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ContactEmail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
-                        .HasColumnType("VARCHAR(100)")
-                        .HasColumnName("email");
+                        .HasColumnName("email")
+                        .HasColumnType("VARCHAR(100)");
 
                     b.HasKey("Id")
                         .HasName("pk_contact_emails");
 
                     b.HasIndex("Email")
                         .IsUnique()
-                        .HasDatabaseName("ix_contact_emails_email");
+                        .HasName("ix_contact_emails_email");
 
-                    b.ToTable("contact_emails", (string)null);
+                    b.ToTable("contact_emails");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.Hypervisor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Host")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("host");
+                        .HasColumnName("host")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("NoVncUrl")
                         .IsRequired()
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("no_vnc_url");
+                        .HasColumnName("no_vnc_url")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("password");
+                        .HasColumnName("password")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("user_name");
+                        .HasColumnName("user_name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Id")
                         .HasName("pk_hypervisors");
 
                     b.HasIndex("Host")
                         .IsUnique()
-                        .HasDatabaseName("ix_hypervisors_host");
+                        .HasName("ix_hypervisors_host");
 
                     b.HasIndex("NoVncUrl")
                         .IsUnique()
-                        .HasDatabaseName("ix_hypervisors_no_vnc_url");
+                        .HasName("ix_hypervisors_no_vnc_url");
 
-                    b.ToTable("hypervisors", (string)null);
+                    b.ToTable("hypervisors");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorNode", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<int>("HypervisorId")
-                        .HasColumnType("int")
-                        .HasColumnName("hypervisor_id");
+                        .HasColumnName("hypervisor_id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<bool>("Primary")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("primary");
+                        .HasColumnName("primary")
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id")
                         .HasName("pk_hypervisor_nodes");
 
                     b.HasIndex("HypervisorId")
-                        .HasDatabaseName("ix_hypervisor_nodes_hypervisor_id");
+                        .HasName("ix_hypervisor_nodes_hypervisor_id");
 
                     b.HasIndex("Name", "HypervisorId")
                         .IsUnique()
-                        .HasDatabaseName("ix_hypervisor_nodes_name_hypervisor_id");
+                        .HasName("ix_hypervisor_nodes_name_hypervisor_id");
 
-                    b.ToTable("hypervisor_nodes", (string)null);
+                    b.ToTable("hypervisor_nodes");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorVmTemplate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<int>("HypervisorNodeId")
-                        .HasColumnType("int")
-                        .HasColumnName("hypervisor_node_id");
+                        .HasColumnName("hypervisor_node_id")
+                        .HasColumnType("int");
 
                     b.Property<int>("TemplateVmId")
-                        .HasColumnType("int")
-                        .HasColumnName("template_vm_id");
+                        .HasColumnName("template_vm_id")
+                        .HasColumnType("int");
 
                     b.Property<int>("VmTemplateId")
-                        .HasColumnType("int")
-                        .HasColumnName("vm_template_id");
+                        .HasColumnName("vm_template_id")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("pk_hypervisor_vm_templates");
 
                     b.HasIndex("HypervisorNodeId")
-                        .HasDatabaseName("ix_hypervisor_vm_templates_hypervisor_node_id");
+                        .HasName("ix_hypervisor_vm_templates_hypervisor_node_id");
 
                     b.HasIndex("VmTemplateId")
-                        .HasDatabaseName("ix_hypervisor_vm_templates_vm_template_id");
+                        .HasName("ix_hypervisor_vm_templates_vm_template_id");
 
-                    b.ToTable("hypervisor_vm_templates", (string)null);
+                    b.ToTable("hypervisor_vm_templates");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.VmTemplate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsCoreRouter")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_core_router");
+                        .HasColumnName("is_core_router")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<int?>("OwnerId")
-                        .HasColumnType("int")
-                        .HasColumnName("owner_id");
+                        .HasColumnName("owner_id")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("pk_vm_template");
 
                     b.HasIndex("OwnerId")
-                        .HasDatabaseName("ix_vm_template_owner_id");
+                        .HasName("ix_vm_template_owner_id");
 
-                    b.ToTable("vm_template", (string)null);
+                    b.ToTable("vm_template");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.Maintenance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("end_time");
+                        .HasColumnName("end_time")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("start_time");
+                        .HasColumnName("start_time")
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id")
                         .HasName("pk_maintenances");
 
-                    b.ToTable("maintenances", (string)null);
+                    b.ToTable("maintenances");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.BridgeTemplate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsCoreBridge")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_core_bridge");
+                        .HasColumnName("is_core_bridge")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("LabId")
-                        .HasColumnType("int")
-                        .HasColumnName("lab_id");
+                        .HasColumnName("lab_id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("Uuid")
                         .IsRequired()
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("uuid");
+                        .HasColumnName("uuid")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.HasKey("Id")
                         .HasName("pk_bridge_templates");
 
                     b.HasIndex("LabId")
-                        .HasDatabaseName("ix_bridge_templates_lab_id");
+                        .HasName("ix_bridge_templates_lab_id");
 
                     b.HasIndex("LabId", "Name")
                         .IsUnique()
-                        .HasDatabaseName("ix_bridge_templates_lab_id_name");
+                        .HasName("ix_bridge_templates_lab_id_name");
 
                     b.HasIndex("LabId", "Uuid")
                         .IsUnique()
-                        .HasDatabaseName("ix_bridge_templates_lab_id_uuid");
+                        .HasName("ix_bridge_templates_lab_id_uuid");
 
-                    b.ToTable("bridge_templates", (string)null);
+                    b.ToTable("bridge_templates");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Lab", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("created_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.Property<int>("EstimatedCpusUsed")
-                        .HasColumnType("int")
-                        .HasColumnName("estimated_cpus_used");
+                        .HasColumnName("estimated_cpus_used")
+                        .HasColumnType("int");
 
                     b.Property<int>("EstimatedMemoryUsedMb")
-                        .HasColumnType("int")
-                        .HasColumnName("estimated_memory_used_mb");
+                        .HasColumnName("estimated_memory_used_mb")
+                        .HasColumnType("int");
 
                     b.Property<int>("LabDifficulty")
-                        .HasColumnType("int")
-                        .HasColumnName("lab_difficulty");
+                        .HasColumnName("lab_difficulty")
+                        .HasColumnType("int");
 
                     b.Property<int>("ModuleId")
-                        .HasColumnType("int")
-                        .HasColumnName("module_id");
+                        .HasColumnName("module_id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("VARCHAR(100)")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("type");
+                        .HasColumnName("type")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.HasKey("Id")
                         .HasName("pk_labs");
 
                     b.HasIndex("ModuleId")
-                        .HasDatabaseName("ix_labs_module_id");
+                        .HasName("ix_labs_module_id");
 
                     b.HasIndex("Name", "ModuleId")
                         .IsUnique()
-                        .HasDatabaseName("ix_labs_name_module_id");
+                        .HasName("ix_labs_name_module_id");
 
-                    b.ToTable("labs", (string)null);
+                    b.ToTable("labs");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.LabVm", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("created_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.Property<bool>("IsCoreRouter")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_core_router");
+                        .HasColumnName("is_core_router")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("LabId")
-                        .HasColumnType("int")
-                        .HasColumnName("lab_id");
+                        .HasColumnName("lab_id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(100)")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.Property<int>("VmTemplateId")
-                        .HasColumnType("int")
-                        .HasColumnName("vm_template_id");
+                        .HasColumnName("vm_template_id")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("pk_lab_vms");
 
                     b.HasIndex("LabId")
-                        .HasDatabaseName("ix_lab_vms_lab_id");
+                        .HasName("ix_lab_vms_lab_id");
 
                     b.HasIndex("VmTemplateId")
-                        .HasDatabaseName("ix_lab_vms_vm_template_id");
+                        .HasName("ix_lab_vms_vm_template_id");
 
                     b.HasIndex("Name", "LabId")
                         .IsUnique()
-                        .HasDatabaseName("ix_lab_vms_name_lab_id");
+                        .HasName("ix_lab_vms_name_lab_id");
 
-                    b.ToTable("lab_vms", (string)null);
+                    b.ToTable("lab_vms");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Module", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("created_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("description");
+                        .HasColumnName("description")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<bool>("Disabled")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("disabled");
+                        .HasColumnName("disabled")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<int?>("OwnerId")
-                        .HasColumnType("int")
-                        .HasColumnName("owner_id");
+                        .HasColumnName("owner_id")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Published")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("published");
+                        .HasColumnName("published")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("SpecialCode")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("special_code");
+                        .HasColumnName("special_code")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.Property<string>("Type")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("longtext")
-                        .HasDefaultValue("SingleUser")
-                        .HasColumnName("type");
+                        .HasColumnName("type")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasDefaultValue("SingleUser");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.HasKey("Id")
@@ -449,267 +449,269 @@ namespace CSLabs.Api.Migrations
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("ix_modules_name");
+                        .HasName("ix_modules_name");
 
                     b.HasIndex("OwnerId")
-                        .HasDatabaseName("ix_modules_owner_id");
+                        .HasName("ix_modules_owner_id");
 
                     b.HasIndex("SpecialCode")
                         .IsUnique()
-                        .HasDatabaseName("ix_modules_special_code");
+                        .HasName("ix_modules_special_code");
 
-                    b.ToTable("modules", (string)null);
+                    b.ToTable("modules");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.ModuleTag", b =>
                 {
                     b.Property<int>("ModuleId")
-                        .HasColumnType("int")
-                        .HasColumnName("module_id");
+                        .HasColumnName("module_id")
+                        .HasColumnType("int");
 
                     b.Property<int>("TagId")
-                        .HasColumnType("int")
-                        .HasColumnName("tag_id");
+                        .HasColumnName("tag_id")
+                        .HasColumnType("int");
 
                     b.HasKey("ModuleId", "TagId")
                         .HasName("pk_module_tag");
 
                     b.HasIndex("TagId")
-                        .HasDatabaseName("ix_module_tag_tag_id");
+                        .HasName("ix_module_tag_tag_id");
 
-                    b.ToTable("module_tag", (string)null);
+                    b.ToTable("module_tag");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasColumnType("varchar(255) CHARACTER SET utf8mb4");
 
                     b.HasKey("Id")
                         .HasName("pk_tags");
 
                     b.HasIndex("Name")
                         .IsUnique()
-                        .HasDatabaseName("ix_tags_name");
+                        .HasName("ix_tags_name");
 
-                    b.ToTable("tags", (string)null);
+                    b.ToTable("tags");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.VmInterfaceTemplate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<int>("BridgeTemplateId")
-                        .HasColumnType("int")
-                        .HasColumnName("bridge_template_id");
+                        .HasColumnName("bridge_template_id")
+                        .HasColumnType("int");
 
                     b.Property<string>("BridgeTemplateUuid")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("bridge_template_uuid");
+                        .HasColumnName("bridge_template_uuid")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<int>("InterfaceNumber")
-                        .HasColumnType("int")
-                        .HasColumnName("interface_number");
+                        .HasColumnName("interface_number")
+                        .HasColumnType("int");
 
                     b.Property<int>("LabVmId")
-                        .HasColumnType("int")
-                        .HasColumnName("lab_vm_id");
+                        .HasColumnName("lab_vm_id")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("pk_vm_interface_templates");
 
                     b.HasIndex("BridgeTemplateId")
-                        .HasDatabaseName("ix_vm_interface_templates_bridge_template_id");
+                        .HasName("ix_vm_interface_templates_bridge_template_id");
 
                     b.HasIndex("LabVmId")
-                        .HasDatabaseName("ix_vm_interface_templates_lab_vm_id");
+                        .HasName("ix_vm_interface_templates_lab_vm_id");
 
                     b.HasIndex("InterfaceNumber", "LabVmId")
                         .IsUnique()
-                        .HasDatabaseName("ix_vm_interface_templates_interface_number_lab_vm_id");
+                        .HasName("ix_vm_interface_templates_interface_number_lab_vm_id");
 
-                    b.ToTable("vm_interface_templates", (string)null);
+                    b.ToTable("vm_interface_templates");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.SystemMessage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
+                        .HasColumnName("created_at")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("description");
+                        .HasColumnName("description")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("end_time");
+                        .HasColumnName("end_time")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("start_time");
+                        .HasColumnName("start_time")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("type");
+                        .HasColumnName("type")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
+                        .HasColumnName("updated_at")
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id")
                         .HasName("pk_system_messages");
 
-                    b.ToTable("system_messages", (string)null);
+                    b.ToTable("system_messages");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.SystemStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<int>("HypervisorId")
-                        .HasColumnType("int")
-                        .HasColumnName("hypervisor_id");
+                        .HasColumnName("hypervisor_id")
+                        .HasColumnType("int");
 
                     b.Property<int>("HypervisorNodesUp")
-                        .HasColumnType("int")
-                        .HasColumnName("hypervisor_nodes_up");
+                        .HasColumnName("hypervisor_nodes_up")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Quorum")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("quorum");
+                        .HasColumnName("quorum")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("TotalNodes")
-                        .HasColumnType("int")
-                        .HasColumnName("total_nodes");
+                        .HasColumnName("total_nodes")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("pk_system_statuses");
 
-                    b.ToTable("system_statuses", (string)null);
+                    b.ToTable("system_statuses");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.BridgeInstance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<int>("BridgeTemplateId")
-                        .HasColumnType("int")
-                        .HasColumnName("bridge_template_id");
+                        .HasColumnName("bridge_template_id")
+                        .HasColumnType("int");
 
                     b.Property<int>("HypervisorInterfaceId")
-                        .HasColumnType("int")
-                        .HasColumnName("hypervisor_interface_id");
+                        .HasColumnName("hypervisor_interface_id")
+                        .HasColumnType("int");
 
                     b.Property<int>("UserLabId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_lab_id");
+                        .HasColumnName("user_lab_id")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("pk_bridge_instances");
 
                     b.HasIndex("BridgeTemplateId")
-                        .HasDatabaseName("ix_bridge_instances_bridge_template_id");
+                        .HasName("ix_bridge_instances_bridge_template_id");
 
                     b.HasIndex("UserLabId")
-                        .HasDatabaseName("ix_bridge_instances_user_lab_id");
+                        .HasName("ix_bridge_instances_user_lab_id");
 
                     b.HasIndex("UserLabId", "HypervisorInterfaceId")
                         .IsUnique()
-                        .HasDatabaseName("ix_bridge_instances_user_lab_id_hypervisor_interface_id");
+                        .HasName("ix_bridge_instances_user_lab_id_hypervisor_interface_id");
 
-                    b.ToTable("bridge_instances", (string)null);
+                    b.ToTable("bridge_instances");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<string>("CardCodeHash")
-                        .HasColumnType("VARCHAR(100)")
-                        .HasColumnName("card_code_hash");
+                        .HasColumnName("card_code_hash")
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("created_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.Property<string>("Email")
-                        .HasColumnType("VARCHAR(45)")
-                        .HasColumnName("email");
+                        .HasColumnName("email")
+                        .HasColumnType("VARCHAR(45)");
 
                     b.Property<string>("EmailVerificationCode")
-                        .HasColumnType("VARCHAR(100)")
-                        .HasColumnName("email_verification_code");
+                        .HasColumnName("email_verification_code")
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(100)")
-                        .HasColumnName("first_name");
+                        .HasColumnName("first_name")
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<int?>("GraduationYear")
-                        .HasColumnType("int")
-                        .HasColumnName("graduation_year");
+                        .HasColumnName("graduation_year")
+                        .HasColumnType("int");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(100)")
-                        .HasColumnName("last_name");
+                        .HasColumnName("last_name")
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<string>("MiddleName")
-                        .HasColumnType("VARCHAR(100)")
-                        .HasColumnName("middle_name");
+                        .HasColumnName("middle_name")
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("password");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("password")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasDefaultValue(null);
 
                     b.Property<string>("PasswordRecoveryCode")
-                        .HasColumnType("VARCHAR(100)")
-                        .HasColumnName("password_recovery_code");
+                        .HasColumnName("password_recovery_code")
+                        .HasColumnType("VARCHAR(100)");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("role");
+                        .HasColumnName("role")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime?>("TerminationDate")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("termination_date");
+                        .HasColumnName("termination_date")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.HasKey("Id")
@@ -717,230 +719,230 @@ namespace CSLabs.Api.Migrations
 
                     b.HasIndex("CardCodeHash")
                         .IsUnique()
-                        .HasDatabaseName("ix_users_card_code_hash");
+                        .HasName("ix_users_card_code_hash");
 
                     b.HasIndex("Email")
                         .IsUnique()
-                        .HasDatabaseName("ix_users_email");
+                        .HasName("ix_users_email");
 
                     b.HasIndex("PasswordRecoveryCode")
                         .IsUnique()
-                        .HasDatabaseName("ix_users_password_recovery_code");
+                        .HasName("ix_users_password_recovery_code");
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserLab", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("created_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.Property<DateTime?>("EndDateTime")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("end_date_time");
+                        .HasColumnName("end_date_time")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int?>("HypervisorNodeId")
-                        .HasColumnType("int")
-                        .HasColumnName("hypervisor_node_id");
+                        .HasColumnName("hypervisor_node_id")
+                        .HasColumnType("int");
 
                     b.Property<int>("LabId")
-                        .HasColumnType("int")
-                        .HasColumnName("lab_id");
+                        .HasColumnName("lab_id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("LastUsed")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("last_used");
+                        .HasColumnName("last_used")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("status");
+                        .HasColumnName("status")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.Property<int>("UserModuleId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_module_id");
+                        .HasColumnName("user_module_id")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("pk_user_labs");
 
                     b.HasIndex("EndDateTime")
-                        .HasDatabaseName("ix_user_labs_end_date_time");
+                        .HasName("ix_user_labs_end_date_time");
 
                     b.HasIndex("HypervisorNodeId")
-                        .HasDatabaseName("ix_user_labs_hypervisor_node_id");
+                        .HasName("ix_user_labs_hypervisor_node_id");
 
                     b.HasIndex("LabId")
-                        .HasDatabaseName("ix_user_labs_lab_id");
+                        .HasName("ix_user_labs_lab_id");
 
                     b.HasIndex("UserModuleId")
-                        .HasDatabaseName("ix_user_labs_user_module_id");
+                        .HasName("ix_user_labs_user_module_id");
 
                     b.HasIndex("UserModuleId", "LabId")
                         .IsUnique()
-                        .HasDatabaseName("ix_user_labs_user_module_id_lab_id");
+                        .HasName("ix_user_labs_user_module_id_lab_id");
 
-                    b.ToTable("user_labs", (string)null);
+                    b.ToTable("user_labs");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserLabVm", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("created_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.Property<int>("HypervisorVmTemplateId")
-                        .HasColumnType("int")
-                        .HasColumnName("hypervisor_vm_template_id");
+                        .HasColumnName("hypervisor_vm_template_id")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsCoreRouter")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_core_router");
+                        .HasColumnName("is_core_router")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("LabVmId")
-                        .HasColumnType("int")
-                        .HasColumnName("lab_vm_id");
+                        .HasColumnName("lab_vm_id")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProxmoxVmId")
-                        .HasColumnType("int")
-                        .HasColumnName("proxmox_vm_id");
+                        .HasColumnName("proxmox_vm_id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.Property<int>("UserLabId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_lab_id");
+                        .HasColumnName("user_lab_id")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("pk_user_lab_vms");
 
                     b.HasIndex("HypervisorVmTemplateId")
-                        .HasDatabaseName("ix_user_lab_vms_hypervisor_vm_template_id");
+                        .HasName("ix_user_lab_vms_hypervisor_vm_template_id");
 
                     b.HasIndex("LabVmId")
-                        .HasDatabaseName("ix_user_lab_vms_lab_vm_id");
+                        .HasName("ix_user_lab_vms_lab_vm_id");
 
                     b.HasIndex("UserLabId")
-                        .HasDatabaseName("ix_user_lab_vms_user_lab_id");
+                        .HasName("ix_user_lab_vms_user_lab_id");
 
                     b.HasIndex("UserLabId", "LabVmId")
                         .IsUnique()
-                        .HasDatabaseName("ix_user_lab_vms_user_lab_id_lab_vm_id");
+                        .HasName("ix_user_lab_vms_user_lab_id_lab_vm_id");
 
-                    b.ToTable("user_lab_vms", (string)null);
+                    b.ToTable("user_lab_vms");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserModule", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("created_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.Property<int>("ModuleId")
-                        .HasColumnType("int")
-                        .HasColumnName("module_id");
+                        .HasColumnName("module_id")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("TerminationDate")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("termination_date");
+                        .HasColumnName("termination_date")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
                         .HasColumnName("updated_at")
+                        .HasColumnType("datetime(6)")
                         .HasDefaultValueSql("UTC_TIMESTAMP()");
 
                     b.HasKey("Id")
                         .HasName("pk_user_modules");
 
                     b.HasIndex("ModuleId")
-                        .HasDatabaseName("ix_user_modules_module_id");
+                        .HasName("ix_user_modules_module_id");
 
-                    b.ToTable("user_modules", (string)null);
+                    b.ToTable("user_modules");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserUserModule", b =>
                 {
                     b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_id");
+                        .HasColumnName("user_id")
+                        .HasColumnType("int");
 
                     b.Property<int>("UserModuleId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_module_id");
+                        .HasColumnName("user_module_id")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "UserModuleId")
                         .HasName("pk_user_user_module");
 
                     b.HasIndex("UserModuleId")
-                        .HasDatabaseName("ix_user_user_module_user_module_id");
+                        .HasName("ix_user_user_module_user_module_id");
 
-                    b.ToTable("user_user_module", (string)null);
+                    b.ToTable("user_user_module");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.VmInterfaceInstance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnType("int");
 
                     b.Property<int>("BridgeInstanceId")
-                        .HasColumnType("int")
-                        .HasColumnName("bridge_instance_id");
+                        .HasColumnName("bridge_instance_id")
+                        .HasColumnType("int");
 
                     b.Property<int>("UserLabVmId")
-                        .HasColumnType("int")
-                        .HasColumnName("user_lab_vm_id");
+                        .HasColumnName("user_lab_vm_id")
+                        .HasColumnType("int");
 
                     b.Property<int>("VmInterfaceTemplateId")
-                        .HasColumnType("int")
-                        .HasColumnName("vm_interface_template_id");
+                        .HasColumnName("vm_interface_template_id")
+                        .HasColumnType("int");
 
                     b.HasKey("Id")
                         .HasName("pk_vm_interface_instances");
 
                     b.HasIndex("BridgeInstanceId")
-                        .HasDatabaseName("ix_vm_interface_instances_bridge_instance_id");
+                        .HasName("ix_vm_interface_instances_bridge_instance_id");
 
                     b.HasIndex("UserLabVmId")
-                        .HasDatabaseName("ix_vm_interface_instances_user_lab_vm_id");
+                        .HasName("ix_vm_interface_instances_user_lab_vm_id");
 
                     b.HasIndex("VmInterfaceTemplateId")
-                        .HasDatabaseName("ix_vm_interface_instances_vm_interface_template_id");
+                        .HasName("ix_vm_interface_instances_vm_interface_template_id");
 
-                    b.ToTable("vm_interface_instances", (string)null);
+                    b.ToTable("vm_interface_instances");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorNode", b =>
@@ -948,11 +950,9 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.Hypervisor", "Hypervisor")
                         .WithMany("HypervisorNodes")
                         .HasForeignKey("HypervisorId")
+                        .HasConstraintName("fk_hypervisor_nodes_hypervisors_hypervisor_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_hypervisor_nodes_hypervisors_hypervisor_id");
-
-                    b.Navigation("Hypervisor");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorVmTemplate", b =>
@@ -960,20 +960,16 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.HypervisorNode", "HypervisorNode")
                         .WithMany()
                         .HasForeignKey("HypervisorNodeId")
+                        .HasConstraintName("fk_hypervisor_vm_templates_hypervisor_nodes_hypervisor_node_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_hypervisor_vm_templates_hypervisor_nodes_hypervisor_node_id");
+                        .IsRequired();
 
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.VmTemplate", "VmTemplate")
                         .WithMany("HypervisorVmTemplates")
                         .HasForeignKey("VmTemplateId")
+                        .HasConstraintName("fk_hypervisor_vm_templates_vm_template_vm_template_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_hypervisor_vm_templates_vm_template_vm_template_id");
-
-                    b.Navigation("HypervisorNode");
-
-                    b.Navigation("VmTemplate");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.VmTemplate", b =>
@@ -981,10 +977,8 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.UserModels.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_vm_template_users_owner_id");
-
-                    b.Navigation("Owner");
+                        .HasConstraintName("fk_vm_template_users_owner_id")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.BridgeTemplate", b =>
@@ -992,11 +986,9 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Lab", "Lab")
                         .WithMany("BridgeTemplates")
                         .HasForeignKey("LabId")
+                        .HasConstraintName("fk_bridge_templates_labs_lab_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_bridge_templates_labs_lab_id");
-
-                    b.Navigation("Lab");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Lab", b =>
@@ -1004,11 +996,9 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Module", "Module")
                         .WithMany("Labs")
                         .HasForeignKey("ModuleId")
+                        .HasConstraintName("fk_labs_modules_module_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_labs_modules_module_id");
-
-                    b.Navigation("Module");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.LabVm", b =>
@@ -1016,20 +1006,16 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Lab", "Lab")
                         .WithMany("LabVms")
                         .HasForeignKey("LabId")
+                        .HasConstraintName("fk_lab_vms_labs_lab_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_lab_vms_labs_lab_id");
+                        .IsRequired();
 
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.VmTemplate", "VmTemplate")
                         .WithMany()
                         .HasForeignKey("VmTemplateId")
+                        .HasConstraintName("fk_lab_vms_vm_template_vm_template_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_lab_vms_vm_template_vm_template_id");
-
-                    b.Navigation("Lab");
-
-                    b.Navigation("VmTemplate");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Module", b =>
@@ -1038,8 +1024,6 @@ namespace CSLabs.Api.Migrations
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .HasConstraintName("fk_modules_users_owner_id");
-
-                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.ModuleTag", b =>
@@ -1047,20 +1031,16 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Module", "Module")
                         .WithMany("ModuleTags")
                         .HasForeignKey("ModuleId")
+                        .HasConstraintName("fk_module_tag_modules_module_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_module_tag_modules_module_id");
+                        .IsRequired();
 
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Tag", "Tag")
                         .WithMany("ModuleTags")
                         .HasForeignKey("TagId")
+                        .HasConstraintName("fk_module_tag_tags_tag_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_module_tag_tags_tag_id");
-
-                    b.Navigation("Module");
-
-                    b.Navigation("Tag");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.VmInterfaceTemplate", b =>
@@ -1068,20 +1048,16 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.BridgeTemplate", "BridgeTemplate")
                         .WithMany()
                         .HasForeignKey("BridgeTemplateId")
+                        .HasConstraintName("fk_vm_interface_templates_bridge_templates_bridge_template_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_vm_interface_templates_bridge_templates_bridge_template_id");
+                        .IsRequired();
 
                     b.HasOne("CSLabs.Api.Models.ModuleModels.LabVm", "LabVm")
                         .WithMany("TemplateInterfaces")
                         .HasForeignKey("LabVmId")
+                        .HasConstraintName("fk_vm_interface_templates_lab_vms_lab_vm_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_vm_interface_templates_lab_vms_lab_vm_id");
-
-                    b.Navigation("BridgeTemplate");
-
-                    b.Navigation("LabVm");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.BridgeInstance", b =>
@@ -1089,20 +1065,16 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.BridgeTemplate", "BridgeTemplate")
                         .WithMany()
                         .HasForeignKey("BridgeTemplateId")
+                        .HasConstraintName("fk_bridge_instances_bridge_templates_bridge_template_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_bridge_instances_bridge_templates_bridge_template_id");
+                        .IsRequired();
 
                     b.HasOne("CSLabs.Api.Models.UserModels.UserLab", "UserLab")
                         .WithMany("BridgeInstances")
                         .HasForeignKey("UserLabId")
+                        .HasConstraintName("fk_bridge_instances_user_labs_user_lab_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_bridge_instances_user_labs_user_lab_id");
-
-                    b.Navigation("BridgeTemplate");
-
-                    b.Navigation("UserLab");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserLab", b =>
@@ -1110,28 +1082,22 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.HypervisorNode", "HypervisorNode")
                         .WithMany("UserLabs")
                         .HasForeignKey("HypervisorNodeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_user_labs_hypervisor_nodes_hypervisor_node_id");
+                        .HasConstraintName("fk_user_labs_hypervisor_nodes_hypervisor_node_id")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Lab", "Lab")
                         .WithMany("UserLabs")
                         .HasForeignKey("LabId")
+                        .HasConstraintName("fk_user_labs_labs_lab_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_labs_labs_lab_id");
+                        .IsRequired();
 
                     b.HasOne("CSLabs.Api.Models.UserModels.UserModule", "UserModule")
                         .WithMany("UserLabs")
                         .HasForeignKey("UserModuleId")
+                        .HasConstraintName("fk_user_labs_user_modules_user_module_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_labs_user_modules_user_module_id");
-
-                    b.Navigation("HypervisorNode");
-
-                    b.Navigation("Lab");
-
-                    b.Navigation("UserModule");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserLabVm", b =>
@@ -1139,29 +1105,23 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.HypervisorModels.HypervisorVmTemplate", "HypervisorVmTemplate")
                         .WithMany()
                         .HasForeignKey("HypervisorVmTemplateId")
+                        .HasConstraintName("fk_user_lab_vms_hypervisor_vm_templates_hypervisor_vm_template_")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_lab_vms_hypervisor_vm_templates_hypervisor_vm_template_");
+                        .IsRequired();
 
                     b.HasOne("CSLabs.Api.Models.ModuleModels.LabVm", "LabVm")
                         .WithMany()
                         .HasForeignKey("LabVmId")
+                        .HasConstraintName("fk_user_lab_vms_lab_vms_lab_vm_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_lab_vms_lab_vms_lab_vm_id");
+                        .IsRequired();
 
                     b.HasOne("CSLabs.Api.Models.UserModels.UserLab", "UserLab")
                         .WithMany("UserLabVms")
                         .HasForeignKey("UserLabId")
+                        .HasConstraintName("fk_user_lab_vms_user_labs_user_lab_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_lab_vms_user_labs_user_lab_id");
-
-                    b.Navigation("HypervisorVmTemplate");
-
-                    b.Navigation("LabVm");
-
-                    b.Navigation("UserLab");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserModule", b =>
@@ -1169,11 +1129,9 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.ModuleModels.Module", "Module")
                         .WithMany()
                         .HasForeignKey("ModuleId")
+                        .HasConstraintName("fk_user_modules_modules_module_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_modules_modules_module_id");
-
-                    b.Navigation("Module");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserUserModule", b =>
@@ -1181,20 +1139,16 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.UserModels.User", "User")
                         .WithMany("UserUserModules")
                         .HasForeignKey("UserId")
+                        .HasConstraintName("fk_user_user_module_users_user_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_user_module_users_user_id");
+                        .IsRequired();
 
                     b.HasOne("CSLabs.Api.Models.UserModels.UserModule", "UserModule")
                         .WithMany("UserUserModules")
                         .HasForeignKey("UserModuleId")
+                        .HasConstraintName("fk_user_user_module_user_modules_user_module_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_user_user_module_user_modules_user_module_id");
-
-                    b.Navigation("User");
-
-                    b.Navigation("UserModule");
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("CSLabs.Api.Models.UserModels.VmInterfaceInstance", b =>
@@ -1202,99 +1156,23 @@ namespace CSLabs.Api.Migrations
                     b.HasOne("CSLabs.Api.Models.UserModels.BridgeInstance", "BridgeInstance")
                         .WithMany("InterfaceInstances")
                         .HasForeignKey("BridgeInstanceId")
+                        .HasConstraintName("fk_vm_interface_instances_bridge_instances_bridge_instance_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_vm_interface_instances_bridge_instances_bridge_instance_id");
+                        .IsRequired();
 
                     b.HasOne("CSLabs.Api.Models.UserModels.UserLabVm", "UserLabVm")
                         .WithMany("InterfaceInstances")
                         .HasForeignKey("UserLabVmId")
+                        .HasConstraintName("fk_vm_interface_instances_user_lab_vms_user_lab_vm_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_vm_interface_instances_user_lab_vms_user_lab_vm_id");
+                        .IsRequired();
 
                     b.HasOne("CSLabs.Api.Models.ModuleModels.VmInterfaceTemplate", "Template")
                         .WithMany()
                         .HasForeignKey("VmInterfaceTemplateId")
+                        .HasConstraintName("fk_vm_interface_instances_vm_interface_templates_vm_interface_t")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_vm_interface_instances_vm_interface_templates_vm_interface_t");
-
-                    b.Navigation("BridgeInstance");
-
-                    b.Navigation("Template");
-
-                    b.Navigation("UserLabVm");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.Hypervisor", b =>
-                {
-                    b.Navigation("HypervisorNodes");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.HypervisorNode", b =>
-                {
-                    b.Navigation("UserLabs");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.HypervisorModels.VmTemplate", b =>
-                {
-                    b.Navigation("HypervisorVmTemplates");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Lab", b =>
-                {
-                    b.Navigation("BridgeTemplates");
-
-                    b.Navigation("LabVms");
-
-                    b.Navigation("UserLabs");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.LabVm", b =>
-                {
-                    b.Navigation("TemplateInterfaces");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Module", b =>
-                {
-                    b.Navigation("Labs");
-
-                    b.Navigation("ModuleTags");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.ModuleModels.Tag", b =>
-                {
-                    b.Navigation("ModuleTags");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.UserModels.BridgeInstance", b =>
-                {
-                    b.Navigation("InterfaceInstances");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.UserModels.User", b =>
-                {
-                    b.Navigation("UserUserModules");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserLab", b =>
-                {
-                    b.Navigation("BridgeInstances");
-
-                    b.Navigation("UserLabVms");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserLabVm", b =>
-                {
-                    b.Navigation("InterfaceInstances");
-                });
-
-            modelBuilder.Entity("CSLabs.Api.Models.UserModels.UserModule", b =>
-                {
-                    b.Navigation("UserLabs");
-
-                    b.Navigation("UserUserModules");
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
