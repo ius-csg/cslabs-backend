@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - dev
+      - jc/sonarcloud-dotnet-6
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -31,7 +32,7 @@ jobs:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
-      - name: Install SonarCloud scanner
+      - name: SonarScanner for .NET 6
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
         run: |
@@ -41,8 +42,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"ius-csg_cslabs-backend" /o:"ius-csg" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-          dotnet build cslabs-backend.sln
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        uses: highbyte/sonarscan-dotnet@v2.1.2
+        with:
+          sonarProjectKey: ius-csg_cslabs-backend
+          sonarProjectName: cslabs-backend
+          sonarOrganization: ius-csg
