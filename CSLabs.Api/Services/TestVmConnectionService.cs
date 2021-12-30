@@ -18,6 +18,37 @@ namespace CSLabs.Api.Services
             Context = context;
         }
         
+        // Recursive helper function
+        public async void AttemptStart(int attempt, int labId, ProxmoxApi api)
+        {
+            try
+            {
+                if (attempt != 3) // first or second attempt
+                {
+                    await api.StartVM(labId);
+                }
+                else // third attempt
+                {
+                    await api.StopVM(labId);
+                    await api.StartVM(labId);
+                }
+                
+            }
+            catch (ProxmoxRequestException)
+            {
+                if (attempt != 3)
+                {
+                    AttemptStart(attempt + 1, labId, api);
+                }
+                else
+                {
+                    // TODO
+                    // third attempt at restarting has failed. Something really bad has happened
+                    // and the maintainers need to be emailed
+                }
+            }
+        }
+        
         public async Task<IActionResult> TestLabVmConnection()
         {
             var hypervisors = await Context.Hypervisors
@@ -32,44 +63,23 @@ namespace CSLabs.Api.Services
             {
                 var api = ProxmoxManager.GetProxmoxApi(hypervisor.HypervisorNodes.First());
                 
+                // If a user stops/shuts down their vm manually, something should be logged to the database.
+
                 foreach (var labVm in labVms) 
                 { 
                     try 
                     { 
                         var vmStatus = await api.GetVmStatus(labVm.Id); 
+                        // change to check if status is opposite what is stored in the database
+                        
                         if (vmStatus.IsStopped())  // vm is down
-                        { 
-                            // attempt to restart the vm
-                            try
-                            {
-                                await api.StartVM(labVm.Id); // 1st attempt
-                            }
-                            catch (ProxmoxRequestException)
-                            {
-                                try
-                                {
-                                    await api.StartVM(labVm.Id); // 2nd attempt
-                                }
-                                catch (ProxmoxRequestException)
-                                {
-                                    try
-                                    {
-                                        //third attempt
-                                        await api.ShutdownVm(labVm.Id);
-                                        await api.StartVM(labVm.Id);
-                                    }
-                                    catch (ProxmoxRequestException)
-                                    {
-                                        // third attempt at restarting has failed. Something really bad has happened
-                                        // and the maintainers need to be emailed
-                                    }
-                                }
-                            }
+                        {
+                            AttemptStart(1, labVm.Id, api);
                         }
                     }
                     catch (ProxmoxRequestException) 
                     {
-                        
+                        // something went wrong getting the vm status
                     }
 
                 }
