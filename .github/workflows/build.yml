@@ -25,3 +25,4 @@ jobs:
           sonarProjectName: cslabs-backend
           sonarOrganization: ius-csg
           dotnetBuildArguments: ./cslabs-backend.sln
+          dotnetDisableTests: true
