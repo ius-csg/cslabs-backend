@@ -31,11 +31,13 @@ namespace CSLabs.Api.Models.ModuleModels
         [Required]
         public bool Published { get; set; }
         
+        public int Difficulty { get; set; }
+        
         public string SpecialCode { get; set; }
         public List<Lab> Labs { get; set; }
         
         public List<ModuleTag> ModuleTags { get; set; }
-        
+
         public int? OwnerId  { get; set; }
         [ForeignKey(nameof(OwnerId))]
         [JsonIgnore]
