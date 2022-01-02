@@ -101,5 +101,55 @@ namespace CSLabs.Api.Controllers
                 return NotFound();
             return Ok(module);
         }
+        
+        // GET api/user-module/search/{searchTerm}
+        [HttpGet("search/{searchTerm}")]
+        public async Task<IActionResult> Search(string searchTerm)
+        {
+            if (string.IsNullOrEmpty(searchTerm))
+                return Ok(await DatabaseContext.UserModules.ToListAsync());
+            
+            var searchedModules = DatabaseContext.UserModules
+                .WhereIncludesUser(GetUser())
+                .Include(um => um.Module)
+                .Where(um => EF.Functions.Match(um.Module.Name, searchTerm, MySqlMatchSearchMode.NaturalLanguage) || 
+                             EF.Functions.Match(um.Module.Description, searchTerm, MySqlMatchSearchMode.NaturalLanguage) ||
+                             EF.Functions.Like(um.Module.Name, $"%{searchTerm}%") || 
+                             EF.Functions.Like(um.Module.Description, $"%{searchTerm}%") || 
+                             um.Module.ModuleTags.Any(mt => searchTerm.Equals(mt.Tag.Name.ToLower())));
+
+            return Ok(await searchedModules.ToListAsync());
+        }
+        
+        // GET api/user-module/search?params={...}
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchOptions(string title = null, string description = null, int difficulty = 0, string tags = null)
+        {
+            var searchedModules = DatabaseContext.UserModules
+                .Include(um => um.Module)
+                .WhereIncludesUser(GetUser());
+
+            if (!string.IsNullOrEmpty(title))
+                searchedModules = searchedModules
+                    .Where(um => EF.Functions.Match(um.Module.Name, title, MySqlMatchSearchMode.NaturalLanguage) || 
+                                EF.Functions.Like(um.Module.Name, $"%{title}%"));
+
+            if (!string.IsNullOrEmpty(description))
+                searchedModules = searchedModules
+                    .Where(um => EF.Functions.Match(um.Module.Description, description, MySqlMatchSearchMode.NaturalLanguage) || 
+                                EF.Functions.Like(um.Module.Description, $"%{description}%"));
+
+            if (difficulty != 0)
+                searchedModules = searchedModules
+                    .Where(um => um.Module.Difficulty == difficulty);
+
+            if (!string.IsNullOrEmpty(tags))
+            {
+                var tagNamesList = tags.Split(",").Select(s => s.Trim()).ToList();
+                searchedModules = searchedModules
+                    .Where(um => um.Module.ModuleTags.Any(mt => tagNamesList.Contains(mt.Tag.Name)));
+            }
+            return Ok(await searchedModules.ToListAsync());
+        }
     }
 }
