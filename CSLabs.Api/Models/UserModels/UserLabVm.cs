@@ -35,10 +35,10 @@ namespace CSLabs.Api.Models.UserModels
         
         [InverseProperty(nameof(VmInterfaceInstance.UserLabVm))]
         public List<VmInterfaceInstance> InterfaceInstances { get; set; } = new List<VmInterfaceInstance>();
+
+        public bool Running { get; set; } = true;
         
-        public bool Running { get; set; }
-        
-        // add a bit field (not a boolean) to store the up status of the vm and make sure it's set to 1 in the onModelCreating.
+        // add a bool field to store the up status of the vm and make sure it's set to 1 in the onModelCreating.
         // add some code in the API methods to modify this database value when a vm is started/stopped etc. 
 
 

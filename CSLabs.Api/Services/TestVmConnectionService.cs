@@ -70,9 +70,9 @@ namespace CSLabs.Api.Services
                     try 
                     { 
                         var vmStatus = await api.GetVmStatus(labVm.Id); 
-                        // change to check if status is opposite what is stored in the database
                         
-                        if (vmStatus.IsStopped())  // vm is down
+                        // change to check if status is opposite what is stored in the database
+                        if (vmStatus.IsStopped())  
                         {
                             AttemptStart(1, labVm.Id, api);
                         }
