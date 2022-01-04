@@ -38,9 +38,6 @@ namespace CSLabs.Api.Models.UserModels
 
         public bool Running { get; set; } = true;
         
-        // add a bool field to store the up status of the vm and make sure it's set to 1 in the onModelCreating.
-        // add some code in the API methods to modify this database value when a vm is started/stopped etc. 
-
 
         public static void OnModelCreating(ModelBuilder builder)
         {
