@@ -110,10 +110,22 @@ namespace CSLabs.Api.Controllers
             if (!GetUser().CanEditModules()) {
                 return Forbid("You are not allowed to edit modules");
             }
-            var query = this.DatabaseContext.Modules.AsQueryable();
-            if (!GetUser().IsAdmin())
-                query = query.Where(m => m.OwnerId == GetUser().Id).IncludeTags();
+            var query = DatabaseContext.Modules
+                .Where(m => m.OwnerId == GetUser().Id)
+                .IncludeTags();
             return Ok(await query.ToListAsync());
+        }
+        
+        // GET api/module/modules-editor/admin
+        [HttpGet("modules-editor/admin")]
+        public async Task<IActionResult> GetAdminModules()
+        {
+            if (!GetUser().IsAdmin()) { 
+                return Forbid("You are not allowed to access these modules");
+            }
+            return Ok(
+                await DatabaseContext.Modules.IncludeTags().ToListAsync()
+            );
         }
         
         // GET api/module/modules-editor/search/{searchTerm}
