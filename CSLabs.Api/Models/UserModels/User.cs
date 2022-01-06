@@ -51,8 +51,13 @@ namespace CSLabs.Api.Models.UserModels
         [Column(TypeName = "VARCHAR(100)")]
         public string PasswordRecoveryCode { get; set; }
         
+        
         // many to many link
         public List<UserUserModule> UserUserModules { get; set; }
+
+        
+        //User is verified
+        public bool Verified => EmailVerificationCode == null;
         
         public bool CanEditModules()
         {
@@ -63,7 +68,9 @@ namespace CSLabs.Api.Models.UserModels
         {
             return Role == EUserRole.Admin;
         }
-
+        
+        
+        
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<User>();
