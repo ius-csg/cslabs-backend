@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Corsinvest.ProxmoxVE.Api;
 using Corsinvest.ProxmoxVE.Api.Extension.Info;
 using CSLabs.Api.Models.HypervisorModels;
+using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.Proxmox.Responses;
 using Newtonsoft.Json;
 
@@ -25,7 +26,7 @@ namespace CSLabs.Api.Proxmox
             _password = password;
         }
 
-        private bool loggedIn => DateTime.Now.Subtract(_loggedInAt).TotalMinutes < 15;
+        private bool loggedIn => DateTime.Now.Subtract(_loggedInAt).TotalMinutes < 60;
 
         private async Task LoginIfNotLoggedIn()
         {
@@ -40,11 +41,46 @@ namespace CSLabs.Api.Proxmox
             _loggedInAt = DateTime.Now;
         }
 
+        public async Task ManageApiToken()
+        {
+            var userid = $"{HypervisorNode.Hypervisor.UserName}@pam";
+            if (string.IsNullOrEmpty(client.ApiToken))
+                await GenerateApiToken(userid);
+            else
+                await RotateApiToken(userid);
+        }
+
+        private async Task RotateApiToken(string userid)
+        {
+            await PerformRequest(() => client.Access.Users[userid].Token["API_TOKEN"].RemoveToken());
+            await GenerateApiToken(userid);
+        }
+
+        private async Task GenerateApiToken(string userid)
+        {
+            var apiTokenResponse = await GetApiToken(userid);
+            client.ApiToken = $"{userid}!API_TOKEN={apiTokenResponse.FullTokenId}";
+        }
+
+        private async Task<ApiTokenResponse> GetApiToken(string userid)
+        {
+            var expireDate = (int) DateTimeOffset.UtcNow.AddDays(30).ToUnixTimeSeconds();
+            var apiKey = await PerformRequest(() =>
+                client.Access.Users[userid].Token["API_TOKEN"].GenerateToken(expire: expireDate, privsep: true));
+
+            return new ApiTokenResponse()
+            {
+                FullTokenId = apiKey.Response.data["full-tokenid"],
+                Info = apiKey.Response.data.info,
+                Value = apiKey.Response.value,
+            };
+        }
+
         public async Task<TicketResponse> GetTicket(int vmId)
         {
             await LoginIfNotLoggedIn();
             var output = await PerformRequest(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Vncproxy.Vncproxy(websocket: true));
-
+            
             return new TicketResponse()
             {
                 Port = int.Parse(output.Response.data.port),
