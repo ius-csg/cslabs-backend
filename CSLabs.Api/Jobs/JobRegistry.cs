@@ -11,7 +11,7 @@ namespace CSLabs.Api.Jobs
             
             // Schedule new jobs here
             Schedule(() => new ExampleJob(provider)).ToRunEvery(1).Minutes();
-
+            Schedule(() => new ApiTokenJob(provider)).ToRunOnceAt(DateTime.Now).AndEvery(30).Days().At(0, 0);
         }
     }
 }

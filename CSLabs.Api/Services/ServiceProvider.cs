@@ -32,6 +32,7 @@ namespace CSLabs.Api.Services
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.ProvideProxmoxApi();
             services.AddScoped<BaseControllerDependencies>();
+            services.AddScoped<ProxmoxApiTokenService>();
             services.AddTransient<UserLabInstantiationService>();
             services.AddTransient<ProxmoxVmTemplateService>();
             services.AddSingleton<UrlBasedUploadManager>();
