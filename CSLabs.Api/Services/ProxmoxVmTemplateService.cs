@@ -168,7 +168,7 @@ namespace CSLabs.Api.Services
             var ovf = ParseOvf(await reader.ReadToEndAsync());
             
             var vmId = await api.CreateVm(name.ToSafeId(), ovf.MemorySizeMb);
-            var result = ssh.RunCommand($"qm importdisk {vmId} {vmdk.FullName} local-lvm -format qcow2");
+            var result = ssh.RunCommand($"qm importdisk {vmId} {vmdk.FullName} nasapp -format qcow2");
             if (result.Error != "")
             {
                 throw new Exception("Failed to import disk! Error: " + result.Error);

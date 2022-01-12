@@ -19,7 +19,8 @@ namespace CSLabs.Api.Services
         public async Task ManageApiToken(DefaultContext context)
         {
             var hypervisor = await context.Hypervisors.FirstOrDefaultAsync();
-            var api = ProxmoxManager.GetProxmoxApi(hypervisor.HypervisorNodes.First());
+            var primaryHypervisorNode = await ProxmoxManager.GetPrimaryHypervisorNode(hypervisor);
+            var api = ProxmoxManager.GetProxmoxApi(primaryHypervisorNode);
             await api.ManageApiToken();
         }
     }
