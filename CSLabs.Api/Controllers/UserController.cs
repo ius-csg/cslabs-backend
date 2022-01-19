@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CSLabs.Api.Controllers
 {
@@ -125,7 +126,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> CheckUserVerification()
         {
             var user = GetUser();
-            if (user != null && user.EmailVerificationCode == null)
+            if (user != null && user.EmailVerificationCode.IsNullOrEmpty())
             {
                 return Ok(true); 
             }
@@ -142,7 +143,7 @@ namespace CSLabs.Api.Controllers
             await CreateEmail().SendEmailVerification(user.Email, 
                 WebAppUrl + "/verify-email/" + user.EmailVerificationCode);
 
-            return Ok();
+            return Ok(true);
         }
 
         [HttpPost("change-password")]
