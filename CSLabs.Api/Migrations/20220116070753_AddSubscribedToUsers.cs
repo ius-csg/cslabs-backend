@@ -12,7 +12,7 @@ namespace CSLabs.Api.Migrations
                 name: "subscribed",
                 table: "users",
                 nullable: false,
-                defaultValue: false);
+                defaultValue: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

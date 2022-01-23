@@ -76,6 +76,7 @@ namespace CSLabs.Api.Models.UserModels
                 .Property(b => b.Password)
                 .HasDefaultValue(null);
             builder.Entity<User>().Property(p => p.Role).HasConversion<string>();
+            builder.Entity<User>().Property(p => p.Subscribed).HasDefaultValue(false);
         }
     }
 }
