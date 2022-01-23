@@ -32,8 +32,10 @@ namespace CSLabs.Api.Models.UserModels
         [Column(TypeName = "VARCHAR(100)")]
         public string EmailVerificationCode { get; set; }
         
+        public bool Subscribed { get; set; }
+        
         public int? GraduationYear { get; set; }
-
+        
         [Required]
         [JsonConverter(typeof(StringEnumConverter))]
         public EUserRole Role { get; set; } = EUserRole.Guest;
@@ -43,7 +45,7 @@ namespace CSLabs.Api.Models.UserModels
         
         [Required]
         public string Password { get; set; }
-
+        
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]
         public DateTime? TerminationDate { get; set; }
         

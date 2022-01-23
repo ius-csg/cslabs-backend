@@ -163,5 +163,17 @@ namespace CSLabs.Api.Controllers
             
             return NoContent();
         }
+
+        [HttpPut("change-subscription")]
+        public async Task<IActionResult> ChangeSubscription(ChangeSubscriptionRequest request)
+        {
+            var user = GetUser();
+            if (user == null)
+                return BadRequest(new { message = "Unable to change email subscription" });
+            
+            user.Subscribed = request.Subscribe;
+            await DatabaseContext.SaveChangesAsync();
+            return Ok();
+        }
     }
 }
