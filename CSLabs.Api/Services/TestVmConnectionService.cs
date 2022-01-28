@@ -70,7 +70,7 @@ namespace CSLabs.Api.Services
                 foreach (var labVm in labVms) 
                 { 
                     try 
-                    { 
+                    {
                         //actual status of VM
                         var vmStatus = await api.GetVmStatus(labVm.Id); 
                         

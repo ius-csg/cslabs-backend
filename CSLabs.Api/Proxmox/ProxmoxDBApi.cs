@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using Corsinvest.ProxmoxVE.Api;
-using Corsinvest.ProxmoxVE.Api.Extension.Info;
+﻿using System.Threading.Tasks;
 using CSLabs.Api.Models;
 using CSLabs.Api.Models.HypervisorModels;
-using CSLabs.Api.Proxmox.Responses;
-using Newtonsoft.Json;
 
 namespace CSLabs.Api.Proxmox
 {
