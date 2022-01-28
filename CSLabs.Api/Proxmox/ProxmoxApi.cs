@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Corsinvest.ProxmoxVE.Api;
 using Corsinvest.ProxmoxVE.Api.Extension.Info;
-using CSLabs.Api.Models;
 using CSLabs.Api.Models.HypervisorModels;
 using CSLabs.Api.Proxmox.Responses;
 using Newtonsoft.Json;
