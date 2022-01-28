@@ -19,13 +19,11 @@ namespace CSLabs.Api.Proxmox
         private DateTime _loggedInAt = DateTime.MinValue;
         private string _password;
         public HypervisorNode HypervisorNode { get;}
-        private DefaultContext _context;
-        public ProxmoxApi(HypervisorNode hypervisorNode, string password, DefaultContext context)
+        public ProxmoxApi(HypervisorNode hypervisorNode, string password)
         {
             client = new PveClient(hypervisorNode.Hypervisor.Host);
             HypervisorNode = hypervisorNode;
             _password = password;
-            _context = context;
         }
 
         private bool loggedIn => DateTime.Now.Subtract(_loggedInAt).TotalMinutes < 15;
@@ -60,8 +58,6 @@ namespace CSLabs.Api.Proxmox
             var node = targetNode ?? HypervisorNode.Name;
             await LoginIfNotLoggedIn();
             await PerformRequest(() => this.client.Nodes[node].Qemu[vmId].Status.Start.VmStart());
-            // Save in the database that the VM is started
-            _context.UserLabVms.Find(vmId).Running = true;
         }
 
         public async Task<NodeStatus> GetNodeStatus(HypervisorNode node = null)
@@ -104,8 +100,6 @@ namespace CSLabs.Api.Proxmox
         {
             await LoginIfNotLoggedIn();
             await PerformRequest(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Stop.VmStop());
-            // Save in the database that the VM is stopped
-            _context.UserLabVms.Find(vmId).Running = false;
         }
 
         public async Task ResetVM(int vmId)
@@ -118,8 +112,6 @@ namespace CSLabs.Api.Proxmox
         {
             await LoginIfNotLoggedIn();
             await PerformRequest(() => this.client.Nodes[HypervisorNode.Name].Qemu[vmId].Status.Shutdown.VmShutdown(timeout: timeout));
-            // Save in the database that the VM is stopped
-            _context.UserLabVms.Find(vmId).Running = false;
         }
         
         public async Task DestroyVm(int vmId)

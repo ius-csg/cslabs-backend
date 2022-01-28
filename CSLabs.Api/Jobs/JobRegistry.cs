@@ -12,7 +12,7 @@ namespace CSLabs.Api.Jobs
             // Every 3 minutes check to see if we have quorum (at least 50% of the ProxMox nodes are up)
             
             // Schedule new jobs here
-            Schedule(() => new VmStatusJob(provider)).ToRunEvery(1).Minutes();
+            Schedule(() => new VmStatusJob(provider)).ToRunEvery(3).Seconds();
 
         }
     }

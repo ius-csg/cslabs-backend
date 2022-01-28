@@ -59,20 +59,27 @@ namespace CSLabs.Api.Services
                 .Include(v => v.Id)
                 .ToListAsync();
 
+            var userLabVms = await Context.UserLabVms
+                .Include(v => v.Id)
+                .ToListAsync();
+
             foreach (var hypervisor in hypervisors) 
             {
-                var api = ProxmoxManager.GetProxmoxApi(hypervisor.HypervisorNodes.First());
+                var api = ProxmoxManager.GetProxmoxDBApi(hypervisor.HypervisorNodes.First());
                 
-                // If a user stops/shuts down their vm manually, something should be logged to the database.
-
                 foreach (var labVm in labVms) 
                 { 
                     try 
                     { 
+                        //actual status of VM
                         var vmStatus = await api.GetVmStatus(labVm.Id); 
                         
-                        // change to check if status is opposite what is stored in the database
-                        if (vmStatus.IsStopped())  
+                        //value stored in database
+                        var userLab = userLabVms.Find(x => x.LabVmId.Equals(labVm.Id));
+                        var userLabStatus = userLab.Running;
+
+                        // check if actual status is opposite what is stored in the database
+                        if (vmStatus.IsStopped() != userLabStatus)  
                         {
                             AttemptStart(1, labVm.Id, api);
                         }

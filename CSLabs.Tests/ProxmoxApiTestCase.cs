@@ -14,7 +14,6 @@ namespace CSLabs.Tests
         private ProxmoxApi client;
         private HypervisorNode _hypervisorNode;
         private int _vmId;
-        private DefaultContext _context;
         [SetUp]
         public void Setup()
         {
@@ -35,7 +34,7 @@ namespace CSLabs.Tests
                 }
             };
             _vmId = int.Parse(apiSection["VmId"]);
-            client = new ProxmoxApi(_hypervisorNode, apiSection["Password"], _context);
+            client = new ProxmoxApi(_hypervisorNode, apiSection["Password"]);
         }
 
         [Test]
