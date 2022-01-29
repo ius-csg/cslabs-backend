@@ -4,12 +4,12 @@
 
 namespace CSLabs.Api.Migrations
 {
-    public partial class AddSubscribedToUsers : Migration
+    public partial class AddSubscribedNewsletterToUsers : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<bool>(
-                name: "subscribed",
+                name: "subscribed_newsletter",
                 table: "users",
                 nullable: false,
                 defaultValue: true);
@@ -18,7 +18,7 @@ namespace CSLabs.Api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "subscribed",
+                name: "subscribed_newsletter",
                 table: "users");
         }
     }

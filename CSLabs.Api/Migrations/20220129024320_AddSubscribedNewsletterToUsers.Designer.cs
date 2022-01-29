@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    [Migration("20220116070753_AddSubscribedToUsers")]
-    partial class AddSubscribedToUsers
+    [Migration("20220129024320_AddSubscribedNewsletterToUsers")]
+    partial class AddSubscribedNewsletterToUsers
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -703,6 +703,12 @@ namespace CSLabs.Api.Migrations
                         .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("role");
+
+                    b.Property<bool>("SubscribedNewsletter")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false)
+                        .HasColumnName("subscribed_newsletter");
 
                     b.Property<DateTime?>("TerminationDate")
                         .HasColumnType("datetime(6)")

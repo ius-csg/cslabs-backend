@@ -3,7 +3,7 @@ using CSLabs.Api.Models.UserModels;
 
 namespace CSLabs.Api.RequestModels
 {
-    public class ChangeSubscriptionRequest
+    public class ChangeNewsletterSubscriptionRequest
     {
         [Required]
         public bool Subscribe { get; set; }

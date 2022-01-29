@@ -702,6 +702,12 @@ namespace CSLabs.Api.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("role");
 
+                    b.Property<bool>("SubscribedNewsletter")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false)
+                        .HasColumnName("subscribed_newsletter");
+
                     b.Property<DateTime?>("TerminationDate")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("termination_date");

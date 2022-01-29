@@ -32,7 +32,7 @@ namespace CSLabs.Api.Models.UserModels
         [Column(TypeName = "VARCHAR(100)")]
         public string EmailVerificationCode { get; set; }
         
-        public bool Subscribed { get; set; }
+        public bool SubscribedNewsletter { get; set; }
         
         public int? GraduationYear { get; set; }
         
@@ -76,7 +76,7 @@ namespace CSLabs.Api.Models.UserModels
                 .Property(b => b.Password)
                 .HasDefaultValue(null);
             builder.Entity<User>().Property(p => p.Role).HasConversion<string>();
-            builder.Entity<User>().Property(p => p.Subscribed).HasDefaultValue(false);
+            builder.Entity<User>().Property(p => p.SubscribedNewsletter).HasDefaultValue(false);
         }
     }
 }
