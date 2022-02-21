@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using CSLabs.Api.Config;
-using CSLabs.Api.Email;
 using CSLabs.Api.Models;
 using CSLabs.Api.Models.Enums;
 using CSLabs.Api.Models.HypervisorModels;
@@ -60,7 +59,6 @@ namespace CSLabs.Api
         
         public static IWebHost SeedData(this IWebHost host)
         {
-            //new SESEmail().SendMail();
             using (var scope = host.Services.CreateScope())
             {
                 var context = scope.ServiceProvider.GetService<DefaultContext>();
