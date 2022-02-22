@@ -27,18 +27,23 @@ namespace CSLabs.Api.Email
         
         public SendResponse Send(IFluentEmail email, CancellationToken? token = null)
         {
-            return SendAsync(email, token).GetAwaiter().GetResult();
+            return SendAsync(email, token).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         public async Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken? token = null)
         {
             using var client = new AmazonSimpleEmailServiceV2Client(_accessKey, _secretKey, _endpoint);
+            
+            var suppressionList = await client.ListSuppressedDestinationsAsync(new ListSuppressedDestinationsRequest());
+            var toAddresses = email.Data.ToAddresses.Select(e => e.EmailAddress)
+                .Except(suppressionList.SuppressedDestinationSummaries.Select(s => s.EmailAddress));
+            
             var sendRequest = new SendEmailRequest
             {
                 FromEmailAddress = email.Data.FromAddress.EmailAddress,
                 Destination = new Destination
                 {
-                    ToAddresses = email.Data.ToAddresses.Select(e => e.EmailAddress).ToList()
+                    ToAddresses = toAddresses.ToList()
                 },
                 Content = new EmailContent
                 {
@@ -59,12 +64,12 @@ namespace CSLabs.Api.Email
                         }
                     }
                 },
-                ReplyToAddresses = new List<string> {"iuscompsec@gmail.com"}
+                ReplyToAddresses = email.Data.ReplyToAddresses.Select(e => e.EmailAddress).ToList() //new List<string> {"iuscompsec@gmail.com"})
             };
             try
             {
-                var response = await client.SendEmailAsync(sendRequest);
-                var result = new SendResponse {MessageId = response.MessageId};
+                var sendResponse = await client.SendEmailAsync(sendRequest);
+                var result = new SendResponse {MessageId = sendResponse.MessageId};
                 Console.WriteLine("Email sent successfully.");
                 return result;
             }

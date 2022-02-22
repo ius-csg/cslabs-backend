@@ -9,6 +9,7 @@ using CSLabs.Api.Email;
 using CSLabs.Api.Jobs;
 using CSLabs.Api.Services;
 using CSLabs.Api.Util;
+using FluentEmail.Core;
 using FluentScheduler;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -77,17 +78,17 @@ namespace CSLabs.Api
                 throw new ConfigurationException("Email.FromAddress must be configured in the appsettings.json. Please follow the setup steps in the readme.");
             }
 
-            if (!appSettings.Deployment.Equals("production"))
+            var serviceBuilder = services.AddTransient<IFluentEmailFactory, SESFluentEmailFactory>();
+
+            if (!string.IsNullOrEmpty(appSettings.AWS.SecretKey) && !string.IsNullOrEmpty(appSettings.AWS.AccessKey))
             {
-                services
-                    .AddFluentEmail(appSettings.AWS.SES.FromAddress)
+                serviceBuilder.AddFluentEmail(appSettings.AWS.SES.FromAddress)
                     .AddRazorRenderer(Path.Join(Environment.CurrentDirectory, "Views"))
                     .AddSESSender(appSettings.AWS.AccessKey, appSettings.AWS.SecretKey, RegionEndpoint.USEast2);
             }
             else
             {
-                services
-                    .AddFluentEmail(appSettings.AWS.SES.FromAddress)
+                serviceBuilder.AddFluentEmail(appSettings.AWS.SES.DevFromAddress)
                     .AddRazorRenderer(Path.Join(Environment.CurrentDirectory, "Views"))
                     .AddSmtpSender(appSettings.Email.Host, appSettings.Email.Port, appSettings.Email.UserName, appSettings.Email.Password);
             }

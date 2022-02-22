@@ -9,7 +9,6 @@ namespace CSLabs.Api.Config
         public ConnectionStrings ConnectionStrings { get; set; }
         public EmailSettings Email { get; set; }
         
-        public string Deployment { get; set; }
         public AWSSettings AWS { get; set; }
         public string[] CorsUrls { get; set; }
         
