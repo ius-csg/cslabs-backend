@@ -126,7 +126,7 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> CheckUserVerification()
         {
             var user = GetUser();
-            if (user != null && user.EmailVerificationCode.IsNullOrEmpty())
+            if (user != null && user.Verified)
             {
                 return Ok(true); 
             }
@@ -135,7 +135,7 @@ namespace CSLabs.Api.Controllers
                 return Ok(false); 
             }
         }
-        [HttpPost("resend-email")]
+        [HttpPost("resend-emailverification")]
         public async Task<IActionResult> ResendEmail()
         {
             var user =  GetUser();

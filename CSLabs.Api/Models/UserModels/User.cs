@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -57,7 +58,7 @@ namespace CSLabs.Api.Models.UserModels
 
         
         //User is verified
-        public bool Verified => EmailVerificationCode == null;
+        public bool Verified => EmailVerificationCode.IsNullOrEmpty();
         
         public bool CanEditModules()
         {
