@@ -24,6 +24,7 @@ namespace CSLabs.Api.Proxmox
             await base.StopVM(vmId);
             // Save in the database that the VM is stopped
             _context.UserLabVms.Find(vmId).Running = false;
+            await _context.SaveChangesAsync();
         }
         
         public new async Task ShutdownVm(int vmId, int timeout = 20)
@@ -31,6 +32,7 @@ namespace CSLabs.Api.Proxmox
             await base.ShutdownVm(vmId, timeout);
             // Save in the database that the VM is stopped
             _context.UserLabVms.Find(vmId).Running = false;
+            await _context.SaveChangesAsync();
         }
     }
 }
