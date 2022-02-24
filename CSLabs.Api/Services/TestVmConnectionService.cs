@@ -76,7 +76,6 @@ namespace CSLabs.Api.Services
                         
                             //actual status of VM
                             var vmStatus = await api.GetVmStatus(userLab.ProxmoxVmId);
-                            Console.WriteLine(vmStatus.IsStopped());
 
                             // check if actual status is opposite what is stored in the database
                             // yes this is supposed to be ==
