@@ -17,10 +17,7 @@ namespace CSLabs.Api.Jobs
         protected override async Task ExecuteAsync()
         {
             using var scope = _provider.CreateScope();
-            using var context = scope.ServiceProvider.GetService<DefaultContext>();
-            
-            // Do job
-            var connectionService = new TestVmConnectionService(context);
+            var connectionService = scope.ServiceProvider.GetService<TestVmConnectionService>();
             await connectionService.TestLabVmConnection();
 
         }

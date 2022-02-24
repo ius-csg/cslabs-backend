@@ -35,6 +35,7 @@ namespace CSLabs.Api.Services
             services.AddTransient<UserLabInstantiationService>();
             services.AddTransient<ProxmoxVmTemplateService>();
             services.AddSingleton<UrlBasedUploadManager>();
+            services.AddScoped<TestVmConnectionService>();
         }
     }
 }
