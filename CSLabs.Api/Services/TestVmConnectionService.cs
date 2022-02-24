@@ -44,7 +44,6 @@ namespace CSLabs.Api.Services
                 }
                 else
                 {
-                    Console.WriteLine("Uh-Oh");
                     // TODO
                     // third attempt at restarting has failed. Something really bad has happened
                     // and the maintainers need to be emailed
@@ -54,63 +53,46 @@ namespace CSLabs.Api.Services
         
         public async Task<IActionResult> TestLabVmConnection()
         {
-            try {
-                Console.WriteLine("In TestLabVMConnection()");
                 var hypervisors = await Context.Hypervisors
                     .Include(h => h.HypervisorNodes)
                     .ToListAsync();
-                Console.WriteLine("Got hypervisors context");
                 var labVms = await Context.LabVms
                     .ToListAsync();
-                Console.WriteLine("Got labVms context");
 
                 var userLabVms = await Context.UserLabVms
                 .ToListAsync();
-                Console.WriteLine("Got all the database info");
                 foreach (var hypervisor in hypervisors)
                 {
                     var node = hypervisor.HypervisorNodes.First();
                     var api = ProxmoxManager.GetProxmoxDBApi(node);
-                    Console.WriteLine("Got the API");
                 
                     foreach (var labVm in labVms) 
-                    { 
-                        Console.WriteLine("Test2");
+                    {
                         try {
                         
                             //value stored in database
                             var userLab = userLabVms.Find(x => x.LabVmId.Equals(labVm.Id));
                             var userLabStatus = userLab.Running;
-                            Console.WriteLine("Got VM status in DB");
                         
                             //actual status of VM
-                            var vmStatus = await api.GetVmStatus(labVm.Id); 
-                            Console.WriteLine("Got VM status");
+                            var vmStatus = await api.GetVmStatus(userLab.ProxmoxVmId); 
 
                             // check if actual status is opposite what is stored in the database
                             if (vmStatus.IsStopped() != userLabStatus)  
                             {
-                                Console.WriteLine("VM status is not what is stored in DB, attempting to fix...");
                                 AttemptStart(1, labVm.Id, api);
                             }
                         }
-                        //catch (ProxmoxRequestException)
-                        catch (Exception ex)
+                        catch (ProxmoxRequestException ex)
                         {
-                            Console.WriteLine(ex);
                             // something went wrong getting the vm status
+                            Console.WriteLine(ex);
                         }
 
                     }
                 
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-            
-            return new OkObjectResult("All LabVMs are up and responding");
+                return new OkObjectResult("All LabVMs are up and responding");
         }
         
     }
