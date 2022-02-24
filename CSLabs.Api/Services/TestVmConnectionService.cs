@@ -75,10 +75,12 @@ namespace CSLabs.Api.Services
                             var userLabStatus = userLab.Running;
                         
                             //actual status of VM
-                            var vmStatus = await api.GetVmStatus(userLab.ProxmoxVmId); 
+                            var vmStatus = await api.GetVmStatus(userLab.ProxmoxVmId);
+                            Console.WriteLine(vmStatus.IsStopped());
 
                             // check if actual status is opposite what is stored in the database
-                            if (vmStatus.IsStopped() != userLabStatus)  
+                            // yes this is supposed to be ==
+                            if (vmStatus.IsStopped() == userLabStatus)  
                             {
                                 AttemptStart(1, labVm.Id, api);
                             }
