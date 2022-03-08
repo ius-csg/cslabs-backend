@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using AutoMapper;
 using CSLabs.Api.Controllers;
+using CSLabs.Api.Jobs;
 using CSLabs.Api.Models;
 using CSLabs.Api.Proxmox;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +37,8 @@ namespace CSLabs.Api.Services
             services.AddTransient<ProxmoxVmTemplateService>();
             services.AddSingleton<UrlBasedUploadManager>();
             services.AddScoped<TestVmConnectionService>();
+            services.AddTransient<VmStatusJob>();
+            services.AddTransient<InjectedAsyncJob<VmStatusJob>>();
         }
     }
 }
