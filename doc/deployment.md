@@ -44,7 +44,7 @@ in `/var/www/cslabs-webapp/` then you only need to run this script to deploy a n
 
 ### Note: 403 Forbidden
 
-If you are having issues with the server responding with `403 Forbidden` to requests to front-end
+If you are having issues with the server responding with `403 Forbidden` to requests for front-end
 resources, check the following:
 
 - Check that the nginx user has read, write, and execute permissions along the entire filepath to
@@ -55,9 +55,22 @@ these files and you will see `403 Forbidden` responses.
 
 ## Deploying the back-end
 
-The back-end is a .NET application running as a Linux service. The status of the service can be viewed
-using `systemctl status cslabs-backend`. The service configuration file currently lives at
+The back-end is a .NET application running as a Linux Kestrel service. The status of the service can be
+viewed using `systemctl status cslabs-backend`. The service configuration file currently lives at
 `/etc/systemd/system/cslabs-backend.service`. The current version is committed to the root directory
 of the back-end repository. This service is configured to run from compiled .NET binaries located at
 `/var/www/cslabs-backend/CSLabs.Api/bin/Release/net6.0/publish` which is the default build directory
 for .NET 6.
+
+The back-end must have a connection to the database to work correctly. The build script will signal a
+database error if the application cannot make a connection. DB connection info can be found in the project
+Trello board in the deployment card.
+
+To deploy a new version, run the `deploy.sh` script in the root directory of the back-end repo. Similar
+to the front-end script, this will pull down the latest changes of the current branch, and then build
+a new version to the default directory, noted above. It will then restart the Kestrel service to apply
+the changes.
+
+## Github Actions
+
+Coming soon :)
