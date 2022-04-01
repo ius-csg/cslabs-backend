@@ -64,12 +64,19 @@ for .NET 6.
 
 The back-end must have a connection to the database to work correctly. The build script will signal a
 database error if the application cannot make a connection. DB connection info can be found in the project
-Trello board in the deployment card.
+Trello board in the deployment card. The `CSLabs.Api/appsettings.json` file must have the correct
+mail credentials - these can be found in the project Trello board.
 
 To deploy a new version, run the `deploy.sh` script in the root directory of the back-end repo. Similar
 to the front-end script, this will pull down the latest changes of the current branch, and then build
 a new version to the default directory, noted above. It will then restart the Kestrel service to apply
 the changes.
+
+### Note: Emails
+
+CSLabs uses AWS mail services to send email to users. If this isn't working, it can be (mostly) bypassed
+by commenting out the email lines in the login method of UserController.cs. This should not be done on
+production, but can be used as a temporary solution for testing in dev environment if necessary.
 
 ## Github Actions
 
