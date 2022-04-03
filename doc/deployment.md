@@ -74,10 +74,21 @@ the changes.
 
 ### Note: Emails
 
-CSLabs uses AWS mail services to send email to users. If this isn't working, it can be (mostly) bypassed
+CSLabs uses mail services to send email to users. If this isn't working, it can be (mostly) bypassed
 by commenting out the email lines in the login method of UserController.cs. This should not be done on
 production, but can be used as a temporary solution for testing in dev environment if necessary.
 
 ## Github Actions
 
-Coming soon :)
+Automated deployment actions are undertaken on our servers by a self-hosted Github Actions runner. You can
+see the documentation for self-hosted runners [here](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners).
+On each of our servers, the actions runner runs under the `github` username, with the same password as root.
+There is one runner for dev, named `cslabs-dev` and another for prod named `cslabs-prod`. The work folder for
+the actions runner is `_actions_work`. The actions runner is configured to run as a service so that it will 
+automatically run on system startup.
+
+Currently, the actions runner only handles deployment of new versions of the software. On a fresh machine,
+the first deployment will have to be done manually. After that, subsequent deployments will be automatically
+handled by the actions runner. These deployments are set up to trigger automatically when a pull request is
+merged to either the dev or main branch. The workflow will automatically determine which
+environment to deploy to based on which branch triggered the job.
