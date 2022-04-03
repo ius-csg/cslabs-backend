@@ -90,5 +90,5 @@ automatically run on system startup.
 Currently, the actions runner only handles deployment of new versions of the software. On a fresh machine,
 the first deployment will have to be done manually. After that, subsequent deployments will be automatically
 handled by the actions runner. These deployments are set up to trigger automatically when a pull request is
-merged to either the dev or main branch. The workflow will automatically determine which
-environment to deploy to based on which branch triggered the job.
+merged to the dev branch or when a release is published to the repos. The workflow will automatically determine
+which environment to deploy to based on which condition triggered the job.
