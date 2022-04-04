@@ -1,0 +1,35 @@
+﻿name: Deploy Backend
+on:
+  push:
+    branches:
+      - dev
+  release:
+    types: [published]
+jobs:
+  deploy-dev:
+    name: Deployment to dev
+    if: github.ref_name == 'dev'
+    runs-on: [self-hosted, cslabs, dev]
+    steps:
+      - name: Move to backend repo
+        run:
+          cd /var/www/cslabs-backend
+      - name: Ensure dev branch
+        run:
+          git checkout dev
+      - name: Run deploy script
+        run: ./deploy.sh
+
+  deploy-prod:
+    name: Deployment to prod
+    if: github.event_name == 'release'
+    runs-on: [self-hosted, cslabs, prod]
+    steps:
+      - name: Move to backend repo
+        run:
+          cd /var/www/cslabs-backend
+      - name: Ensure main branch
+        run:
+          git checkout main
+      - name: Run deploy script
+        run: ./deploy.sh
