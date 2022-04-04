@@ -1,0 +1,29 @@
+﻿name: Deploy Backend
+on:
+  push:
+    branches:
+      - dev
+  release:
+    types: [published]
+
+env:
+  DOTNET_CLI_HOME: '/_actions_work'
+
+jobs:
+  deploy-dev:
+    name: Deployment to dev
+    if: github.ref_name == 'dev'
+    runs-on: [self-hosted, cslabs, dev]
+    steps:
+      - name: Move to backend repo, verify dev branch, and run deployment script
+        run:
+          cd /var/www/cslabs-backend && git checkout dev && ./deploy.sh
+
+  deploy-prod:
+    name: Deployment to prod
+    if: github.event_name == 'release'
+    runs-on: [self-hosted, cslabs, prod]
+    steps:
+      - name: Move to backend repo, verify main branch, and run deployment script
+        run:
+          /var/www/cslabs-backend && git checkout main && ./deploy.sh

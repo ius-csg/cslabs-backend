@@ -7,5 +7,7 @@ namespace CSLabs.Api.Config
         public string UserName { get; set; }
         public string Password { get; set; }
         public string FromAddress { get; set; }
+
+        public AWSSesSettings AwsSes { get; set; } = new AWSSesSettings();
     }
 }

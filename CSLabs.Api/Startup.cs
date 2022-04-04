@@ -2,11 +2,14 @@
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Amazon;
 using AutoMapper;
 using CSLabs.Api.Config;
+using CSLabs.Api.Email;
 using CSLabs.Api.Jobs;
 using CSLabs.Api.Services;
 using CSLabs.Api.Util;
+using FluentEmail.Core;
 using FluentScheduler;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -59,7 +62,7 @@ namespace CSLabs.Api
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 });
 
-            ConfigureEmail(services, appSettings.Email);
+            ConfigureEmail(services, appSettings);
             services.ConfigureDatabase(appSettings.ConnectionStrings.DefaultConnection);
             ConfigureCors(services, appSettings.CorsUrls);
             ConfigureJWT(services, appSettings.JWTSecret);
@@ -67,17 +70,20 @@ namespace CSLabs.Api
             services.ProvideAppServices();
         }
 
-        private void ConfigureEmail(IServiceCollection services, EmailSettings emailSettings)
+        private void ConfigureEmail(IServiceCollection services, AppSettings appSettings)
         {
-            Console.WriteLine(Environment.CurrentDirectory);
-            if (string.IsNullOrEmpty(emailSettings.FromAddress))
-            {
+            if (string.IsNullOrEmpty(appSettings.Email.FromAddress))
                 throw new ConfigurationException("Email.FromAddress must be configured in the appsettings.json. Please follow the setup steps in the readme.");
-            }
-            services
-                .AddFluentEmail(emailSettings.FromAddress)
-                .AddRazorRenderer(Path.Join(Environment.CurrentDirectory, "Views"))
-                .AddSmtpSender(emailSettings.Host, emailSettings.Port, emailSettings.UserName, emailSettings.Password);
+            var serviceBuilder = services.AddTransient<IFluentEmailFactory, AppFluentEmailFactory>();
+            var useAwsSes = !string.IsNullOrEmpty(appSettings.Email.AwsSes.SecretKey) ||
+                            !string.IsNullOrEmpty(appSettings.Email.AwsSes.AccessKey);
+            var baseConfig = serviceBuilder
+                .AddFluentEmail(appSettings.Email.FromAddress)
+                .AddRazorRenderer(Path.Join(Environment.CurrentDirectory, "Views"));
+            if(useAwsSes)
+                baseConfig.AddSESSender(appSettings.Email.AwsSes.AccessKey, appSettings.Email.AwsSes.SecretKey, RegionEndpoint.USEast2);
+            else 
+                baseConfig.AddSmtpSender(appSettings.Email.Host, appSettings.Email.Port, appSettings.Email.UserName, appSettings.Email.Password);
         }
         
         private AppSettings ConfigureAppSettings(IServiceCollection services)

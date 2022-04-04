@@ -1,0 +1,18 @@
+﻿
+[Unit]
+Description=CS Labs Backend Kestrel Service
+
+[Service]
+WorkingDirectory=/var/www/cslabs-backend/CSLabs.Api/bin/Release/net6.0/publish
+ExecStart=/usr/bin/dotnet /var/www/cslabs-backend/CSLabs.Api/bin/Release/net6.0/publish/CSLabs.Api.dll
+Restart=always
+# Restart service after 10 seconds if the dotnet service crashes:
+RestartSec=3
+KillSignal=SIGINT
+SyslogIdentifier=cslabs-backend
+User=root
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target

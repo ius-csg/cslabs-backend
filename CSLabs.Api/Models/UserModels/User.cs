@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -32,8 +33,10 @@ namespace CSLabs.Api.Models.UserModels
         [Column(TypeName = "VARCHAR(100)")]
         public string EmailVerificationCode { get; set; }
         
+        public bool SubscribedNewsletter { get; set; }
+        
         public int? GraduationYear { get; set; }
-
+        
         [Required]
         [JsonConverter(typeof(StringEnumConverter))]
         public EUserRole Role { get; set; } = EUserRole.Guest;
@@ -43,7 +46,7 @@ namespace CSLabs.Api.Models.UserModels
         
         [Required]
         public string Password { get; set; }
-
+        
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy hh:mm tt}")]
         public DateTime? TerminationDate { get; set; }
         
@@ -51,8 +54,10 @@ namespace CSLabs.Api.Models.UserModels
         [Column(TypeName = "VARCHAR(100)")]
         public string PasswordRecoveryCode { get; set; }
         
-        // many to many link
         public List<UserUserModule> UserUserModules { get; set; }
+        
+        [NotMapped]
+        public bool Verified => EmailVerificationCode.IsNullOrEmpty();
         
         public bool CanEditModules()
         {
@@ -63,7 +68,7 @@ namespace CSLabs.Api.Models.UserModels
         {
             return Role == EUserRole.Admin;
         }
-
+        
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<User>();
@@ -74,6 +79,7 @@ namespace CSLabs.Api.Models.UserModels
                 .Property(b => b.Password)
                 .HasDefaultValue(null);
             builder.Entity<User>().Property(p => p.Role).HasConversion<string>();
+            builder.Entity<User>().Property(p => p.SubscribedNewsletter).HasDefaultValue(false);
         }
     }
 }

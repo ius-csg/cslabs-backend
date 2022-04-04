@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CSLabs.Api.Controllers
 {
@@ -106,7 +107,7 @@ namespace CSLabs.Api.Controllers
             await _authenticationService.ChangePassword(user, request.NewPassword);
             return Ok();
         }
-
+        
         [HttpPost("verify-email")]
         public async Task<IActionResult> VerifyEmail([FromBody] EmailVerificationRequest request)
         {
@@ -119,6 +120,24 @@ namespace CSLabs.Api.Controllers
             user.EmailVerificationCode = null;
             await DatabaseContext.SaveChangesAsync();
             return Ok();
+        }
+
+        [HttpGet("verify-user")]
+        public async Task<IActionResult> CheckUserVerification()
+        {
+            var user = GetUser();
+            return Ok(user != null && user.Verified);
+        }
+        
+        [HttpPost("resend-emailverification")]
+        public async Task<IActionResult> ResendEmail()
+        {
+            var user = GetUser();
+            user.EmailVerificationCode = Guid.NewGuid().ToString();
+            await CreateEmail().SendEmailVerification(user.Email, 
+                WebAppUrl + "/verify-email/" + user.EmailVerificationCode);
+            await DatabaseContext.SaveChangesAsync();
+            return Ok(true);
         }
 
         [HttpPost("change-password")]
@@ -162,6 +181,18 @@ namespace CSLabs.Api.Controllers
             await DatabaseContext.SaveChangesAsync();
             
             return NoContent();
+        }
+
+        [HttpPut("change-newsletter-subscription")]
+        public async Task<IActionResult> ChangeNewsletterSubscription(ChangeNewsletterSubscriptionRequest request)
+        {
+            var user = GetUser();
+            if (user == null)
+                return BadRequest(new { message = "Unable to change email subscription" });
+            
+            user.SubscribedNewsletter = request.Subscribe;
+            await DatabaseContext.SaveChangesAsync();
+            return Ok();
         }
     }
 }
