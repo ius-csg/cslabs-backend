@@ -57,7 +57,7 @@ namespace CSLabs.Api.Models.UserModels
         public List<UserUserModule> UserUserModules { get; set; }
 
         
-        //User is verified
+        [NotMapped]
         public bool Verified => EmailVerificationCode.IsNullOrEmpty();
         
         public bool CanEditModules()
