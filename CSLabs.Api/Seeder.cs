@@ -29,7 +29,6 @@ namespace CSLabs.Api
                       new ModuleTag
                       {
                           ModuleId = 1,
-                          Module = context.Modules.FirstOrDefault(m => m.Id == 1),
                           TagId = 1,
                           Tag = new Tag
                           {
