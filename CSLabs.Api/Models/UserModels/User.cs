@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using CSLabs.Api.Util;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -53,8 +54,10 @@ namespace CSLabs.Api.Models.UserModels
         [Column(TypeName = "VARCHAR(100)")]
         public string PasswordRecoveryCode { get; set; }
         
-        // many to many link
         public List<UserUserModule> UserUserModules { get; set; }
+        
+        [NotMapped]
+        public bool Verified => EmailVerificationCode.IsNullOrEmpty();
         
         public bool CanEditModules()
         {
@@ -65,7 +68,7 @@ namespace CSLabs.Api.Models.UserModels
         {
             return Role == EUserRole.Admin;
         }
-
+        
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<User>();
