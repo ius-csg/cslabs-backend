@@ -5,6 +5,10 @@ on:
       - dev
   release:
     types: [published]
+
+env:
+  DOTNET_CLI_HOME: '/_actions_work'
+
 jobs:
   deploy-dev:
     name: Deployment to dev
