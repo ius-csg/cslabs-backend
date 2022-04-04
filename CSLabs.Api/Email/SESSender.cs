@@ -24,7 +24,7 @@ namespace CSLabs.Api.Email
             _secretKey = secretKey;
             _endpoint = endpoint;
         }
-        
+
         public SendResponse Send(IFluentEmail email, CancellationToken? token = null)
         {
             return SendAsync(email, token).ConfigureAwait(false).GetAwaiter().GetResult();
@@ -33,11 +33,11 @@ namespace CSLabs.Api.Email
         public async Task<SendResponse> SendAsync(IFluentEmail email, CancellationToken? token = null)
         {
             using var client = new AmazonSimpleEmailServiceV2Client(_accessKey, _secretKey, _endpoint);
-            
+
             var suppressionList = await client.ListSuppressedDestinationsAsync(new ListSuppressedDestinationsRequest());
             var toAddresses = email.Data.ToAddresses.Select(e => e.EmailAddress)
                 .Except(suppressionList.SuppressedDestinationSummaries.Select(s => s.EmailAddress));
-            
+
             var sendRequest = new SendEmailRequest
             {
                 FromEmailAddress = email.Data.FromAddress.EmailAddress,
@@ -64,21 +64,36 @@ namespace CSLabs.Api.Email
                         }
                     }
                 },
-                ReplyToAddresses = email.Data.ReplyToAddresses.Select(e => e.EmailAddress).ToList() //new List<string> {"iuscompsec@gmail.com"})
+                ReplyToAddresses = email.Data.ReplyToAddresses.Select(e => e.EmailAddress).ToList()
             };
             try
             {
-                var sendResponse = await client.SendEmailAsync(sendRequest);
-                var result = new SendResponse {MessageId = sendResponse.MessageId};
-                Console.WriteLine("Email sent successfully.");
-                return result;
+                var sesSendResponse = await client.SendEmailAsync(sendRequest);
+                var sendResponse = new SendResponse { MessageId = sesSendResponse.MessageId };
+                if (IsHttpSuccess((int)sesSendResponse.HttpStatusCode))
+                    return sendResponse;
+                sendResponse.ErrorMessages = new List<string>
+                {
+                    $"Amazon SES responded with a non-successful status code: {(int)sesSendResponse.HttpStatusCode}"
+                };
+                return sendResponse;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to send the email.");
-                Console.WriteLine("Error: " + ex.Message);
+                return new SendResponse
+                {
+                    ErrorMessages = new List<string>
+                    {
+                        "SES Sender Encountered an exception while attempting to send the email.",
+                        ex.ToString()
+                    }
+                };
             }
-            return null;
+        }
+
+        private bool IsHttpSuccess(int statusCode)
+        {
+            return statusCode >= 200 && statusCode < 300;
         }
     }
 }
