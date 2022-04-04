@@ -70,8 +70,6 @@ namespace CSLabs.Api.Models.UserModels
             return Role == EUserRole.Admin;
         }
         
-        
-        
         public static void OnModelCreating(ModelBuilder builder)
         {
             builder.TimeStamps<User>();

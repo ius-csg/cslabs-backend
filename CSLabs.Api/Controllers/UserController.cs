@@ -126,23 +126,17 @@ namespace CSLabs.Api.Controllers
         public async Task<IActionResult> CheckUserVerification()
         {
             var user = GetUser();
-            if (user != null && user.Verified)
-            {
-                return Ok(true); 
-            }
-            else
-            {
-                return Ok(false); 
-            }
+            return Ok(user != null && user.Verified);
         }
+        
         [HttpPost("resend-emailverification")]
         public async Task<IActionResult> ResendEmail()
         {
-            var user =  GetUser();
+            var user = GetUser();
             user.EmailVerificationCode = Guid.NewGuid().ToString();
             await CreateEmail().SendEmailVerification(user.Email, 
                 WebAppUrl + "/verify-email/" + user.EmailVerificationCode);
-
+            await DatabaseContext.SaveChangesAsync();
             return Ok(true);
         }
 
