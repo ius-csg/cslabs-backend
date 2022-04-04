@@ -72,26 +72,18 @@ namespace CSLabs.Api
 
         private void ConfigureEmail(IServiceCollection services, AppSettings appSettings)
         {
-            Console.WriteLine(Environment.CurrentDirectory);
-            if (string.IsNullOrEmpty(appSettings.AWS.SES.FromAddress))
-            {
+            if (string.IsNullOrEmpty(appSettings.Email.FromAddress))
                 throw new ConfigurationException("Email.FromAddress must be configured in the appsettings.json. Please follow the setup steps in the readme.");
-            }
-
-            var serviceBuilder = services.AddTransient<IFluentEmailFactory, SESFluentEmailFactory>();
-
-            if (!string.IsNullOrEmpty(appSettings.AWS.SecretKey) && !string.IsNullOrEmpty(appSettings.AWS.AccessKey))
-            {
-                serviceBuilder.AddFluentEmail(appSettings.AWS.SES.FromAddress)
-                    .AddRazorRenderer(Path.Join(Environment.CurrentDirectory, "Views"))
-                    .AddSESSender(appSettings.AWS.AccessKey, appSettings.AWS.SecretKey, RegionEndpoint.USEast2);
-            }
-            else
-            {
-                serviceBuilder.AddFluentEmail(appSettings.AWS.SES.DevFromAddress)
-                    .AddRazorRenderer(Path.Join(Environment.CurrentDirectory, "Views"))
-                    .AddSmtpSender(appSettings.Email.Host, appSettings.Email.Port, appSettings.Email.UserName, appSettings.Email.Password);
-            }
+            var serviceBuilder = services.AddTransient<IFluentEmailFactory, AppFluentEmailFactory>();
+            var useAwsSes = !string.IsNullOrEmpty(appSettings.Email.AwsSes.SecretKey) ||
+                            !string.IsNullOrEmpty(appSettings.Email.AwsSes.AccessKey);
+            var baseConfig = serviceBuilder
+                .AddFluentEmail(appSettings.Email.FromAddress)
+                .AddRazorRenderer(Path.Join(Environment.CurrentDirectory, "Views"));
+            if(useAwsSes)
+                baseConfig.AddSESSender(appSettings.Email.AwsSes.AccessKey, appSettings.Email.AwsSes.SecretKey, RegionEndpoint.USEast2);
+            else 
+                baseConfig.AddSmtpSender(appSettings.Email.Host, appSettings.Email.Port, appSettings.Email.UserName, appSettings.Email.Password);
         }
         
         private AppSettings ConfigureAppSettings(IServiceCollection services)
