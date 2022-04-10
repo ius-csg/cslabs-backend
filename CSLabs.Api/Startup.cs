@@ -80,7 +80,9 @@ namespace CSLabs.Api
             var baseConfig = serviceBuilder
                 .AddFluentEmail(appSettings.Email.FromAddress)
                 .AddRazorRenderer(Path.Join(Environment.CurrentDirectory, "Views"));
-            if(useAwsSes)
+            if (appSettings.Email.DisableEmail)
+                baseConfig.AddMockSender();
+            else if(useAwsSes)
                 baseConfig.AddSESSender(appSettings.Email.AwsSes.AccessKey, appSettings.Email.AwsSes.SecretKey, RegionEndpoint.USEast2);
             else 
                 baseConfig.AddSmtpSender(appSettings.Email.Host, appSettings.Email.Port, appSettings.Email.UserName, appSettings.Email.Password);

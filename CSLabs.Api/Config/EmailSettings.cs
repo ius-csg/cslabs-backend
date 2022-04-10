@@ -8,6 +8,7 @@ namespace CSLabs.Api.Config
         public string Password { get; set; }
         public string FromAddress { get; set; }
 
+        public bool DisableEmail { get; set; } = false;
         public AWSSesSettings AwsSes { get; set; } = new AWSSesSettings();
     }
 }
