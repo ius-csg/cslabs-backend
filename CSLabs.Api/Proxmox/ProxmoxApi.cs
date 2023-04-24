@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Corsinvest.ProxmoxVE.Api;
 using Corsinvest.ProxmoxVE.Api.Extension.Info;
 using CSLabs.Api.Models.HypervisorModels;
+using CSLabs.Api.Models.UserModels;
 using CSLabs.Api.Proxmox.Responses;
 using Newtonsoft.Json;
 
@@ -17,6 +18,7 @@ namespace CSLabs.Api.Proxmox
         private PveClient client;
         private DateTime _loggedInAt = DateTime.MinValue;
         private string _password;
+        
         public HypervisorNode HypervisorNode { get;}
         public ProxmoxApi(HypervisorNode hypervisorNode, string password)
         {
@@ -38,6 +40,49 @@ namespace CSLabs.Api.Proxmox
             if (!successful)
                 throw new UnauthorizedProxmoxUser();
             _loggedInAt = DateTime.Now;
+        }
+
+        public async Task ManageApiToken()
+        {
+            await LoginIfNotLoggedIn();
+            var userid = $"{HypervisorNode.Hypervisor.UserName}@pam";
+            if (string.IsNullOrEmpty(client.ApiToken))
+                await GenerateApiToken(userid);
+            else
+                await RotateApiToken(userid);
+        }
+
+        private async Task RotateApiToken(string userid)
+        {
+            await LoginIfNotLoggedIn();
+            await PerformRequest(() => client.Access.Users[userid].Token["API_TOKEN"].RemoveToken());
+            await GenerateApiToken(userid);
+        }
+
+        private async Task GenerateApiToken(string userid)
+        {
+            await LoginIfNotLoggedIn();
+            var apiTokenResponse = await GetApiToken(userid);
+            client.ApiToken = $"{userid}!API_TOKEN={apiTokenResponse.Value}";
+        }
+
+        private async Task<ApiTokenResponse> GetApiToken(string userid)
+        {
+            await LoginIfNotLoggedIn();
+            var expireDate = (int) DateTimeOffset.UtcNow.AddDays(30).ToUnixTimeSeconds();
+            var apiKey = await PerformRequest(() =>
+                client.Access.Users[userid].Token["API_TOKEN"].GenerateToken(expire: expireDate, privsep: true));
+
+            return new ApiTokenResponse()
+            {
+                FullTokenId = ((IDictionary<string, object>) apiKey.Response.data)["full-tokenid"].ToString(),
+                Info = new TokenInfo()
+                {
+                    Expire = int.Parse(apiKey.Response.data.info.expire),
+                    PrivSep = apiKey.Response.data.info.privsep == "1"
+                },
+                Value = apiKey.Response.data.value
+            };
         }
 
         public async Task<TicketResponse> GetTicket(int vmId)
