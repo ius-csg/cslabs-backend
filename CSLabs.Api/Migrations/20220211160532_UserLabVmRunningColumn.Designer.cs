@@ -3,6 +3,7 @@ using System;
 using CSLabs.Api.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CSLabs.Api.Migrations
 {
     [DbContext(typeof(DefaultContext))]
-    partial class DefaultContextModelSnapshot : ModelSnapshot
+    [Migration("20220211160532_UserLabVmRunningColumn")]
+    partial class UserLabVmRunningColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -701,12 +703,6 @@ namespace CSLabs.Api.Migrations
                         .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("role");
-
-                    b.Property<bool>("SubscribedNewsletter")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint(1)")
-                        .HasDefaultValue(false)
-                        .HasColumnName("subscribed_newsletter");
 
                     b.Property<DateTime?>("TerminationDate")
                         .HasColumnType("datetime(6)")

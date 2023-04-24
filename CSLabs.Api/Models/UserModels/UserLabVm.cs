@@ -36,6 +36,8 @@ namespace CSLabs.Api.Models.UserModels
         [InverseProperty(nameof(VmInterfaceInstance.UserLabVm))]
         public List<VmInterfaceInstance> InterfaceInstances { get; set; } = new List<VmInterfaceInstance>();
 
+        public bool Running { get; set; } = true;
+        
 
         public static void OnModelCreating(ModelBuilder builder)
         {
@@ -43,6 +45,7 @@ namespace CSLabs.Api.Models.UserModels
             builder.Entity<UserLabVm>().HasIndex(u => new {u.UserLabId, u.LabVmId}).IsUnique();
             builder.Entity<UserLabVm>().HasIndex(u => new {u.UserLabId});
             builder.Entity<UserLabVm>().HasIndex(u => new {u.LabVmId});
+            builder.Entity<UserLabVm>().HasIndex(u => new {u.Running});
         }
 
         

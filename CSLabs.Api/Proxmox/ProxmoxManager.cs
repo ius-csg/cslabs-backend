@@ -64,6 +64,12 @@ namespace CSLabs.Api.Proxmox
             return new ProxmoxApi(node, password);
         }
         
+        public ProxmoxApi GetProxmoxDBApi(HypervisorNode node)
+        {
+            var password = Cryptography.DecryptString(node.Hypervisor.Password, _encryptionKey);
+            return new ProxmoxDBApi(node, password, _context);
+        }
+        
         public ProxmoxApi GetProxmoxApi(UserLab userLab)
         {
             return GetProxmoxApi(userLab.HypervisorNode);
