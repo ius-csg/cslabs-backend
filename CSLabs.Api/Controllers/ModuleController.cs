@@ -17,6 +17,7 @@ using CSLabs.Api.RequestModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CSLabs.Api.Controllers
 {
@@ -104,15 +105,136 @@ namespace CSLabs.Api.Controllers
 
         // GET api/module/modules-editor
         [HttpGet("modules-editor")]
-        public async Task<IActionResult> GetUsersModules()
+        public async Task<IActionResult> GetEditorsModules()
         {
             if (!GetUser().CanEditModules()) {
                 return Forbid("You are not allowed to edit modules");
             }
-            var query = this.DatabaseContext.Modules.AsQueryable();
-            if (!GetUser().IsAdmin())
-                query = query.Where(m => m.OwnerId == GetUser().Id).IncludeTags();
+            var query = DatabaseContext.Modules
+                .Where(m => m.OwnerId == GetUser().Id)
+                .IncludeTags();
             return Ok(await query.ToListAsync());
+        }
+        
+        // GET api/module/modules-editor/admin
+        [HttpGet("modules-editor/admin")]
+        public async Task<IActionResult> GetAdminModules()
+        {
+            if (!GetUser().IsAdmin()) { 
+                return Forbid("You are not allowed to access these modules");
+            }
+            return Ok(
+                await DatabaseContext.Modules.IncludeTags().ToListAsync()
+            );
+        }
+        
+        // GET api/module/modules-editor/search/{searchTerm}
+        [HttpGet("modules-editor/search/{searchTerm}")]
+        public async Task<IActionResult> SearchEditorsModules(string searchTerm)
+        {
+            if (!GetUser().CanEditModules())
+                return Forbid("You are not allowed to edit modules");
+            
+            if (string.IsNullOrEmpty(searchTerm))
+                return Ok(await DatabaseContext.Modules.ToListAsync());
+
+            var searchedModules = DatabaseContext.Modules.AsQueryable();
+            if (!GetUser().IsAdmin())
+                searchedModules = searchedModules.Where(m => m.OwnerId == GetUser().Id);
+            
+            searchedModules = searchedModules
+                .Where(m => EF.Functions.Match(m.Name, searchTerm, MySqlMatchSearchMode.NaturalLanguage) ||
+                            EF.Functions.Match(m.Description, searchTerm, MySqlMatchSearchMode.NaturalLanguage) ||
+                            EF.Functions.Like(m.Name, $"%{searchTerm}%") ||
+                            EF.Functions.Like(m.Description, $"%{searchTerm}%") || 
+                            m.ModuleTags.Any(mt => searchTerm.Equals(mt.Tag.Name.ToLower())));
+            
+            return Ok(await searchedModules.ToListAsync());
+        }
+        
+        // GET api/module/modules-editor/search?params={...}
+        [HttpGet("modules-editor/search")]
+        public async Task<IActionResult> SearchOptionsEditorsModules(string title = null, string description = null, int difficulty = 0, string tags = null)
+        {
+            if (!GetUser().CanEditModules())
+                return Forbid("You are not allowed to edit modules");
+            
+            var searchedModules = DatabaseContext.Modules.AsQueryable();
+            if (GetUser().IsAdmin())
+                searchedModules = searchedModules.Where(m => m.OwnerId == GetUser().Id);
+            
+            if (!string.IsNullOrEmpty(title))
+                searchedModules = searchedModules
+                    .Where(m => EF.Functions.Match(m.Name, title, MySqlMatchSearchMode.NaturalLanguage) || 
+                                EF.Functions.Like(m.Name, $"%{title}%"));
+
+            if (!string.IsNullOrEmpty(description))
+                searchedModules = searchedModules
+                    .Where(m => EF.Functions.Match(m.Description, description, MySqlMatchSearchMode.NaturalLanguage) || 
+                                EF.Functions.Like(m.Description, $"%{description}%"));
+
+            if (difficulty != 0)
+                searchedModules = searchedModules
+                    .Where(m => m.Difficulty == difficulty);
+
+            if (!string.IsNullOrEmpty(tags))
+            {
+                var tagNamesList = tags.Split(",").Select(s => s.Trim()).ToList();
+                searchedModules = searchedModules
+                    .Where(m => m.ModuleTags.Any(mt => tagNamesList.Contains(mt.Tag.Name)))
+                    .IncludeTags();
+            }
+            return Ok(await searchedModules.ToListAsync());
+        }
+
+        // GET api/module/search/{searchTerm}
+        [HttpGet("search/{searchTerm}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Search(string searchTerm)
+        {
+            if (string.IsNullOrEmpty(searchTerm))
+                return Ok(await DatabaseContext.Modules.Where(m => m.Published).ToListAsync());
+            
+            var searchedModules = DatabaseContext.Modules
+                .Where(m => m.Published)
+                .Where(m => EF.Functions.Match(m.Name, searchTerm, MySqlMatchSearchMode.NaturalLanguage) || 
+                            EF.Functions.Match(m.Description, searchTerm, MySqlMatchSearchMode.NaturalLanguage) ||
+                            EF.Functions.Like(m.Name, $"%{searchTerm}%") || 
+                            EF.Functions.Like(m.Description, $"%{searchTerm}%") || 
+                            m.ModuleTags.Any(mt => searchTerm.Equals(mt.Tag.Name.ToLower())));
+            
+            return Ok(await searchedModules.ToListAsync());
+        }
+
+        // GET api/module/search?params={...}
+        [HttpGet("search")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SearchOptions(string title = null, string description = null, int difficulty = 0, string tags = null)
+        {
+            var searchedModules = DatabaseContext.Modules.Where(m => m.Published);
+
+            if (!string.IsNullOrEmpty(title))
+                searchedModules = searchedModules
+                    .Where(m => EF.Functions.Match(m.Name, title, MySqlMatchSearchMode.NaturalLanguage) || 
+                            EF.Functions.Like(m.Name, $"%{title}%"));
+
+            if (!string.IsNullOrEmpty(description))
+                searchedModules = searchedModules
+                    .Where(m => EF.Functions.Match(m.Description, description, MySqlMatchSearchMode.NaturalLanguage) || 
+                            EF.Functions.Like(m.Description, $"%{description}%"));
+
+            if (difficulty != 0)
+                searchedModules = searchedModules
+                    .Where(m => m.Difficulty == difficulty);
+
+            if (!string.IsNullOrEmpty(tags))
+            {
+                var tagNamesList = tags.Split(",").Select(s => s.Trim()).ToList();
+                searchedModules = searchedModules
+                    .Where(m => m.ModuleTags.Any(mt => tagNamesList.Contains(mt.Tag.Name)))
+                    .IncludeTags();
+            }
+            return Ok(await searchedModules.ToListAsync());
         }
         
         // POST api/values

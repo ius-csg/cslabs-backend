@@ -23,6 +23,20 @@ namespace CSLabs.Api
                     Name = "Sexton's Test Pilot",
                     Published = false,
                     SpecialCode = settings.ModuleSpecialCode,
+                    Difficulty = 1,
+                    ModuleTags = new List<ModuleTag>
+                    {
+                      new ModuleTag
+                      {
+                          ModuleId = 1,
+                          TagId = 1,
+                          Tag = new Tag
+                          {
+                              Id = 1,
+                              Name = "Test"
+                          }
+                      }
+                    },
                     Labs = new List<Lab>
                     {
                         new Lab
